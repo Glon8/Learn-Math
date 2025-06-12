@@ -18,7 +18,9 @@ function ProfilePage() {
     email: null,
     password: null,
     secret: null,
-    answer: null
+    answer: null,
+    language: 'he',
+    navPosition: 'top'
   };
 
   const my_scores = {
@@ -46,23 +48,25 @@ function ProfilePage() {
     power_root: 'power & root',
     fraction_fractionMixed: 'fractions',
     forms_sizes: 'forms & sizes',
-    exam_basic: 'exam basic',
+    exam_basic: 'exam - basic',
     equasions_basic: 'equasions - basic',
     equations_two_unknowns: 'equasions - two unknowns',
     verbal_problems: 'verbal problems',
     geometry: 'geometry',
     quadratic_equation: 'quadratic equation',
     circles: 'circles',
-    exam_advanced: 'exam advanced'
+    exam_advanced: 'exam - advanced'
   };
 
-  return (<Center paddingTop={'3rem'}>
+  return (<Center paddingTop={'3rem'}
+    paddingX={'10%'}
+    paddingY={'10%'}>
 
     <Flex gap={5}>
 
-      <Flex height={'fit'} width={'25rem'} gapY={3} padding={4}
+      <Flex height={'fit'} width={'25rem'} gapY={3} paddingX={5} paddingY={7}
         flexDirection={"column"}
-        border borderRadius={"xl"}
+        rounded={"xl"}
         borderColor={'black'}
         borderWidth={1}
         textAlign={'center'}>
@@ -109,38 +113,38 @@ function ProfilePage() {
         <Slot value={my_user.status === 0 ? 'Local' : 'Online'} category={'Status'} />
         <Slot value={my_user.shared ? 'Shared' : 'Not Shared'} category={'Scores'} />
         <Separator />
-        <Flex gapY={3} paddingBottom={4} flexDirection={"column"} textAlign={'center'}>
-          
+        <Flex gapY={3} flexDirection={"column"} textAlign={'center'}>
+
           {
-            //< MENU DISABLED!!!!
+            //< MENU DISABLED!!!! as status is local
           }
           <FlexMenu pi_icon={'pi-book'}
             title={'Share my grades'}
             inner_title={'Are you sure?'}
             options={['NO', 'YES']}
-            disabled={my_user.status === 0? true : false } /> 
-          <CheckCard title={'Edit Profile'} ifChange={() => set_profile_edit(!use_profile_edit)} />
+            disabled={my_user.status === 0 ? true : false} />
+          <CheckCard pi_icon={'pi-thumbtack'} title={'Edit Profile'} ifChange={() => set_profile_edit(!use_profile_edit)} />
           <Text textAlign={'center'}> (POPUP as error for local user)<br /> To share your grades, you must be an online user.<br />
             You can check the profile for your status <br /> or in right top corner menu.</Text>
 
         </Flex>
 
       </Flex>
-      <Flex height={'fit'} width={'25rem'} gapY={3} padding={4} flexDirection={"column"} border borderRadius={"xl"} borderColor={'black'} borderWidth={1} textAlign={'center'} >
+      <Flex height={'fit'} width={'25rem'} gapY={3} paddingX={5} paddingY={7} flexDirection={"column"} border borderRadius={"xl"} borderColor={'black'} borderWidth={1} textAlign={'center'} >
 
         <TitleSlot pi_icon={'pi-trophy'} title={'PROGRESS'} />
         <Separator />
         {
           Object.entries(topic_names)
             .map((topic) => {
-              const score = my_scores[topic];
+              const score = my_scores[topic[0]];
 
-              if (topic[0] === 'equasions_basic')
-                return (
-                  <Separator>
-                    <Slot key={score} value={score ? score : 0} category={topic[1]} />
-                  </Separator>)
-              else return (<Slot key={score} value={score ? score : 0} category={topic[1]} />)
+              if (topic[0] === 'equasions_basic') {
+                return (<Separator key={topic[1]}>
+                  <Slot key={score} value={score ? score : 0} category={topic[1]} />
+                </Separator>)
+              }
+              else return (<Slot key={topic[1]} value={score ? score : 0} category={topic[1]} />)
             })
         }
 

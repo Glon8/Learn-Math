@@ -1,12 +1,13 @@
 import './App.css'
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
-import NavBar from './components/NavBar.jsx'
 
+import NavBar from './components/NavBar.jsx'
 import WelcomePage from './pages/WelcomePage.jsx'
 import ProfilePage from './pages/ProfilePage.jsx'
 import TopScoresPage from './pages/TopScoresPage.jsx'
 import HintsPage from './pages/HintsPage.jsx'
-import Schools from './pages/Schools.jsx'
+import SchoolsPage from './pages/SchoolsPage.jsx'
+import ExercisePage from './pages/ExercisePage.jsx'
 
 function App() {
   return (<Router>
@@ -19,7 +20,8 @@ function App() {
       <Route path='/profile' element={<ProfilePage/>} />
       <Route path='/top-scores' element={<TopScoresPage/>} />
       <Route path='/hints' element={<HintsPage/>} />
-      <Route path='/schools' element={<Schools/>} />
+      <Route path='/schools' element={<SchoolsPage/>} />
+      <Route path='/exercise' element={<ExercisePage/>} />
 
     </Routes>
 

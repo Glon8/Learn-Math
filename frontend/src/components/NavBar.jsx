@@ -1,6 +1,10 @@
-import { Button, Flex, Menu, Portal, Text, useCheckboxGroup } from "@chakra-ui/react"
+import { Button, Flex, Text } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useNavigate } from 'react-router-dom'
+
+import OnHoverTag from "./OnHoverTag.jsx";
+import NavMenu from './NavMenu.jsx'
+import { useEffect, useState } from "react";
 
 function NavBar() {
     const navigate = useNavigate();
@@ -21,22 +25,31 @@ function NavBar() {
         value: 'russian',
         title: 'RU'
     }];
-    const languages_checked = useCheckboxGroup({ defaultValue: ['hebrew'] });
+    const languages_checked = 'hebrew';
+    
+    const toTop = () => { setNavSide('top') }
+    const toLeft = () => { setNavSide('left') }
+    const toBottom = () => { setNavSide('bottom') }
+    const toRight = () => { setNavSide('right') }
 
     const menu_pos = [{
         value: 'top',
-        title: 'Top'
+        title: 'Top',
+        onClick: () => toTop()
     }, {
         value: 'left',
-        title: 'Left'
+        title: 'Left',
+        onClick: () => toLeft()
     }, {
         value: 'bottom',
-        title: 'Bottom'
+        title: 'Bottom',
+        onClick: () => toBottom()
     }, {
         value: 'right',
-        title: 'Right'
+        title: 'Right',
+        onClick: () => toRight()
     }];
-    const menu_pos_checked = useCheckboxGroup({ defaultValue: ['top'] });
+    const menu_pos_checked = 'top';
 
     const lesson_settings = [{
         value: 'set1',
@@ -48,171 +61,349 @@ function NavBar() {
         value: 'set3',
         title: '...'
     }];
-    const lesson_settings_checked = useCheckboxGroup({ defaultValue: ['set1'] });
+
+    const lesson_settings_checked = ['set1'];
+
+    //const user = false
 
     const user = {
-    _id: 1110,
-    status: 0,
-    shared: false,
-    name: 'Ruslan',
-    email: null,
-    password: null,
-    secret: null,
-    answer: null
-  };
+        _id: 1110,
+        status: 0,
+        shared: false,
+        name: 'Ruslan',
+        email: null,
+        password: null,
+        secret: null,
+        answer: null,
+        language: 'he',
+        navPosition: 'top'
+    };
 
-    return (<Flex border borderBottomWidth={2}
+    const navShort = false;
+    const [navSide, setNavSide] = useState('top');
+    const [useNavOpen, setNavOpen] = useState(false);
+
+    const [useMainPop, setMainPop] = useState(false);
+    const [useHintPop, setHintPop] = useState(false);
+    const [useScorePop, setScorePop] = useState(false);
+    const [useProfilePop, setProfilePop] = useState(false);
+    const [useSchoolsPop, setSchoolsPop] = useState(false);
+    const [useMenuPop, setMenuPop] = useState(false);
+
+    useEffect(() => {
+        user.navSide ? setNavSide(user.navSide) : setNavSide('top');
+    }, [user.navSide]);
+
+    return (<Flex border
+        borderStartWidth={navSide === 'right' ? 2 : 0}
+        borderEndWidth={navSide === 'left' ? 2 : 0}
+        borderTopWidth={navSide === 'bottom' ? 2 : 0}
+        borderBottomWidth={navSide === 'top' ? 2 : 0}
         borderColor={'blackAlpha.500'}
-        height={20}
+        position={'fixed'}
+        width={navSide === 'top' || navSide === 'bottom' ? '100%' : 20}
+        height={navSide === 'top' || navSide === 'bottom' ? 20 : '100%'}
         padding={3}
-        flexDir={'row'}
+        flexDir={navSide === 'top' || navSide === 'bottom' ? 'row' : 'column-reverse'}
+        right={navSide === 'right' ? 0 : 'auto'}
+        left={navSide === 'left' ? 0 : "auto"}
+        top={navSide === 'top' ? 0 : 'auto'}
+        bottom={navSide === 'bottom' ? 0 : 'auto'}
         justify={'space-between'}
-        backgroundColor={'blackAlpha.400'}
+        backgroundColor={'rgb(166, 166, 166)'}
+        zIndex={5}
     >
+        {
+            //console.log(menu_pos_checked.value)
+        }
+        <Flex flexDirection={'row'}
+            justifyContent={'center'}
+            alignItems={'center'}
+            gap={3}>
 
-        <Flex flexDirection={'row'} alignItems={'center'} gap={3}>
+            <Flex position={"relative"}
+                justifyContent={'center'}
+                marginStart={navSide === 'left' ? 24 : 0}
+                marginEnd={navSide === 'right' ? 24 : 0}>
+                <Button backgroundColor={'black'} onClick={to_main}
+                    onMouseOver={() => {
+                        navShort && !(navSide === 'right' || navSide === 'left') ?
+                            setMainPop(true) : null
+                    }}
+                    onMouseLeave={() => {
+                        navShort && !(navSide === 'right' || navSide === 'left') ?
+                            setMainPop(false) : null
+                    }}
+                    width={navSide === 'right' || navSide === 'left' ? '9rem' : 'auto'}>
 
-            <Button backgroundColor={'black'} onClick={to_main}><i className="pi pi-sparkles" />Learn Math</Button>
+                    <Flex flexDirection={'row'} gap={3}>
+                        <i className={`pi pi-sparkles`} />
+                        {
+                            navShort ? (navSide === 'right' || navSide === 'left' ?
+                                (<Text textAlign={'center'}>Learn Math</Text>) : null) :
+                                (<Text textAlign={'center'}>Learn Math</Text>)
+                        }
+                    </Flex>
 
-        </Flex>
-        <Flex flexDirection={'row'} alignItems={'center'} gap={3}>
+                </Button>
+                <OnHoverTag value={'Main'}
+                    display={useMainPop ? 'flex' : 'none'}
+                    top={12}
+                    bottom={12}
+                    right={16}
+                    left={16}
+                    navSide={navSide} />
 
-            <Button backgroundColor={'black'} onClick={to_hints} ><i className="pi pi-question" />Hints</Button>
-            <Button backgroundColor={'black'} onClick={to_top_scores} ><i className="pi pi-crown" />Top Scores</Button>
-            <Button backgroundColor={'black'} onClick={to_profile} ><i className="pi pi-id-card" />Profile</Button>
-            <Button backgroundColor={'black'} onClick={to_schools} ><i className="pi pi-list-check" />Schools</Button>
-            <Menu.Root closeOnSelect={false}>
+            </Flex>
 
-                <Menu.Trigger backgroundColor={'black'}>
-                    <i className='pi pi-align-justify' style={{ color: 'white'}} />
-                </Menu.Trigger>
-                <Portal>
-                    <Menu.Positioner>
-
-                        <Menu.Content width={'12rem'}>
-
-                            <Menu.ItemGroup>
-
-                                <Text paddingStart={2}>{user.status === 0? 'Local' : 'Online'} user: {user.name}</Text>
-                                <Menu.Item value='sign-up'><i className="pi pi-user-edit" />Sign Up</Menu.Item>
-                                <Menu.Item value='sign-in'><i className="pi pi-sign-in" />Sign In</Menu.Item>
-                                <Menu.Item value='sign-out'><i className="pi pi-sign-out" />Sign Out</Menu.Item>
-
-                            </Menu.ItemGroup>
-                            <Menu.Separator />
-                            <Menu.ItemGroup>
-
-                                <Menu.Item value='mode' ><i className="pi pi-moon" /><Text>Mode</Text></Menu.Item>
-                                <Menu.Root positioning={{ placement: 'right-start', gutter: 2 }} closeOnSelect={false}>
-
-                                    <Menu.TriggerItem>
-                                        <i className="pi pi-language" /><Text>Language</Text>
-                                    </Menu.TriggerItem>
-                                    <Portal>
-
-                                        <Menu.Positioner>
-
-                                            <Menu.Content>
-
-                                                <Menu.ItemGroup>
-                                                    {
-                                                        languages.map(({ title, value }) =>
-                                                            <Menu.CheckboxItem key={value}
-                                                                value={value}
-                                                                checked={languages_checked.isChecked(value)}
-                                                                onCheckedChange={() => languages_checked.toggleValue(value)}
-                                                            >
-                                                                {title}<Menu.ItemIndicator />
-                                                            </Menu.CheckboxItem>
-                                                        )
-                                                    }
-                                                </Menu.ItemGroup>
-
-                                            </Menu.Content>
-
-                                        </Menu.Positioner>
-
-                                    </Portal>
-
-                                </Menu.Root>
-                                <Menu.Root closeOnSelect={false}>
-
-                                    <Menu.TriggerItem>
-                                        <i className="pi pi-cog" /><Text>Lesson Settings</Text>
-                                    </Menu.TriggerItem>
-
-                                    <Menu.Positioner>
-
-                                        <Menu.Content>
-
-                                            <Menu.ItemGroup>
-
-                                                {
-                                                    lesson_settings.map(({ title, value }) =>
-                                                        <Menu.CheckboxItem key={value}
-                                                            value={value}
-                                                            checked={lesson_settings_checked.isChecked(value)}
-                                                            onCheckedChange={() => lesson_settings_checked.toggleValue(value)}>
-                                                            {title}<Menu.ItemIndicator />
-                                                        </Menu.CheckboxItem>
-                                                    )
-                                                }
-
-                                            </Menu.ItemGroup>
-
-                                        </Menu.Content>
-
-                                    </Menu.Positioner>
-
-                                </Menu.Root>
-                                <Menu.Root closeOnSelect={false}>
-
-                                    <Menu.TriggerItem>
-                                        <i className="pi pi-angle-down" /><Text>Menu Position</Text>
-                                    </Menu.TriggerItem>
-                                    <Portal>
-
-                                        <Menu.Positioner>
-
-                                            <Menu.Content>
-
-                                                <Menu.ItemGroup>
-
-                                                    {
-                                                        menu_pos.map(({ title, value }) =>
-                                                            <Menu.CheckboxItem key={value}
-                                                                value={value}
-                                                                checked={menu_pos_checked.isChecked(value)}
-                                                                onCheckedChange={() => menu_pos_checked.toggleValue(value)}
-                                                            >
-                                                                {title}<Menu.ItemIndicator />
-                                                            </Menu.CheckboxItem>
-                                                        )
-                                                    }
-
-                                                </Menu.ItemGroup>
-
-                                            </Menu.Content>
-
-                                        </Menu.Positioner>
-
-                                    </Portal>
-
-                                </Menu.Root>
-
-                            </Menu.ItemGroup>
-
-                        </Menu.Content>
-
-                    </Menu.Positioner>
-
-                </Portal>
-
-            </Menu.Root>
 
         </Flex>
+        <Flex flexDirection={navSide === 'top' || navSide === 'bottom' ? 'row' : 'column-reverse'}
+            alignItems={'center'}
+            gap={3}>
+            <Flex position={"relative"}
+                justifyContent={'center'}
+                marginStart={navSide === 'left' ? 24 : 0}
+                marginEnd={navSide === 'right' ? 24 : 0}>
 
-    </Flex>)
+                <Button backgroundColor={'black'} onClick={to_hints}
+                    onMouseOver={() => {
+                        navShort && !(navSide === 'right' || navSide === 'left') ?
+                            setHintPop(true) : null
+                    }}
+                    onMouseLeave={() => {
+                        navShort && !(navSide === 'right' || navSide === 'left') ?
+                            setHintPop(false) : null
+                    }}
+                    width={navSide === 'right' || navSide === 'left' ? '9rem' : 'auto'} >
+
+                    <Flex flexDirection={'row'} gap={3}>
+                        <i className={`pi pi-question`} />
+                        {
+                            navShort ? (navSide === 'right' || navSide === 'left' ?
+                                (<Text textAlign={'center'}>Hints</Text>) : null) :
+                                (<Text textAlign={'center'}>Hints</Text>)
+                        }
+                    </Flex>
+
+                </Button>
+
+                <OnHoverTag value={'Hints'}
+                    display={useHintPop ? 'flex' : 'none'}
+                    top={12}
+                    bottom={12}
+                    right={16}
+                    left={16}
+                    navSide={navSide} />
+
+            </Flex>
+            <Flex position={'relative'}
+                justifyContent={'center'}
+                marginStart={navSide === 'left' ? 24 : 0}
+                marginEnd={navSide === 'right' ? 24 : 0}>
+
+                <Button backgroundColor={'black'} onClick={to_top_scores}
+                    onMouseOver={() => {
+                        navShort && !(navSide === 'right' || navSide === 'left') ?
+                            setScorePop(true) : null
+                    }}
+                    onMouseLeave={() => {
+                        navShort && !(navSide === 'right' || navSide === 'left') ?
+                            setScorePop(false) : null
+                    }}
+                    width={navSide === 'right' || navSide === 'left' ? '9rem' : 'auto'} >
+
+                    <Flex flexDirection={'row'} gap={3}>
+                        <i className={`pi pi-crown`} />
+                        {
+                            navShort ? (navSide === 'right' || navSide === 'left' ?
+                                (<Text textAlign={'center'}>Top Scores</Text>) : null) :
+                                (<Text textAlign={'center'}>Top Scores</Text>)
+                        }
+                    </Flex>
+
+                </Button>
+                <OnHoverTag value={'Top Scores'}
+                    display={useScorePop ? 'flex' : 'none'}
+                    top={12}
+                    bottom={12}
+                    right={16}
+                    left={16}
+                    navSide={navSide} />
+
+
+            </Flex>
+            <Flex position={'relative'}
+                justifyContent={'center'}
+                marginStart={navSide === 'left' ? 24 : 0}
+                marginEnd={navSide === 'right' ? 24 : 0}>
+
+                <Button backgroundColor={'black'} onClick={to_profile}
+                    onMouseOver={() => {
+                        navShort && !(navSide === 'right' || navSide === 'left') ?
+                            setProfilePop(true) : null
+                    }}
+                    onMouseLeave={() => {
+                        navShort && !(navSide === 'right' || navSide === 'left') ?
+                            setProfilePop(false) : null
+                    }}
+                    width={navSide === 'right' || navSide === 'left' ? '9rem' : 'auto'} >
+
+                    <Flex flexDirection={'row'} gap={3}>
+                        <i className={`pi pi-id-card`} />
+                        {
+                            navShort ? (navSide === 'right' || navSide === 'left' ?
+                                (<Text textAlign={'center'}>Profile</Text>) : null) :
+                                (<Text textAlign={'center'}>Profile</Text>)
+                        }
+                    </Flex>
+
+                </Button>
+
+                <OnHoverTag value={'Profile'}
+                    display={useProfilePop ? 'flex' : 'none'}
+                    top={12}
+                    bottom={12}
+                    right={16}
+                    left={16}
+                    navSide={navSide} />
+
+            </Flex>
+
+            <Flex position={'relative'}
+                justifyContent={'center'}
+                marginStart={navSide === 'left' ? 24 : 0}
+                marginEnd={navSide === 'right' ? 24 : 0}>
+
+                <Button backgroundColor={'black'} onClick={to_schools}
+                    onMouseOver={() => {
+                        navShort && !(navSide === 'right' || navSide === 'left') ?
+                            setSchoolsPop(true) : null
+                    }}
+                    onMouseLeave={() => {
+                        navShort && !(navSide === 'right' || navSide === 'left') ?
+                            setSchoolsPop(false) : null
+                    }}
+                    width={navSide === 'right' || navSide === 'left' ? '9rem' : 'auto'} >
+
+                    <Flex flexDirection={'row'} gap={3}>
+                        <i className={`pi pi-list-check`} />
+                        {
+                            navShort ? (navSide === 'right' || navSide === 'left' ?
+                                (<Text textAlign={'center'}>Schools</Text>) : null) :
+                                (<Text textAlign={'center'}>Schools</Text>)
+                        }
+                    </Flex>
+
+                </Button>
+
+                <OnHoverTag value={'Schools'}
+                    display={useSchoolsPop ? 'flex' : 'none'}
+                    top={12}
+                    bottom={12}
+                    right={16}
+                    left={16}
+                    navSide={navSide} />
+
+            </Flex>
+            <Flex position={'relative'}
+                justifyContent={'center'}
+                marginStart={navSide === 'left' ? 24 : 0}
+                marginEnd={navSide === 'right' ? 24 : 0}>
+
+                <Button backgroundColor={'black'} onClick={() => { setNavOpen(!useNavOpen) }}
+                    onMouseOver={() => {
+                        navShort && !(navSide === 'right' || navSide === 'left') ?
+                            setMenuPop(true) : null
+                    }}
+                    onMouseLeave={() => {
+                        navShort && !(navSide === 'right' || navSide === 'left') ?
+                            setMenuPop(false) : null
+                    }}
+                    width={navSide === 'right' || navSide === 'left' ? '9rem' : 'auto'}
+                >
+
+                    <Flex flexDirection={'row'} gap={3}>
+                        <i className={`pi pi-align-justify`} />
+                        {
+                            navShort ? (navSide === 'right' || navSide === 'left' ?
+                                (<Text textAlign={'center'}>Menu</Text>) : null) :
+                                (<Text textAlign={'center'}>Menu</Text>)
+
+                        }
+                    </Flex>
+
+                </Button>
+
+                <OnHoverTag value={'Menu'}
+                    display={useMenuPop ? 'flex' : 'none'}
+                    top={12}
+                    bottom={12}
+                    right={16}
+                    left={16}
+                    navSide={navSide} />
+
+            </Flex>
+            <Flex position={"absolute"}
+                display={useNavOpen ? 'flex' : 'none'}
+                right={
+                    navSide === 'right' ? '10rem' :
+                        navSide === 'top' ? 3 :
+                            navSide === 'bottom' ? 3 : 'auto'
+                }
+                left={
+                    navSide === 'left' ? '10rem' : 'auto'
+                }
+                top={
+                    navSide === 'right' ? 3 :
+                        navSide === 'left' ? 3 :
+                            navSide === 'top' ? 16 : 'auto'
+                }
+                bottom={
+                    navSide === 'bottom' ? 16 : 'auto'
+                }
+                onMouseLeave={() => { setNavOpen(false) }}
+            >
+                <NavMenu disabled={false}
+                    close={true}
+                    navPosition={navSide}
+                    user={user}
+                    group_a={{
+                        button_a: { pi_icon: 'pi-user-edit', value: 'Sign Up', onClick: () => { console.log('sign up') } },
+                        button_b: { pi_icon: 'pi-sign-in', value: 'Sign In', onClick: () => { console.log('sign in') } },
+                        button_c: { pi_icon: 'pi-sign-out', value: 'Sign Out', onClick: () => { console.log('sign out') } },
+                    }}
+                    group_b={{
+                        menu_a: {
+                            pi_icon: 'pi-language',
+                            title: 'Language',
+                            list: languages,
+                            list_checked: languages_checked
+                        },
+                        menu_b: {
+                            pi_icon: 'pi-cog',
+                            title: 'Lesson Settings',
+                            list: lesson_settings,
+                            list_checked: lesson_settings_checked
+                        },
+                        menu_c: {
+                            pi_icon: 'pi-angle-down',
+                            title: 'Menu Position',
+                            list: menu_pos,
+                            list_checked: menu_pos_checked
+                        }
+                    }}
+                    mode={{
+                        pi_icon: 'pi-moon',
+                        value: 'Mode',
+                        onClick: () => { console.log('mode changed') }
+                    }} />
+
+            </Flex>
+
+        </Flex>
+
+    </Flex >)
 }
 
 export default NavBar
