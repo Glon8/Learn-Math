@@ -1,10 +1,10 @@
 import { Text, Flex, Menu, Portal, Separator } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 
-// <Flexmenu disabled={false} pi_icon={''} title={'do something'} inner_title={'DO SOMETHING!'} options={['will do', 'negative']} />
+// <Flexmenu disabled={false} close={true} pi_icon={''} title={'do something'} inner_title={'DO SOMETHING!'} options={['will do', 'negative']} />
 
-function FlexMenu({ pi_icon, title, inner_title, options, disabled }) {
-    return (<Menu.Root>
+function FlexMenu({ pi_icon, title, inner_title, options, disabled, close }) {
+    return (<Menu.Root closeOnSelect={close? close : true}>
 
         <Menu.Trigger disabled={disabled? disabled : false}>
 
