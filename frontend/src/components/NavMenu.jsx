@@ -1,18 +1,80 @@
 import { Separator, Button, Flex, Text } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
+import { useState } from "react";
 
 import SelectionCheckMenu from "./SelectionCheckMenu";
 import SelectionCheckSwitchMenu from "./SelectionCheckSwitchMenu";
-import { useState } from "react";
 
-function NavMenu({ hidden, user, group_a, group_b, mode, navPosition }) {
+function NavMenu({ hidden, user, navPosition, signUpForm, signInForm, modeState, useShort }) {
+    const [navSide, setNavSide] = useState(user ? user.navPosition : 'top');
+
     const [use_languages, set_languages] = useState(true);
     const [use_settings, set_settings] = useState(true);
     const [use_position, set_position] = useState(true);
 
+    const languages = [{
+        value: 'english',
+        title: 'EN'
+    }, {
+        value: 'hebrew',
+        title: 'HE'
+    }, {
+        value: 'russian',
+        title: 'RU'
+    }];
+    const default_languages = user ? user.language : 'english';
+
+    const lesson_settings = [{
+        value: 'set1',
+        title: 'Form awaits to be fully filled'
+    }, {
+        value: 'set2',
+        title: 'Exercises instant replacement'
+    }, {
+        value: 'set3',
+        title: '...'
+    }];
+    const default_lesson_settings = ['set1'];
+
+    const toTop = () => {
+        navPosition('top')
+        setNavSide('top')
+    }
+    const toLeft = () => {
+        navPosition('left')
+        setNavSide('left')
+    }
+    const toBottom = () => {
+        navPosition('bottom')
+        setNavSide('bottom')
+    }
+    const toRight = () => {
+        navPosition('right')
+        setNavSide('right')
+    }
+
+    const menu_pos = [{
+        value: 'top',
+        title: 'Top',
+        onClick: () => toTop()
+    }, {
+        value: 'left',
+        title: 'Left',
+        onClick: () => toLeft()
+    }, {
+        value: 'bottom',
+        title: 'Bottom',
+        onClick: () => toBottom()
+    }, {
+        value: 'right',
+        title: 'Right',
+        onClick: () => toRight()
+    }];
+    const default_menu_pos = navSide;
+
     return (<Flex padding={1} gap={3}
         hidden={hidden ? hidden : false}
-        flexDirection={navPosition === 'bottom' ? "column-reverse" : 'column'}
+        flexDirection={navSide === 'bottom' ? "column-reverse" : 'column'}
         width={'13rem'}
         rounded={'md'}
         border
@@ -25,11 +87,27 @@ function NavMenu({ hidden, user, group_a, group_b, mode, navPosition }) {
                 (<Text marginStart={4}>No user connected!</Text>)
         }
         {
-            user ? (group_a ? Object.entries(group_a).map((item) => {
-                if (item[0] === 'button_c')
-                    return (<Button key={item[0]}
+            user ? (<Button
+                backgroundColor={'white'}
+                onClick={() => { console.log('sign out') }}
+                color={"black"}
+            >
+
+                <Flex width={'full'}
+                    alignItems={'center'}
+                    gap={3}>
+
+                    <i className={`pi pi-sign-out`} />
+                    <Text>Sign Out</Text>
+
+                </Flex>
+
+            </Button>) :
+                (<Flex flexDirection={navSide === 'bottom' ? "column-reverse" : 'column'}>
+
+                    <Button
                         backgroundColor={'white'}
-                        onClick={item[1].onClick}
+                        onClick={signUpForm}
                         color={"black"}
                     >
 
@@ -37,51 +115,46 @@ function NavMenu({ hidden, user, group_a, group_b, mode, navPosition }) {
                             alignItems={'center'}
                             gap={3}>
 
-                            <i className={`pi ${item[1].pi_icon}`} />
-                            {item[1].value}
+                            <i className={`pi pi-user-edit`} />
+                            <Text>Sign Up</Text>
 
                         </Flex>
 
-                    </Button>)
-            }) : null) :
-                (group_a ? Object.entries(group_a).map((item) => {
-                    if (item[0] === 'button_a' || item[0] === 'button_b')
-                        return (<Button key={item[0]}
-                            backgroundColor={'white'}
-                            onClick={item[1].onClick}
-                            color={"black"}
-                        >
+                    </Button>
+                    <Button
+                        backgroundColor={'white'}
+                        onClick={signInForm}
+                        color={"black"}
+                    >
 
-                            <Flex width={'full'}
-                                alignItems={'center'}
-                                gap={3}>
+                        <Flex width={'full'}
+                            alignItems={'center'}
+                            gap={3}>
 
-                                <i className={`pi ${item[1].pi_icon}`} />
-                                {item[1].value}
+                            <i className={`pi pi-sign-in`} />
+                            <Text>Sign In</Text>
 
-                            </Flex>
+                        </Flex>
 
-                        </Button>)
-                }) : null)
+                    </Button>
+
+                </Flex>)
         }
-        {
-            group_a && group_b ? (<Separator />) : null
-        }
-        {
-            mode ? (<Button backgroundColor={'white'} color={'black'} onClick={mode.onClick}>
+        <Separator />
+        <Button backgroundColor={'white'}
+            color={'black'}
+            onClick={modeState}>
 
-                <Flex width={'full'}
-                    alignItems={'center'}
-                    gap={3}>
+            <Flex width={'full'}
+                alignItems={'center'}
+                gap={3}>
 
-                    <i className={`pi ${mode.pi_icon}`} />
-                    <Text>{mode.value}</Text>
+                <i className={`pi pi-moon`} />
+                <Text>Mode</Text>
 
-                </Flex>
+            </Flex>
 
-            </Button>) : null
-        }
-
+        </Button>
         <Button
             backgroundColor={'white'}
             onClick={() => {
@@ -96,13 +169,12 @@ function NavMenu({ hidden, user, group_a, group_b, mode, navPosition }) {
                 alignItems={'center'}
                 gap={3}>
 
-                <i className={`pi pi-globe`} />
-                {group_b.menu_a.title}
+                <i className={`pi pi-language`} />
+                <Text>Language</Text>
 
             </Flex>
 
         </Button>
-
         <Button
             backgroundColor={'white'}
             onClick={() => {
@@ -118,12 +190,11 @@ function NavMenu({ hidden, user, group_a, group_b, mode, navPosition }) {
                 gap={3}>
 
                 <i className={`pi pi-cog`} />
-                {group_b.menu_b.title}
+                <Text>Lesson Settings</Text>
 
             </Flex>
 
         </Button>
-
         <Button
             backgroundColor={'white'}
             onClick={() => {
@@ -139,7 +210,7 @@ function NavMenu({ hidden, user, group_a, group_b, mode, navPosition }) {
                 gap={3}>
 
                 <i className={`pi pi-angle-down`} />
-                {group_b.menu_c.title}
+                <Text>Menu Position</Text>
 
             </Flex>
 
@@ -148,77 +219,101 @@ function NavMenu({ hidden, user, group_a, group_b, mode, navPosition }) {
             position={'absolute'}
             width={'auto'}
             right={
-                navPosition === 'right' ? '13rem' :
-                    navPosition === 'top' ? '13rem' :
-                        navPosition === 'bottom' ? '13rem' : 'auto'
+                useShort ? (navSide === 'right' ? 0.75 :
+                    navSide === 'top' ? 0.75 :
+                        navSide === 'bottom' ? 0.75 : 'auto') :
+                    (navSide === 'right' ? '13rem' :
+                        navSide === 'top' ? '13rem' :
+                            navSide === 'bottom' ? '13rem' : 'auto')
             }
             left={
-                navPosition === 'left' ? '13rem' : 'auto'
+                useShort ? (navSide === 'left' ? 0.75 : 'auto') :
+                    (navSide === 'left' ? '13rem' : 'auto')
             }
             top={
-                navPosition === 'right' ? '10rem' :
-                    navPosition === 'left' ? '10rem' :
-                        navPosition === 'top' ? '10rem' : 'auto'
+                useShort ? (navSide === 'right' ? '12.5rem' :
+                    navSide === 'left' ? '12.5rem' :
+                        navSide === 'top' ? '12.5rem' : 'auto') :
+                    (navSide === 'right' ? '10rem' :
+                        navSide === 'left' ? '10rem' :
+                            navSide === 'top' ? '10rem' : 'auto')
             }
             bottom={
-                navPosition === 'bottom' ? '10rem' : 'auto'
+                useShort ? (navSide === 'bottom' ? '12.5rem' : 'auto') :
+                    (navSide === 'bottom' ? '10rem' : 'auto')
             }
-            flexDirection={navPosition === 'bottom' ? "column-reverse" : 'column'}
+            flexDirection={navSide === 'bottom' ? "column-reverse" : 'column'}
         >
-            <SelectionCheckSwitchMenu default_option={group_b.menu_a.list_checked}
+            <SelectionCheckSwitchMenu default_option={default_languages}
                 hidden={use_languages}
-                options={group_b.menu_a.list}
+                options={languages}
             />
         </Flex>
         <Flex onMouseLeave={() => { set_settings(true) }}
             position={'absolute'}
             width={'auto'}
             right={
-                navPosition === 'right' ? '13rem' :
-                    navPosition === 'top' ? '13rem' :
-                        navPosition === 'bottom' ? '13rem' : 'auto'
+                useShort ? (navSide === 'top' ? 0.75 :
+                    navSide === 'left' ? '0.3rem' :
+                        navSide === 'bottom' ? 0.75 : 'auto') :
+                    (navSide === 'right' ? '13rem' :
+                        navSide === 'top' ? '13rem' :
+                            navSide === 'bottom' ? '13rem' : 'auto')
             }
             left={
-                navPosition === 'left' ? '13rem' : 'auto'
+                useShort ? (navSide === 'right' ? '0.3rem' : 'auto') :
+                    (navSide === 'left' ? '13rem' : 'auto')
             }
             top={
-                navPosition === 'right' ? '13rem' :
-                    navPosition === 'left' ? '13rem' :
-                        navPosition === 'top' ? '13rem' : 'auto'
+                useShort ? (navSide === 'right' ? '15.8rem' :
+                    navSide === 'left' ? '15.8rem' :
+                        navSide === 'top' ? '15.8rem' : 'auto') :
+                    (navSide === 'right' ? '13rem' :
+                        navSide === 'left' ? '13rem' :
+                            navSide === 'top' ? '13rem' : 'auto')
             }
             bottom={
-                navPosition === 'bottom' ? '13rem' : 'auto'
+                useShort ? (navSide === 'bottom' ? '15.8rem' : 'auto') :
+                    (navSide === 'bottom' ? '13rem' : 'auto')
             }
-            flexDirection={navPosition === 'bottom' ? "column-reverse" : 'column'}>
-            <SelectionCheckMenu default_options={group_b.menu_b.list_checked}
+            flexDirection={navSide === 'bottom' ? "column-reverse" : 'column'}>
+            <SelectionCheckMenu default_options={default_lesson_settings}
                 hidden={use_settings}
                 width={'20rem'}
                 switch_board={true}
-                options={group_b.menu_b.list} />
+                options={lesson_settings} />
         </Flex>
         <Flex onMouseLeave={() => { set_position(true) }}
             position={'absolute'}
             width={'auto'}
             right={
-                navPosition === 'right' ? '13rem' :
-                    navPosition === 'top' ? '13rem' :
-                        navPosition === 'bottom' ? '13rem' : 'auto'
+                useShort ? (navSide === 'right' ? 0.75 :
+                    navSide === 'top' ? 0.75 :
+                        navSide === 'bottom' ? 0.75 : 'auto') :
+                    (navSide === 'right' ? '13rem' :
+                        navSide === 'top' ? '13rem' :
+                            navSide === 'bottom' ? '13rem' : 'auto')
             }
             left={
-                navPosition === 'left' ? '13rem' : 'auto'
+                useShort ? (navSide === 'left' ? 0.75 : 'auto') :
+                    navSide === 'left' ? '13rem' : 'auto'
             }
             top={
-                navPosition === 'right' ? '16rem' :
-                    navPosition === 'left' ? '16rem' :
-                        navPosition === 'top' ? '16rem' : 'auto'
+                useShort ? (navSide === 'right' ? '19rem' :
+                    navSide === 'left' ? '19rem' :
+                        navSide === 'top' ? '19rem' : 'auto') :
+                    (navSide === 'right' ? '16rem' :
+                        navSide === 'left' ? '16rem' :
+                            navSide === 'top' ? '16rem' : 'auto')
             }
             bottom={
-                navPosition === 'bottom' ? '16rem' : 'auto'
+                useShort ? (navSide === 'bottom' ? '19rem' : 'auto') :
+                    (navSide === 'bottom' ? '16rem' : 'auto')
             }
-            flexDirection={navPosition === 'bottom' ? "column-reverse" : 'column'} >
-            <SelectionCheckSwitchMenu default_option={group_b.menu_c.list_checked}
+            flexDirection={navSide === 'bottom' ? "column-reverse" : 'column'} >
+            <SelectionCheckSwitchMenu default_option={default_menu_pos}
                 hidden={use_position}
-                options={group_b.menu_c.list}
+                options={menu_pos}
             />
         </Flex>
 
