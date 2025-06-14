@@ -1,72 +1,19 @@
 import { Button, Flex, Text } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from "react";
 
 import OnHoverTag from "./OnHoverTag.jsx";
 import NavMenu from './NavMenu.jsx'
-import { useEffect, useState } from "react";
+import SignForm from './SignForm.jsx'
+import Toast from "./Toast.jsx";
 
 function NavBar() {
     const navigate = useNavigate();
 
-    const to_main = () => { navigate('/'); }
-    const to_profile = () => { navigate('/profile') }
-    const to_top_scores = () => { navigate('/top-scores') }
-    const to_hints = () => { navigate('/hints') }
-    const to_schools = () => { navigate('/schools') }
+    const user = false
 
-    const languages = [{
-        value: 'english',
-        title: 'EN'
-    }, {
-        value: 'hebrew',
-        title: 'HE'
-    }, {
-        value: 'russian',
-        title: 'RU'
-    }];
-    const languages_checked = 'hebrew';
-    
-    const toTop = () => { setNavSide('top') }
-    const toLeft = () => { setNavSide('left') }
-    const toBottom = () => { setNavSide('bottom') }
-    const toRight = () => { setNavSide('right') }
-
-    const menu_pos = [{
-        value: 'top',
-        title: 'Top',
-        onClick: () => toTop()
-    }, {
-        value: 'left',
-        title: 'Left',
-        onClick: () => toLeft()
-    }, {
-        value: 'bottom',
-        title: 'Bottom',
-        onClick: () => toBottom()
-    }, {
-        value: 'right',
-        title: 'Right',
-        onClick: () => toRight()
-    }];
-    const menu_pos_checked = 'top';
-
-    const lesson_settings = [{
-        value: 'set1',
-        title: 'Form awaits to be fully filled'
-    }, {
-        value: 'set2',
-        title: 'Exercises instant replacement'
-    }, {
-        value: 'set3',
-        title: '...'
-    }];
-
-    const lesson_settings_checked = ['set1'];
-
-    //const user = false
-
-    const user = {
+    /*const user = {
         _id: 1110,
         status: 0,
         shared: false,
@@ -75,13 +22,22 @@ function NavBar() {
         password: null,
         secret: null,
         answer: null,
-        language: 'he',
-        navPosition: 'top'
-    };
+        language: 'english',
+        navPosition: 'left'
+    };*/
 
     const navShort = false;
-    const [navSide, setNavSide] = useState('top');
+    const [navSide, setNavSide] = useState(user ? user.navPosition : 'top');
     const [useNavOpen, setNavOpen] = useState(false);
+    const [useSignUp, setSignUp] = useState(false);
+    const [useSignIn, setSignIn] = useState(false);
+    const [useMode, setMode] = useState(false);
+    const [useToast, setToast] = useState({
+        hidden: true,
+        title: 'Toast title',
+        desc: 'Toast description',
+        color: 'black'
+    });
 
     const [useMainPop, setMainPop] = useState(false);
     const [useHintPop, setHintPop] = useState(false);
@@ -90,9 +46,24 @@ function NavBar() {
     const [useSchoolsPop, setSchoolsPop] = useState(false);
     const [useMenuPop, setMenuPop] = useState(false);
 
+    const to_main = () => { navigate('/'); }
+    const to_profile = () => { navigate('/profile') }
+    const to_top_scores = () => { navigate('/top-scores') }
+    const to_hints = () => { navigate('/hints') }
+    const to_schools = () => { navigate('/schools') }
+
+    const callToast = (title, desc, color) => {
+        setToast({
+            hidden: false,
+            title: title,
+            desc: desc,
+            color: color
+        });
+    }
+
     useEffect(() => {
-        user.navSide ? setNavSide(user.navSide) : setNavSide('top');
-    }, [user.navSide]);
+        user.navPosition ? setNavSide(user.navPosition) : setNavSide('top');
+    }, [user.navPosition]);
 
     return (<Flex border
         borderStartWidth={navSide === 'right' ? 2 : 0}
@@ -113,9 +84,6 @@ function NavBar() {
         backgroundColor={'rgb(166, 166, 166)'}
         zIndex={5}
     >
-        {
-            //console.log(menu_pos_checked.value)
-        }
         <Flex flexDirection={'row'}
             justifyContent={'center'}
             alignItems={'center'}
@@ -160,9 +128,11 @@ function NavBar() {
         </Flex>
         <Flex flexDirection={navSide === 'top' || navSide === 'bottom' ? 'row' : 'column-reverse'}
             alignItems={'center'}
-            gap={3}>
+            gap={navShort ? 0.5 : 3}>
+
             <Flex position={"relative"}
                 justifyContent={'center'}
+                maxW={'20rem'}
                 marginStart={navSide === 'left' ? 24 : 0}
                 marginEnd={navSide === 'right' ? 24 : 0}>
 
@@ -366,41 +336,56 @@ function NavBar() {
             >
                 <NavMenu disabled={false}
                     close={true}
-                    navPosition={navSide}
-                    user={user}
-                    group_a={{
-                        button_a: { pi_icon: 'pi-user-edit', value: 'Sign Up', onClick: () => { console.log('sign up') } },
-                        button_b: { pi_icon: 'pi-sign-in', value: 'Sign In', onClick: () => { console.log('sign in') } },
-                        button_c: { pi_icon: 'pi-sign-out', value: 'Sign Out', onClick: () => { console.log('sign out') } },
+                    useShort={navShort}
+                    navPosition={(side) => { setNavSide(side) }}
+                    signUpForm={() => {
+                        setSignUp(!useSignUp)
+                        setSignIn(false)
                     }}
-                    group_b={{
-                        menu_a: {
-                            pi_icon: 'pi-language',
-                            title: 'Language',
-                            list: languages,
-                            list_checked: languages_checked
-                        },
-                        menu_b: {
-                            pi_icon: 'pi-cog',
-                            title: 'Lesson Settings',
-                            list: lesson_settings,
-                            list_checked: lesson_settings_checked
-                        },
-                        menu_c: {
-                            pi_icon: 'pi-angle-down',
-                            title: 'Menu Position',
-                            list: menu_pos,
-                            list_checked: menu_pos_checked
-                        }
+                    signInForm={() => {
+                        setSignUp(false)
+                        setSignIn(!useSignIn)
                     }}
-                    mode={{
-                        pi_icon: 'pi-moon',
-                        value: 'Mode',
-                        onClick: () => { console.log('mode changed') }
-                    }} />
-
+                    modeState={() => setMode(!useMode)}
+                    user={user} />
             </Flex>
 
+        </Flex>
+
+        <SignForm isIn={useSignIn}
+            isUp={useSignUp}
+            close={() => {
+                setSignIn(false);
+                setSignUp(false);
+            }}
+            callToast={(title, desc, color) => {
+                callToast(title, desc, color)
+            }} />
+
+
+        <Flex position={'absolute'}
+            right={
+                navSide === 'right' ? '70vw' :
+                    navSide === 'top' ? 5 :
+                        navSide === 'bottom' ? 5 : 'auto'
+            }
+            left={
+                navSide === 'left' ? '70vw' : 'auto'
+            }
+            top={
+                navSide === 'right' ? '90vh' :
+                    navSide === 'left' ? '90vh' : 'auto'
+            }
+            bottom={
+                navSide === 'top' ? '-90vh' :
+                    navSide === 'bottom' ? '90vh' : 'auto'
+            }
+        >
+            <Toast hidden={useToast.hidden}
+                pi_icon={'pi-info-circle'}
+                title={useToast.title}
+                desc={useToast.desc}
+                color={useToast.color} />
         </Flex>
 
     </Flex >)
