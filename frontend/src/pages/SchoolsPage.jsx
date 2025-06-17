@@ -1,55 +1,35 @@
-import { Flex, Stack, Text, Separator, Button } from "@chakra-ui/react"
+import { Flex, Stack, Text, Separator } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 import TitleSlot from '../components/TitleSlot.jsx'
-import { useNavigate } from "react-router-dom";
+import TopicBut from '../components/TopicBut.jsx'
 
 function SchoolsPage() {
   const navigate = useNavigate();
+
+  const [useSchool, setSchool] = useState(true);
 
   const toExercise = (topic) => {
     navigate('/exercise', { state: { exerciseId: topic[0], exerciseWritten: topic[1] } })
   };
 
-  const toTop = () => { console.log('top') }
-  const toLeft = () => { console.log('left') }
-  const toBottom = () => { console.log('bottom') }
-  const toRight = () => { console.log('right') }
-
-  const options = {
-    top: {
-      label: 'Top',
-      onClick: toTop
-    },
-    left: {
-      label: 'Left',
-      onClick: toLeft
-    },
-    bottom: {
-      label: 'Bottom',
-      onClick: toBottom
-    },
-    right: {
-      label: 'Right',
-      onClick: toRight
-    }
-  };
-
   const topic_names = {
-    summary_substraction: 'summary & substraction',
-    multiplication_division: 'multiplication & division',
+    sum_substract: 'sum & substract',
+    multiply_divide: 'multiply & divide',
     mixed: 'mixed',
     power_root: 'power & root',
     fraction_fractionMixed: 'fractions',
     forms_sizes: 'forms & sizes',
-    exam_basic: 'exam - basic',
-    equasions_basic: 'equasions - basic',
-    equations_two_unknowns: 'equasions - two unknowns',
+    exam_basic: 'exam: basic',
+    equasions_basic: 'equasions: basic',
+    equations_two_more: 'equasions: two & more',
     verbal_problems: 'verbal problems',
     geometry: 'geometry',
     quadratic_equation: 'quadratic equation',
     circles: 'circles',
-    exam_advanced: 'exam - advanced'
+    exam_advanced: 'exam: advanced'
   };
 
   return (<Flex justifyItems={'center'}
@@ -66,63 +46,45 @@ function SchoolsPage() {
 
       <TitleSlot pi_icon={'pi-list-check'} title={'SCHOOLS TOPICS'} />
       <Separator />
-      <Text textAlign={'center'}>Select topic that you would like to exercise at!</Text>
+      <Flex justify={'space-between'}>
+        <TopicBut pi_icon={'pi-list-check'}
+          title={'Teenage-School'}
+          onClick={() => { setSchool(true) }}
+          showSub={true}
+        />
+        <Text width={'full'} textAlign={'center'}>Select topic that you would like to exercise at!</Text>
+        
+          <TopicBut
+            pi_icon={'pi-list-check'}
+            title={'High-School'}
+            onClick={() => { setSchool(false) }}
+            showSub={true}
+            dir={'row-reverse'}
+          />
+      </Flex>
       <Separator />
       {
 
-        Object.entries(topic_names).map((topic) => {
-          if (topic[0] === 'equasions_basic') {
-            return (<Separator key={topic[0]}
-              paddingTop={1}>
-
-              <Flex
-                flexDirection={"row"}
-                gapX={3}
-                alignItems={'center'}>
-
-                <Button bg={'gray.100'}
-                  color={'black'}
-                  width={'15rem'}
-                  onClick={() => {
-                    toExercise(topic);
-                  }}>
-
-                  <Flex width={'full'}
-                    alignItems={'center'}
-                    gap={3}>
-                    <i className="pi pi-hashtag" />{topic[1]}
-                  </Flex>
-
-                </Button>
-                <Text fontWeight={'medium'}>-</Text>
-                <Text>Summary Explanation</Text>
-
-              </Flex>
-
-            </Separator>)
-          }
-          else return (<Flex key={topic[0]}
-            flexDirection={"row"}
-            gapX={3}
-            alignItems={'center'}>
-
-            <Button bg={'gray.100'}
-              color={'black'}
-              width={'15rem'}
+        Object.entries(topic_names).map((topic, index) => {
+          if (useSchool && index >= 0 && index < 7) {
+            return (<TopicBut key={topic[0]}
+              pi_icon={'pi-hashtag'}
+              title={topic[1]}
               onClick={() => { toExercise(topic) }}
-            >
-
-              <Flex width={'full'}
-                alignItems={'center'}
-                gap={3}>
-                <i className="pi pi-hashtag" />{topic[1]}
-              </Flex>
-
-            </Button>
-            <Text fontWeight={'medium'}>-</Text>
-            <Text>Summary Explanation</Text>
-
-          </Flex>)
+              showSub={false}
+              subTitle={'Some subtitle'}
+            />)
+          }
+          else if (!useSchool && index >= 7){
+            return (<TopicBut key={topic[0]}
+              pi_icon={'pi-hashtag'}
+              title={topic[1]}
+              onClick={() => { toExercise(topic) }}
+              showSub={false}
+              subTitle={'Some subtitle'}
+              dir={'row-reverse'}
+            />)
+          }
         })
       }
 

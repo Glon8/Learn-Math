@@ -28,15 +28,15 @@ function ScorePage() {
   const user_scores_list = [
     {
       _id: 1111,
-      summary_substraction: 25,
-      multiplication_division: null,
+      sum_substract: 25,
+      multiply_divide: null,
       mixed: null,
       power_root: null,
       fraction_fractionMixed: null,
       forms_sizes: null,
       exam_basic: null,
       equasions_basic: null,
-      equations_two_unknowns: null,
+      equations_two_more: null,
       verbal_problems: null,
       geometry: null,
       quadratic_equation: null,
@@ -44,15 +44,15 @@ function ScorePage() {
       exam_advanced: null
     }, {
       _id: 1112,
-      summary_substraction: 10,
-      multiplication_division: null,
+      sum_substract: 10,
+      multiply_divide: null,
       mixed: null,
       power_root: null,
       fraction_fractionMixed: null,
       forms_sizes: null,
       exam_basic: null,
       equasions_basic: null,
-      equations_two_unknowns: null,
+      equations_two_more: null,
       verbal_problems: null,
       geometry: null,
       quadratic_equation: null,
@@ -60,15 +60,15 @@ function ScorePage() {
       exam_advanced: null
     }, {
       _id: 1113,
-      summary_substraction: 5,
-      multiplication_division: null,
+      sum_substract: 5,
+      multiply_divide: null,
       mixed: null,
       power_root: null,
       fraction_fractionMixed: null,
       forms_sizes: null,
       exam_basic: null,
       equasions_basic: null,
-      equations_two_unknowns: null,
+      equations_two_more: null,
       verbal_problems: null,
       geometry: null,
       quadratic_equation: null,
@@ -92,15 +92,15 @@ function ScorePage() {
 
   const my_scores = {
     _id: 1110,
-    summary_substraction: 20,
-    multiplication_division: null,
+    sum_substract: 20,
+    multiply_divide: null,
     mixed: null,
     power_root: null,
     fraction_fractionMixed: null,
     forms_sizes: null,
     exam_basic: null,
     equasions_basic: null,
-    equations_two_unknowns: null,
+    equations_two_more: null,
     verbal_problems: null,
     geometry: null,
     quadratic_equation: null,
@@ -109,20 +109,20 @@ function ScorePage() {
   };
 
   const topic_names = {
-    summary_substraction: 'summary & substraction',
-    multiplication_division: 'multiplication & division',
+    sum_substract: 'sum & substract',
+    multiply_divide: 'multiply & divide',
     mixed: 'mixed',
     power_root: 'power & root',
     fraction_fractionMixed: 'fractions',
     forms_sizes: 'forms & sizes',
-    exam_basic: 'exam - basic',
-    equasions_basic: 'equasions - basic',
-    equations_two_unknowns: 'equasions - two unknowns',
+    exam_basic: 'exam: basic',
+    equasions_basic: 'equasions: basic',
+    equations_two_more: 'equasions: two & more',
     verbal_problems: 'verbal problems',
     geometry: 'geometry',
     quadratic_equation: 'quadratic equation',
     circles: 'circles',
-    exam_advanced: 'exam - advanced'
+    exam_advanced: 'exam: advanced'
   };
 
   const [use_compare, set_compare] = useState(false);
