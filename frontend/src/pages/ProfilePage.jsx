@@ -1,11 +1,13 @@
-import { Center, Flex, Text, Image, Menu, Portal, Separator } from "@chakra-ui/react"
+import { Center, Flex, Text, Separator } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useState } from "react";
 
 import TitleSlot from "../components/TitleSlot";
+import TwoTitlesSlot from "../components/TwoTitlesSlot";
 import Slot from "../components/Slot";
 import CheckCard from '../components/CheckCard.jsx'
 import FlexMenu from "../components/FlexMenu.jsx";
+import GradesMenu from "../components/GradesMenu.jsx";
 
 function ProfilePage() {
   const [use_profile_edit, set_profile_edit] = useState(false);
@@ -62,7 +64,8 @@ function ProfilePage() {
     paddingX={'10%'}
     paddingY={'10%'}>
 
-    <Flex gap={5}>
+    <Flex gap={5}
+      flexDirection={'row'}>
 
       <Flex height={'fit'} width={'25rem'} gapY={3} paddingX={5} paddingY={7}
         flexDirection={"column"}
@@ -116,7 +119,7 @@ function ProfilePage() {
         <Flex gapY={3} flexDirection={"column"} textAlign={'center'}>
 
           {
-            //< MENU DISABLED!!!! as status is local
+            //< MENU throws out a toast!!!! as status is local
           }
           <FlexMenu pi_icon={'pi-book'}
             title={'Share my grades'}
@@ -130,25 +133,43 @@ function ProfilePage() {
         </Flex>
 
       </Flex>
-      <Flex height={'fit'} width={'25rem'} gapY={3} paddingX={5} paddingY={7} flexDirection={"column"} border borderRadius={"xl"} borderColor={'black'} borderWidth={1} textAlign={'center'} >
+      <GradesMenu display={'flex'}
+        title_type={0}
+        pi_icon={'pi-trophy'}
+        title={'PROGRESS'}
+        title_info={{
+          info_a: {
+            pi_icon: 'pi-trophy',
+            title: 'PROGRESS'
+          },
+          info_b: {
+            pi_icon: 'pi-hashtag',
+            title: 'Teenage-School'
+          }
+        }}
+        topic_names={topic_names}
+        my_scores={my_scores}
+        size={1}
+        part={0}
+      />
 
-        <TitleSlot pi_icon={'pi-trophy'} title={'PROGRESS'} />
-        <Separator />
-        {
-          Object.entries(topic_names)
-            .map((topic) => {
-              const score = my_scores[topic[0]];
-
-              if (topic[0] === 'equasions_basic') {
-                return (<Separator key={topic[1]}>
-                  <Slot key={score} value={score ? score : 0} category={topic[1]} />
-                </Separator>)
-              }
-              else return (<Slot key={topic[1]} value={score ? score : 0} category={topic[1]} />)
-            })
-        }
-
-      </Flex>
+      <GradesMenu display={'none'}
+        title_type={1}
+        title_info={{
+          info_a: {
+            pi_icon: 'pi-trophy',
+            title: 'PROGRESS'
+          },
+          info_b: {
+            pi_icon: 'pi-hashtag',
+            title: 'High-School'
+          }
+        }}
+        topic_names={topic_names}
+        my_scores={my_scores}
+        size={0}
+        part={1}
+      />
 
     </Flex>
 

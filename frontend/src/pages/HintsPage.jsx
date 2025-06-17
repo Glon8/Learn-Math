@@ -23,7 +23,7 @@ function HintsPage() {
   return (<Flex justifyItems={'center'}
     flexDirection={"column"}
     paddingTop={'3rem'}
-    paddingX={'10%'}
+    paddingX={'20%'}
     paddingY={'10%'}>
 
     <Stack border borderColor={"black"} borderWidth={1}

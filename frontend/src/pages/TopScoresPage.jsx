@@ -1,4 +1,4 @@
-import { Center, Stack, Text, Flex, Menu, Portal, Separator } from "@chakra-ui/react"
+import { Center, Stack, Text, Flex, Menu, Portal, Separator, Button } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useState } from "react";
 
@@ -8,6 +8,8 @@ import TitleSlot from '../components/TitleSlot.jsx'
 import CheckCard from "../components/CheckCard.jsx";
 import FlexMenu from "../components/FlexMenu.jsx";
 import TwoTitlesSlot from "../components/TwoTitlesSlot.jsx";
+import GradesMenuComparable from "../components/GradesMenuComparable.jsx";
+import TopScoresSlot from "../components/TopScoresSlot.jsx";
 
 function ScorePage() {
   const user_list = [
@@ -130,147 +132,139 @@ function ScorePage() {
     paddingX={'10%'}
     paddingY={'10%'}>
 
-    <Stack paddingX={5}
-      paddingY={7}
-      gap={3}
-      justifyItems={'center'}
-      rounded={'xl'}
-      border borderColor={'black'}
-      borderWidth={1}>
+    <Flex gap={5}
+      flexDirection={'row'}>
 
-      <Stack>
-        <TitleSlot pi_icon={'pi-crown'} title={'TOP SCORES'} />
-        <Separator />
-        {
-          !user_list || user_list.length <= 0 ?
-            (<Text>Whoops! Something went wrong or no users shared their scores.</Text>) : ''
-        }
-        {
-          user_list.map((user, i) => {
-            return (
-              <Menu.Root key={i}>
+      <Stack height={'fit'}
+        paddingX={5}
+        paddingY={7}
+        gap={3}
+        justifyItems={'center'}
+        rounded={'xl'}
+        border borderColor={'black'}
+        borderWidth={1}>
 
-                <Menu.Trigger>
+        <Stack>
+          <TitleSlot pi_icon={'pi-crown'} title={'TOP SCORES'} />
+          <Separator />
+          {
+            !user_list || user_list.length <= 0 ?
+              (<Text>Whoops! Something went wrong or no users shared their scores.</Text>) : ''
+          }
+          {
+            user_list.map((user, i) => {
+              return (
 
-                  <Flex width={'xs'} flexDirection={'row'} justify={'space-between'}>
 
-                    <Flex flexDirection={'row'} gap={3}>
-                      <Text>{1 + i}</Text>
-                      <i className="pi pi-trophy" />
-                      <Text textAlign={'center'}>{user.name}</Text>
-                    </Flex>
-                    <Text>
-                      {
-                        !user_scores_list && user_scores_list.length <= 0 ? '0' : temp = 0
-                      }
-                      {
-                        user_scores_list.map((scores) => {
-                          if (user._id === scores._id) {
-                            Object.entries(topic_names).map((topic) => {
-                              const score = scores[topic[0]];
+                <Flex>
+                  {
+                    true ?
+                      // if it medium screen size, it ll show two fields, of menu + users scores
+                      // if it large screem size, it ll show three fields, menu + users scores + compare field
+                      (<TopScoresSlot i={i}
+                        user={user}
+                        user_scores_list={user_scores_list}
+                        topic_names={topic_names}
+                        use_compare={use_compare}
+                        my_user={my_user}
+                        my_scores={my_scores}
+                        temp={temp} />) :
+                      (<Button color={'black'}>
+                        <Flex width={'xs'} flexDirection={'row'} justify={'space-between'}>
 
-                              temp = temp + score;
-                            })
-
-                            temp = temp / 13;
-
-                            return (`${temp.toFixed(2)}`)
-                          }
-                        })
-                      }
-                    </Text>
-
-                  </Flex>
-
-                </Menu.Trigger>
-                <Portal>
-
-                  <Menu.Positioner>
-
-                    <Menu.Content width={'xs'} paddingX={5} paddingY={3} marginStart={5}>
-
-                      <TitleSlot pi_icon={'pi-graduation-cap'} title={'Scores'} />
-                      {
-                        use_compare && user_scores_list && user_scores_list.length > 0 ?
-                          (<TwoTitlesSlot title_info={{
-                            title_a: {
-                              pi_icon: '',
-                              title: user.name
-                            },
-                            title_b: {
-                              pi_icon: '',
-                              title: my_user.name
+                          <Flex flexDirection={'row'} gap={3}>
+                            <Text>{1 + i}</Text>
+                            <i className="pi pi-trophy" />
+                            <Text textAlign={'center'}>{user.name}</Text>
+                          </Flex>
+                          <Text>
+                            {
+                              !user_scores_list && user_scores_list.length <= 0 ? '0' : temp = 0
                             }
-                          }}
-                            boldness={'normal'} />) : ''
-                      }
-                      <Separator />
-                      {
-                        !user_scores_list || user_scores_list.length <= 0 ?
-                          (<Text>Whoops! Something went wrong, no grades awailable.</Text>) : ''
-                      }
-                      {
-                        // split users grades list in to seperate lists per user
-                        user_scores_list.map((scores, i2) => {
-                          // split user grades list into seperate topics
-                          if (!use_compare) { // < without compare
-                            // checking if user id match list id
-                            if (user._id === scores._id)
-                              return Object.entries(topic_names).map((topic) => {
-                                const score = scores[topic[0]];
+                            {
+                              user_scores_list.map((scores) => {
+                                if (user._id === scores._id) {
+                                  Object.entries(topic_names).map((topic) => {
+                                    const score = scores[topic[0]];
 
-                                if (topic[0] === 'equasions_basic')
-                                  return (
-                                    <Separator key={i2 + topic[1]}>
-                                      <Slot value={score ? score : 0} category={topic[1]} />
-                                    </Separator>)
-                                else return (<Slot key={i2 + topic[1]} value={score ? score : 0} category={topic[1]} />)
+                                    temp = temp + score;
+                                  })
+
+                                  temp = temp / 13;
+
+                                  return (`${temp.toFixed(2)}`)
+                                }
                               })
-                          } else { // < with compare
-                            if (user._id === scores._id)
-                              return Object.entries(topic_names).map((topic) => {
-                                const score = scores[topic[0]];
-                                const user_score = my_scores[topic[0]];
+                            }
+                          </Text>
 
-                                if (topic[0] === 'equasions_basic')
-                                  return (
-                                    <Separator key={i2 + topic[1]}>
-                                      <CompareSlot value_a={score ? score : 0} value_b={user_score ? user_score : 0} category={topic[1]} />
-                                    </Separator>)
-                                else return (<CompareSlot key={i2 + topic[1]}
-                                  value_a={score ? score : 0}
-                                  value_b={user_score ? user_score : 0}
-                                  category={topic[1]} />)
-                              })
-                          }
-                        })
-                      }
+                        </Flex>
+                      </Button>)
+                  }
 
-                    </Menu.Content>
-
-                  </Menu.Positioner>
-
-                </Portal>
-
-              </Menu.Root>)
-          })
+                </Flex>)
+            })
+          }
+        </Stack>
+        {
+          //< MENU throws toast!!!! as status is local
         }
-      </Stack>
-      {
-        //< MENU DISABLED!!!! as status is local
-      }
-      <FlexMenu pi_icon={'pi-book'}
-        title={'Share my grades'}
-        inner_title={'Are you sure?'}
-        options={['NO', 'YES']}
-        disabled={my_user.status === 0 ? true : false} />
-      
-        <CheckCard pi_icon={'pi-thumbtack'} title={'Compare with my grades'} ifChange={() => set_compare(!use_compare)} />
-      
-      <Text textAlign={'center'}> (POPUP as error for local user)<br /> To share your grades, you must be an online user.<br />
-        You can check the profile for your status <br /> or in right top corner menu.</Text>
+        <FlexMenu pi_icon={'pi-book'}
+          title={'Share my grades'}
+          inner_title={'Are you sure?'}
+          options={['NO', 'YES']}
+          disabled={my_user.status === 0 ? true : false} />
 
-    </Stack>
+        <CheckCard pi_icon={'pi-thumbtack'} title={'Compare with my grades'} ifChange={() => set_compare(!use_compare)} />
+
+        <Text textAlign={'center'}> (POPUP as error for local user)<br /> To share your grades, you must be an online user.<br />
+          You can check the profile for your status <br /> or in right top corner menu.</Text>
+
+      </Stack>
+
+      <GradesMenuComparable display={'none'}
+        title_type={0}
+        pi_icon={'pi-trophy'}
+        title={'PROGRESS'}
+        title_info={{
+          title_a: {
+            pi_icon: 'pi-trophy',
+            title: 'PROGRESS'
+          },
+          title_b: {
+            pi_icon: '',
+            title: my_user.name
+          }
+        }
+        }
+        topic_names={topic_names}
+        my_scores={my_scores}
+        comparable={0}
+        compare_to_grades={user_scores_list[1]}
+      />
+
+      <GradesMenuComparable display={'none'}
+        title_type={1}
+        pi_icon={'pi-trophy'}
+        title={'PROGRESS'}
+        title_info={{
+          title_a: {
+            pi_icon: 'pi-trophy',
+            title: 'PROGRESS'
+          },
+          title_b: {
+            pi_icon: '',
+            title: 'someone not Ruslan'
+          }
+        }
+        }
+        topic_names={topic_names}
+        my_scores={user_scores_list[1]}
+        comparable={0}
+        compare_to_grades={my_scores}
+      />
+
+    </Flex>
 
   </Center >)
 }
