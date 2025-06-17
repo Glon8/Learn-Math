@@ -1,10 +1,11 @@
-import { Button, Flex, Text } from "@chakra-ui/react"
+import { Flex, Button } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from "react";
+import { useColorMode } from "./ui/color-mode.jsx";
 
-import OnHoverTag from "./OnHoverTag.jsx";
 import NavMenu from './NavMenu.jsx'
+import NavBut from "./NavBut.jsx";
 import SignForm from './SignForm.jsx'
 import Toast from "./Toast.jsx";
 
@@ -26,6 +27,7 @@ function NavBar() {
         navPosition: 'left'
     };*/
 
+    const { colorMode, toggleColorMode } = useColorMode();
     const navShort = false;
     const [navSide, setNavSide] = useState(user ? user.navPosition : 'top');
     const [useNavOpen, setNavOpen] = useState(false);
@@ -61,10 +63,53 @@ function NavBar() {
         });
     }
 
+    const navButList = [
+        {
+            title: 'Hints',
+            pi_icon: 'pi-question',
+            hoverTrig: useHintPop,
+            stichh: (stat) => setHintPop(stat),
+            onClick: to_hints,
+        },
+        {
+            title: 'Top Scores',
+            pi_icon: 'pi-crown',
+            hoverTrig: useScorePop,
+            stichh: (stat) => setScorePop(stat),
+            onClick: to_top_scores,
+        },
+        {
+            title: 'Profile',
+            pi_icon: 'pi-id-card',
+            hoverTrig: useProfilePop,
+            stichh: (stat) => setProfilePop(stat),
+            onClick: to_profile,
+        },
+        {
+            title: 'Schools',
+            pi_icon: 'pi-list-check',
+            hoverTrig: useSchoolsPop,
+            stichh: (stat) => setSchoolsPop(stat),
+            onClick: to_schools,
+        },
+        {
+            title: 'Menu',
+            pi_icon: 'pi-align-justify',
+            hoverTrig: useMenuPop,
+            stichh: (stat) => setMenuPop(stat),
+            onClick: () => setNavOpen(!useNavOpen),
+        },
+    ];
+
     useEffect(() => {
         user.navPosition ? setNavSide(user.navPosition) : setNavSide('top');
     }, [user.navPosition]);
 
+    /*
+            <Button bg={'black'} _dark={{bg: 'red'}} onClick={toggleColorMode}>
+                Switch to {colorMode === 'light' ? 'dark' : 'light'}
+            </Button>
+    */
     return (<Flex border
         borderStartWidth={navSide === 'right' ? 2 : 0}
         borderEndWidth={navSide === 'left' ? 2 : 0}
@@ -89,231 +134,30 @@ function NavBar() {
             alignItems={'center'}
             gap={3}>
 
-            <Flex position={"relative"}
-                justifyContent={'center'}
-                marginStart={navSide === 'left' ? 24 : 0}
-                marginEnd={navSide === 'right' ? 24 : 0}>
-                <Button backgroundColor={'black'} onClick={to_main}
-                    onMouseOver={() => {
-                        navShort && !(navSide === 'right' || navSide === 'left') ?
-                            setMainPop(true) : null
-                    }}
-                    onMouseLeave={() => {
-                        navShort && !(navSide === 'right' || navSide === 'left') ?
-                            setMainPop(false) : null
-                    }}
-                    width={navSide === 'right' || navSide === 'left' ? '9rem' : 'auto'}>
-
-                    <Flex flexDirection={'row'} gap={3}>
-                        <i className={`pi pi-sparkles`} />
-                        {
-                            navShort ? (navSide === 'right' || navSide === 'left' ?
-                                (<Text textAlign={'center'}>Learn Math</Text>) : null) :
-                                (<Text textAlign={'center'}>Learn Math</Text>)
-                        }
-                    </Flex>
-
-                </Button>
-                <OnHoverTag value={'Main'}
-                    display={useMainPop ? 'flex' : 'none'}
-                    top={12}
-                    bottom={12}
-                    right={16}
-                    left={16}
-                    navSide={navSide} />
-
-            </Flex>
-
+            <NavBut title={'Learn Math'}
+                pi_icon={'pi-sparkles'}
+                navShort={navShort}
+                hoverTrig={useMainPop}
+                navSide={navSide}
+                stichh={(stat) => setMainPop(stat)}
+                onClick={to_main} />
 
         </Flex>
         <Flex flexDirection={navSide === 'top' || navSide === 'bottom' ? 'row' : 'column-reverse'}
             alignItems={'center'}
             gap={navShort ? 0.5 : 3}>
-
-            <Flex position={"relative"}
-                justifyContent={'center'}
-                maxW={'20rem'}
-                marginStart={navSide === 'left' ? 24 : 0}
-                marginEnd={navSide === 'right' ? 24 : 0}>
-
-                <Button backgroundColor={'black'} onClick={to_hints}
-                    onMouseOver={() => {
-                        navShort && !(navSide === 'right' || navSide === 'left') ?
-                            setHintPop(true) : null
-                    }}
-                    onMouseLeave={() => {
-                        navShort && !(navSide === 'right' || navSide === 'left') ?
-                            setHintPop(false) : null
-                    }}
-                    width={navSide === 'right' || navSide === 'left' ? '9rem' : 'auto'} >
-
-                    <Flex flexDirection={'row'} gap={3}>
-                        <i className={`pi pi-question`} />
-                        {
-                            navShort ? (navSide === 'right' || navSide === 'left' ?
-                                (<Text textAlign={'center'}>Hints</Text>) : null) :
-                                (<Text textAlign={'center'}>Hints</Text>)
-                        }
-                    </Flex>
-
-                </Button>
-
-                <OnHoverTag value={'Hints'}
-                    display={useHintPop ? 'flex' : 'none'}
-                    top={12}
-                    bottom={12}
-                    right={16}
-                    left={16}
-                    navSide={navSide} />
-
-            </Flex>
-            <Flex position={'relative'}
-                justifyContent={'center'}
-                marginStart={navSide === 'left' ? 24 : 0}
-                marginEnd={navSide === 'right' ? 24 : 0}>
-
-                <Button backgroundColor={'black'} onClick={to_top_scores}
-                    onMouseOver={() => {
-                        navShort && !(navSide === 'right' || navSide === 'left') ?
-                            setScorePop(true) : null
-                    }}
-                    onMouseLeave={() => {
-                        navShort && !(navSide === 'right' || navSide === 'left') ?
-                            setScorePop(false) : null
-                    }}
-                    width={navSide === 'right' || navSide === 'left' ? '9rem' : 'auto'} >
-
-                    <Flex flexDirection={'row'} gap={3}>
-                        <i className={`pi pi-crown`} />
-                        {
-                            navShort ? (navSide === 'right' || navSide === 'left' ?
-                                (<Text textAlign={'center'}>Top Scores</Text>) : null) :
-                                (<Text textAlign={'center'}>Top Scores</Text>)
-                        }
-                    </Flex>
-
-                </Button>
-                <OnHoverTag value={'Top Scores'}
-                    display={useScorePop ? 'flex' : 'none'}
-                    top={12}
-                    bottom={12}
-                    right={16}
-                    left={16}
-                    navSide={navSide} />
-
-
-            </Flex>
-            <Flex position={'relative'}
-                justifyContent={'center'}
-                marginStart={navSide === 'left' ? 24 : 0}
-                marginEnd={navSide === 'right' ? 24 : 0}>
-
-                <Button backgroundColor={'black'} onClick={to_profile}
-                    onMouseOver={() => {
-                        navShort && !(navSide === 'right' || navSide === 'left') ?
-                            setProfilePop(true) : null
-                    }}
-                    onMouseLeave={() => {
-                        navShort && !(navSide === 'right' || navSide === 'left') ?
-                            setProfilePop(false) : null
-                    }}
-                    width={navSide === 'right' || navSide === 'left' ? '9rem' : 'auto'} >
-
-                    <Flex flexDirection={'row'} gap={3}>
-                        <i className={`pi pi-id-card`} />
-                        {
-                            navShort ? (navSide === 'right' || navSide === 'left' ?
-                                (<Text textAlign={'center'}>Profile</Text>) : null) :
-                                (<Text textAlign={'center'}>Profile</Text>)
-                        }
-                    </Flex>
-
-                </Button>
-
-                <OnHoverTag value={'Profile'}
-                    display={useProfilePop ? 'flex' : 'none'}
-                    top={12}
-                    bottom={12}
-                    right={16}
-                    left={16}
-                    navSide={navSide} />
-
-            </Flex>
-
-            <Flex position={'relative'}
-                justifyContent={'center'}
-                marginStart={navSide === 'left' ? 24 : 0}
-                marginEnd={navSide === 'right' ? 24 : 0}>
-
-                <Button backgroundColor={'black'} onClick={to_schools}
-                    onMouseOver={() => {
-                        navShort && !(navSide === 'right' || navSide === 'left') ?
-                            setSchoolsPop(true) : null
-                    }}
-                    onMouseLeave={() => {
-                        navShort && !(navSide === 'right' || navSide === 'left') ?
-                            setSchoolsPop(false) : null
-                    }}
-                    width={navSide === 'right' || navSide === 'left' ? '9rem' : 'auto'} >
-
-                    <Flex flexDirection={'row'} gap={3}>
-                        <i className={`pi pi-list-check`} />
-                        {
-                            navShort ? (navSide === 'right' || navSide === 'left' ?
-                                (<Text textAlign={'center'}>Schools</Text>) : null) :
-                                (<Text textAlign={'center'}>Schools</Text>)
-                        }
-                    </Flex>
-
-                </Button>
-
-                <OnHoverTag value={'Schools'}
-                    display={useSchoolsPop ? 'flex' : 'none'}
-                    top={12}
-                    bottom={12}
-                    right={16}
-                    left={16}
-                    navSide={navSide} />
-
-            </Flex>
-            <Flex position={'relative'}
-                justifyContent={'center'}
-                marginStart={navSide === 'left' ? 24 : 0}
-                marginEnd={navSide === 'right' ? 24 : 0}>
-
-                <Button backgroundColor={'black'} onClick={() => { setNavOpen(!useNavOpen) }}
-                    onMouseOver={() => {
-                        navShort && !(navSide === 'right' || navSide === 'left') ?
-                            setMenuPop(true) : null
-                    }}
-                    onMouseLeave={() => {
-                        navShort && !(navSide === 'right' || navSide === 'left') ?
-                            setMenuPop(false) : null
-                    }}
-                    width={navSide === 'right' || navSide === 'left' ? '9rem' : 'auto'}
-                >
-
-                    <Flex flexDirection={'row'} gap={3}>
-                        <i className={`pi pi-align-justify`} />
-                        {
-                            navShort ? (navSide === 'right' || navSide === 'left' ?
-                                (<Text textAlign={'center'}>Menu</Text>) : null) :
-                                (<Text textAlign={'center'}>Menu</Text>)
-
-                        }
-                    </Flex>
-
-                </Button>
-
-                <OnHoverTag value={'Menu'}
-                    display={useMenuPop ? 'flex' : 'none'}
-                    top={12}
-                    bottom={12}
-                    right={16}
-                    left={16}
-                    navSide={navSide} />
-
-            </Flex>
+            {
+                navButList.map((butt, index) => {
+                    return (<NavBut key={index}
+                        title={butt.title}
+                        pi_icon={butt.pi_icon}
+                        navShort={navShort}
+                        hoverTrig={butt.hoverTrig}
+                        navSide={navSide}
+                        stichh={butt.stichh}
+                        onClick={butt.onClick} />)
+                })
+            }
             <Flex position={"absolute"}
                 display={useNavOpen ? 'flex' : 'none'}
                 right={
@@ -351,7 +195,6 @@ function NavBar() {
             </Flex>
 
         </Flex>
-
         <SignForm isIn={useSignIn}
             isUp={useSignUp}
             close={() => {
@@ -361,8 +204,6 @@ function NavBar() {
             callToast={(title, desc, color) => {
                 callToast(title, desc, color)
             }} />
-
-
         <Flex position={'absolute'}
             right={
                 navSide === 'right' ? '70vw' :

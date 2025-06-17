@@ -3,7 +3,6 @@ import "primeicons/primeicons.css";
 import { useState } from "react";
 
 import TitleSlot from "../components/TitleSlot";
-import TwoTitlesSlot from "../components/TwoTitlesSlot";
 import Slot from "../components/Slot";
 import CheckCard from '../components/CheckCard.jsx'
 import FlexMenu from "../components/FlexMenu.jsx";
@@ -27,15 +26,15 @@ function ProfilePage() {
 
   const my_scores = {
     _id: 1110,
-    summary_substraction: 20,
-    multiplication_division: null,
+    sum_substract: 20,
+    multiply_divide: null,
     mixed: null,
     power_root: null,
     fraction_fractionMixed: null,
     forms_sizes: null,
     exam_basic: null,
     equasions_basic: null,
-    equations_two_unknowns: null,
+    equations_two_more: null,
     verbal_problems: null,
     geometry: null,
     quadratic_equation: null,
@@ -44,20 +43,20 @@ function ProfilePage() {
   };
 
   const topic_names = {
-    summary_substraction: 'summary & substraction',
-    multiplication_division: 'multiplication & division',
+    sum_substract: 'sum & substract',
+    multiply_divide: 'multiply & divide',
     mixed: 'mixed',
     power_root: 'power & root',
     fraction_fractionMixed: 'fractions',
     forms_sizes: 'forms & sizes',
-    exam_basic: 'exam - basic',
-    equasions_basic: 'equasions - basic',
-    equations_two_unknowns: 'equasions - two unknowns',
+    exam_basic: 'exam: basic',
+    equasions_basic: 'equasions: basic',
+    equations_two_more: 'equasions: two & more',
     verbal_problems: 'verbal problems',
     geometry: 'geometry',
     quadratic_equation: 'quadratic equation',
     circles: 'circles',
-    exam_advanced: 'exam - advanced'
+    exam_advanced: 'exam: advanced'
   };
 
   return (<Center paddingTop={'3rem'}
