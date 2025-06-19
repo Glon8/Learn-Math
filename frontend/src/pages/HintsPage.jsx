@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import TwoTitlesSlot from "../components/TwoTitlesSlot";
 import TopicBut from "../components/TopicBut";
+import Spin from "../components/Spin";
 
 function HintsPage() {
   const [useSchool, setSchool] = useState(true);
@@ -49,23 +50,25 @@ function HintsPage() {
 
       }} />
       <Separator />
-      {
-        // AI session popup speak goes here
-      }
-      <Flex justify={'space-between'}>
+      <Flex hideFrom={'lg'}>
+        <Spin classList={topic_names}
+          additional={
+            'Discuss With Teach!'} />
+      </Flex>
+
+      <Flex hideBelow={'lg'} justify={'space-between'}>
         <TopicBut pi_icon={'pi-list-check'}
           title={'Teenage-School'}
           onClick={() => { setSchool(true) }}
           showSub={true}
         />
-        <Button color={"black"} background={'gray.100'}>I would like discuss the topic with the teach!</Button>
 
-          <TopicBut pi_icon={'pi-list-check'}
-            title={'High-School'}
-            onClick={() => { setSchool(false) }}
-            showSub={true}
-            dir={'row-reverse'}
-          />
+        <TopicBut pi_icon={'pi-list-check'}
+          title={'High-School'}
+          onClick={() => { setSchool(false) }}
+          showSub={true}
+          dir={'row-reverse'}
+        />
       </Flex>
       <Flex gap={3}
         flexDirection={useSchool ? 'row-reverse' : 'row'}>
@@ -75,7 +78,15 @@ function HintsPage() {
           <Text>Topics explanation here! This tab is scrollabble!</Text>
 
         </Flex>
-        <Flex flexDirection={"column"} gapY={3}>
+        <Flex flexDirection={"column"} gapY={3} hideBelow={'lg'}>
+
+          <Separator />
+          <TopicBut
+            pi_icon={'pi-question'}
+            title={'Discuss With Teach!'}
+            onClick={() => { }}
+            showSub={true}
+          />
           <Separator />
           {
 

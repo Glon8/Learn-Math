@@ -1,4 +1,4 @@
-import { Center, Flex, Text, Separator } from "@chakra-ui/react"
+import { Center, Flex, Text, Separator, useBreakpointValue } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useState } from "react";
 
@@ -60,11 +60,11 @@ function ProfilePage() {
   };
 
   return (<Center paddingTop={'3rem'}
-    paddingX={'10%'}
+    paddingX={'20%'}
     paddingY={'10%'}>
 
     <Flex gap={5}
-      flexDirection={'row'}>
+      flexDirection={{ sm: 'column', md: 'column', lg: 'row' }}>
 
       <Flex height={'fit'} width={'25rem'} gapY={3} paddingX={5} paddingY={7}
         flexDirection={"column"}
@@ -133,7 +133,7 @@ function ProfilePage() {
 
       </Flex>
       <GradesMenu display={'flex'}
-        title_type={0}
+        title_type={useBreakpointValue({ base: 0, sm: 0, md: 0, lg: 0, xl: 1 })}
         pi_icon={'pi-trophy'}
         title={'PROGRESS'}
         title_info={{
@@ -148,11 +148,13 @@ function ProfilePage() {
         }}
         topic_names={topic_names}
         my_scores={my_scores}
-        size={1}
+        size={useBreakpointValue({ sm: 1, md: 1, lg: 1, xl: 0 })}
         part={0}
       />
 
-      <GradesMenu display={'none'}
+      {/*{sm: , md: , lg: , xl: }*/}
+
+      <GradesMenu display={{ sm: 'none', md: 'none', lg: 'none', xl: 'flex' }}
         title_type={1}
         title_info={{
           info_a: {
