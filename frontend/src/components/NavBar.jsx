@@ -1,4 +1,4 @@
-import { Flex, Button } from "@chakra-ui/react"
+import { Flex, useBreakpointValue } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from "react";
@@ -28,7 +28,7 @@ function NavBar() {
     };*/
 
     const { colorMode, toggleColorMode } = useColorMode();
-    const navShort = false;
+    const navShort = useBreakpointValue({ sm: true, md: true, lg: false, xl: false });
     const [navSide, setNavSide] = useState(user ? user.navPosition : 'top');
     const [useNavOpen, setNavOpen] = useState(false);
     const [useSignUp, setSignUp] = useState(false);
@@ -161,12 +161,13 @@ function NavBar() {
             <Flex position={"absolute"}
                 display={useNavOpen ? 'flex' : 'none'}
                 right={
-                    navSide === 'right' ? '10rem' :
+                    navSide === 'right' ? (navShort? '4.5rem' : '10.5rem') :
                         navSide === 'top' ? 3 :
                             navSide === 'bottom' ? 3 : 'auto'
                 }
                 left={
-                    navSide === 'left' ? '10rem' : 'auto'
+                    navShort? (navSide === 'left' ? '4.5rem' : 'auto'):
+                    (navSide === 'left' ? '10.5rem' : 'auto')
                 }
                 top={
                     navSide === 'right' ? 3 :

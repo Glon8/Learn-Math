@@ -19,25 +19,24 @@ function NavBut({ display, pi_icon, title, navShort, hoverTrig, navSide, stichh,
         position={"relative"}
         justifyContent={'center'}
         maxW={'20rem'}
-        marginStart={navSide === 'left' ? 24 : 0}
-        marginEnd={navSide === 'right' ? 24 : 0}>
+        marginStart={navShort ? 0 : (navSide === 'left' ? 24 : 0)}
+        marginEnd={navShort ? 0 : (navSide === 'right' ? 24 : 0)}>
 
         <Button backgroundColor={'black'} onClick={() => onClick()}
             onMouseOver={() => {
-                navShort && !(navSide === 'right' || navSide === 'left') ?
+                navShort ?
                     stichh(true) : null
             }}
             onMouseLeave={() => {
-                navShort && !(navSide === 'right' || navSide === 'left') ?
+                navShort ?
                     stichh(false) : null
             }}
-            width={navSide === 'right' || navSide === 'left' ? '9rem' : 'auto'} >
+            width={navShort ? 'auto' : (navSide === 'right' || navSide === 'left' ? '9rem' : 'auto')} >
 
             <Flex flexDirection={'row'} gap={3}>
                 <i className={`pi ${pi_icon ? pi_icon : ''}`} />
                 {
-                    navShort ? (navSide === 'right' || navSide === 'left' ?
-                        (<Text textAlign={'center'}>{title}</Text>) : null) :
+                    navShort ? null :
                         (<Text textAlign={'center'}>{title}</Text>)
                 }
             </Flex>

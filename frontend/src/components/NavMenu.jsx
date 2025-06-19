@@ -231,16 +231,16 @@ function NavMenu({ hidden, user, navPosition, signUpForm, signInForm, modeState,
                     (navSide === 'left' ? '13rem' : 'auto')
             }
             top={
-                useShort ? (navSide === 'right' ? '12.5rem' :
-                    navSide === 'left' ? '12.5rem' :
-                        navSide === 'top' ? '12.5rem' : 'auto') :
-                    (navSide === 'right' ? '10rem' :
-                        navSide === 'left' ? '10rem' :
-                            navSide === 'top' ? '10rem' : 'auto')
+                useShort ? (navSide === 'right' ? '15.2rem' :
+                    navSide === 'left' ? '15.2rem' :
+                        navSide === 'top' ? '15.2rem' : 'auto') :
+                    (navSide === 'right' ? '12.5rem' :
+                        navSide === 'left' ? '12.5rem' :
+                            navSide === 'top' ? '12.5rem' : 'auto')
             }
             bottom={
-                useShort ? (navSide === 'bottom' ? '12.5rem' : 'auto') :
-                    (navSide === 'bottom' ? '10rem' : 'auto')
+                useShort ? (navSide === 'bottom' ? '15.2rem' : 'auto') :
+                    (navSide === 'bottom' ? '12.5rem' : 'auto')
             }
             flexDirection={navSide === 'bottom' ? "column-reverse" : 'column'}
         >
@@ -261,20 +261,20 @@ function NavMenu({ hidden, user, navPosition, signUpForm, signInForm, modeState,
                             navSide === 'bottom' ? '13rem' : 'auto')
             }
             left={
-                useShort ? (navSide === 'right' ? '0.3rem' : 'auto') :
+                useShort ? (navSide === 'left' ? '0.3rem' : 'auto') :
                     (navSide === 'left' ? '13rem' : 'auto')
             }
             top={
-                useShort ? (navSide === 'right' ? '15.8rem' :
-                    navSide === 'left' ? '15.8rem' :
-                        navSide === 'top' ? '15.8rem' : 'auto') :
-                    (navSide === 'right' ? '13rem' :
-                        navSide === 'left' ? '13rem' :
-                            navSide === 'top' ? '13rem' : 'auto')
+                useShort ? (navSide === 'right' ? '18.5rem' :
+                    navSide === 'left' ? '18.5rem' :
+                        navSide === 'top' ? '18.5rem' : 'auto') :
+                    (navSide === 'right' ? '15.5rem' :
+                        navSide === 'left' ? '15.5rem' :
+                            navSide === 'top' ? '15.5rem' : 'auto')
             }
             bottom={
-                useShort ? (navSide === 'bottom' ? '15.8rem' : 'auto') :
-                    (navSide === 'bottom' ? '13rem' : 'auto')
+                useShort ? (navSide === 'bottom' ? '18.5rem' : 'auto') :
+                    (navSide === 'bottom' ? '15.5rem' : 'auto')
             }
             flexDirection={navSide === 'bottom' ? "column-reverse" : 'column'}>
             <SelectionCheckMenu default_options={default_lesson_settings}
@@ -299,16 +299,16 @@ function NavMenu({ hidden, user, navPosition, signUpForm, signInForm, modeState,
                     navSide === 'left' ? '13rem' : 'auto'
             }
             top={
-                useShort ? (navSide === 'right' ? '19rem' :
-                    navSide === 'left' ? '19rem' :
-                        navSide === 'top' ? '19rem' : 'auto') :
-                    (navSide === 'right' ? '16rem' :
-                        navSide === 'left' ? '16rem' :
-                            navSide === 'top' ? '16rem' : 'auto')
+                useShort ? (navSide === 'right' ? '21.6rem' :
+                    navSide === 'left' ? '21.6rem' :
+                        navSide === 'top' ? '21.6rem' : 'auto') :
+                    (navSide === 'right' ? '19rem' :
+                        navSide === 'left' ? '19rem' :
+                            navSide === 'top' ? '19rem' : 'auto')
             }
             bottom={
-                useShort ? (navSide === 'bottom' ? '19rem' : 'auto') :
-                    (navSide === 'bottom' ? '16rem' : 'auto')
+                useShort ? (navSide === 'bottom' ? '21.6rem' : 'auto') :
+                    (navSide === 'bottom' ? '19rem' : 'auto')
             }
             flexDirection={navSide === 'bottom' ? "column-reverse" : 'column'} >
             <SelectionCheckSwitchMenu default_option={default_menu_pos}

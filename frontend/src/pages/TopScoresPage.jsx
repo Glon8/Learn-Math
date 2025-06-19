@@ -125,11 +125,13 @@ function ScorePage() {
     exam_advanced: 'exam: advanced'
   };
 
+   {/*{sm: , md: , lg: , xl: }*/}
+
   const [use_compare, set_compare] = useState(false);
   let temp = 0;
 
   return (<Center paddingTop={'3rem'}
-    paddingX={'10%'}
+    paddingX={'20%'}
     paddingY={'10%'}>
 
     <Flex gap={5}
@@ -222,7 +224,7 @@ function ScorePage() {
 
       </Stack>
 
-      <GradesMenuComparable display={'none'}
+      <GradesMenuComparable display={{sm: 'none', md: 'none', lg: 'flex', xl: 'flex'}}
         title_type={0}
         pi_icon={'pi-trophy'}
         title={'PROGRESS'}
@@ -243,7 +245,7 @@ function ScorePage() {
         compare_to_grades={user_scores_list[1]}
       />
 
-      <GradesMenuComparable display={'none'}
+      <GradesMenuComparable display={{sm: 'none', md: 'none', lg: 'none', xl: 'flex'}}
         title_type={1}
         pi_icon={'pi-trophy'}
         title={'PROGRESS'}

@@ -22,8 +22,8 @@ function TopicBut({ dir, display, pi_icon, title, onClick, subTitle, align, just
 
         <Button bg={'gray.100'}
             color={'black'}
-            width={'auto'}
             minW={'14.5rem'}
+            w={{sm: 'full', md: 'full', lg: 'fit', xl: 'fit'}}
             onClick={onClick}
         >
 
