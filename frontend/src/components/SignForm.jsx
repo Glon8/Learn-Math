@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import Slot from './Slot.jsx'
 import TitleSlot from './TitleSlot.jsx'
 import CheckCard from './CheckCard.jsx'
+import PassSlot from './PassSlot.jsx'
 
 function SignForm({ isIn, isUp, close, callToast }) {
   // to call Toast use => callToast('Form status', 'status CLOSED', 'green');
@@ -22,13 +23,11 @@ function SignForm({ isIn, isUp, close, callToast }) {
     justifyContent={'center'}
     display={useIn || useUp ? 'flex' : 'none'}
     bg={'gray.800/10'}
-    right={0}
-    top={0}>
-
+  >
     {
       // empty space tto track the click outside of the form
     }
-    <Flex w={'100vw'} h={'100vw'}
+    <Flex w={'full'} h={'full'}
       position={'absolute'}
       onClick={() => {
         close();
@@ -37,12 +36,13 @@ function SignForm({ isIn, isUp, close, callToast }) {
       right={0}
       top={0}
       zIndex={5}></Flex>
-
     {
       // form itself
     }
-    <Flex w={'50%'} h={'fit'}
+    <Flex w={'auto'}
+      minW={'25rem'}
       maxW={'30rem'}
+      h={'fit'}
       minH={'25rem'}
       justify={'space-between'}
       align={'center'}
@@ -87,13 +87,15 @@ function SignForm({ isIn, isUp, close, callToast }) {
               To save the progress, you can sign up as online user.
             </Text>
           </Flex>) :
-            (<Flex flexDirection={'column'}>
-              <Slot value={'name'} category={'Name'} edit={true} />
-              <Slot value={'email'} category={'Email'} edit={true} />
-              <Slot value={'password'} category={'Password'} edit={true} />
-              <Slot value={'confirm password'} category={'Confirm Password'} edit={true} />
-              <Slot value={'secret question'} category={'Secret Question'} edit={true} />
-              <Slot value={'answer on the question'} category={'Secret Answer'} edit={true} />
+            (<Flex flexDirection={'column'}
+              gapY={3}
+            >
+              <Slot placeholder={'name'} category={'Name'} edit={true} />
+              <Slot placeholder={'email'} category={'Email'} edit={true} />
+              <PassSlot placeholder={'password'} category={'Password'} edit={true} />
+              <PassSlot placeholder={'confirm password'} category={'Confirm Password'} edit={true} />
+              <Slot placeholder={'secret question'} category={'Secret Question'} edit={true} />
+              <Slot placeholder={'answer on the question'} category={'Secret Answer'} edit={true} />
             </Flex>)
         }
 

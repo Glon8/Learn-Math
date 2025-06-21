@@ -41,26 +41,26 @@ function GradesMenu({display, title_type, pi_icon, title, title_info, topic_name
                 (Object.entries(topic_names)
                     .map((topic, index) => {
                         const score = my_scores[topic[0]];
-
+                        
                         if (size === 0) {
                             if (part === 0) {
                                 if (index < 7) {
-                                    return (<Slot key={topic[1]} value={score ? score : 0} category={topic[1]} />)
+                                    return (<Slot key={topic[1]} value={score ? score : 0} category={topic[1]} auto={true} />)
                                 }
                             }
                             else {
                                 if (index >= 7) {
-                                    return (<Slot key={topic[1]} value={score ? score : 0} category={topic[1]} />)
+                                    return (<Slot key={topic[1]} value={score ? score : 0} category={topic[1]} auto={true} />)
                                 }
                             }
                         }
                         else  if (size === 1) {
                             if (index === 7) {
                                 return (<Separator key={topic[1]}>
-                                    <Slot key={score} value={score ? score : 0} category={topic[1]} />
+                                    <Slot key={score} value={score ? score : 0} category={topic[1]} auto={true}/>
                                 </Separator>)
                             }
-                            else return (<Slot key={topic[1]} value={score ? score : 0} category={topic[1]} />)
+                            else return (<Slot key={topic[1]} value={score ? score : 0} category={topic[1]} auto={true}/>)
                         }
                     })) : 'Something wrong, perhaps no list?'
         }

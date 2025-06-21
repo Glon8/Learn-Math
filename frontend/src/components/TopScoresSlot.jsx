@@ -9,15 +9,16 @@ import TwoTitlesSlot from "./TwoTitlesSlot";
 /*
   <TopScoresSlot i={i}
    user={user}
-    user_scores_list={user_scores_list}
-     topic_names={topic_names}
-      use_compare={use_compare}
-       my_scores={my_scores}
-       temp={temp} />
+   user_scores_list={user_scores_list}
+   topic_names={topic_names}
+   use_compare={use_compare}
+   my_scores={my_scores}
+   temp={temp}
+   />
 */
 
 function TopScoresSlot({ i, user, user_scores_list, topic_names, use_compare, my_user, my_scores, temp }) {
-  return (<Menu.Root key={i}>
+  return (<Menu.Root>
 
     <Menu.Trigger>
 
@@ -91,9 +92,16 @@ function TopScoresSlot({ i, user, user_scores_list, topic_names, use_compare, my
                     if (topic[0] === 'equasions_basic')
                       return (
                         <Separator key={i2 + topic[1]}>
-                          <Slot value={score ? score : 0} category={topic[1]} />
+                          <Slot value={score ? score : ''}
+                            category={topic[1]}
+                            auto={true}
+                            placeholder={'0'} />
                         </Separator>)
-                    else return (<Slot key={i2 + topic[1]} value={score ? score : 0} category={topic[1]} />)
+                    else return (<Slot key={i2 + topic[1]}
+                      value={score ? score : ''}
+                      category={topic[1]}
+                      auto={true}
+                      placeholder={'0'} />)
                   })
               } else { // < with compare
                 if (user._id === scores._id)

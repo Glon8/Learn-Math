@@ -7,6 +7,7 @@ import Slot from "../components/Slot";
 import CheckCard from '../components/CheckCard.jsx'
 import FlexMenu from "../components/FlexMenu.jsx";
 import GradesMenu from "../components/GradesMenu.jsx";
+import PassSlot from "../components/PassSlot.jsx";
 
 function ProfilePage() {
   const [use_profile_edit, set_profile_edit] = useState(false);
@@ -78,37 +79,41 @@ function ProfilePage() {
         <Slot value={my_user.name} category={'Name'} edit={use_profile_edit} />
         {
           my_user.status !== 0 ?
-            <Slot value={my_user.email ? my_user.email : '-----'}
+            <Slot value={my_user.email ? my_user.email : null}
+              placeholder={'-----'}
               category={'Email'}
               edit={use_profile_edit && my_user.status !== 0 ? true : false} /> : ''
         }
         {
           use_profile_edit && my_user.status !== 0 ?
-            <Slot value={'-----'}
+            <PassSlot placeholder={'-----'}
               category={'Current Password'}
               edit={true} /> : ''
         }
         {
           my_user.status !== 0 ?
-            <Slot value={my_user.password ? my_user.password : '-----'}
+            <PassSlot value={my_user.password ? my_user.password : null}
+              placeholder={'-----'}
               category={use_profile_edit && my_user.status !== 0 ? 'New Password' : 'Password'}
               edit={use_profile_edit && my_user.status !== 0 ? true : false} /> : ''
         }
         {
           use_profile_edit && my_user.status !== 0 ?
-            <Slot value={'-----'}
+            <PassSlot placeholder={'-----'}
               category={'Confirm Password'}
               edit={true} /> : ''
         }
         {
           use_profile_edit && my_user.status !== 0 ?
-            <Slot value={my_user.secret ? my_user.secret : '-----'}
+            <Slot value={my_user.secret ? my_user.secret : ''}
+              placeholder={'-----'}
               category={'Secret Question'}
               edit={true} /> : ''
         }
         {
           use_profile_edit && my_user.status !== 0 ?
-            <Slot value={my_user.answer ? my_user.answer : '-----'}
+            <Slot value={my_user.answer ? my_user.answer : ''}
+              placeholder={'-----'}
               category={'Secret Answer'}
               edit={true} /> : ''
         }
@@ -151,8 +156,6 @@ function ProfilePage() {
         size={useBreakpointValue({ sm: 1, md: 1, lg: 1, xl: 0 })}
         part={0}
       />
-
-      {/*{sm: , md: , lg: , xl: }*/}
 
       <GradesMenu display={{ sm: 'none', md: 'none', lg: 'none', xl: 'flex' }}
         title_type={1}

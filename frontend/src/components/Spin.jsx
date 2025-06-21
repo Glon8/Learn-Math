@@ -2,42 +2,56 @@ import { Flex, Text, Button } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useEffect, useState } from "react";
 
-function Spin({ classList, additional }) {
+function Spin({ classList, additional, getValue }) {
   const [usePage, setPage] = useState(0);
-  const [useArray, setArray] = useState([]);
+  const [useTitles, setTitles] = useState([]);
+  const [useNames, setNames] = useState([]);
 
   const forward = () => {
-    usePage >= useArray.length-1 ? setPage(0) :  setPage(1 + usePage);
+    usePage >= useNames.length - 1 ? setPage(0) : setPage(usePage + 1);
+
+    getValue(useTitles[usePage >= useNames.length - 1? 0 : usePage + 1]);
   }
   const backward = () => {
-    usePage <= 0 ? setPage(useArray.length-1) : setPage(usePage-1);
+    usePage <= 0 ? setPage(useNames.length - 1) : setPage(usePage - 1);
+
+    getValue(useTitles[usePage <= 0? useNames.length - 1 : usePage - 1]);
   }
 
+
   useEffect(() => {
-    const pseudo = [];
+    const pseudoTitles = [];
+    const pseudoNames = [];
 
     Object.entries(classList).map((item) => {
-      pseudo.push(item[1].toUpperCase());
+      pseudoTitles.push(item[0]);
+      pseudoNames.push(item[1].toUpperCase());
     });
 
-    additional? pseudo.push(additional.toUpperCase()) : null;
-    
-    setArray(pseudo);
-  }, [classList]);
+    if (additional) {
+      const [[key, value]] = Object.entries(additional);
+      pseudoTitles.push(key);
+      pseudoNames.push(value.toUpperCase());
+    }
+
+    setTitles(pseudoTitles)
+    setNames(pseudoNames);
+  }, []);
 
   return (<Flex flexDirection={'row'}
     justify={'space-between'}
     alignItems={'center'}
     width={'full'}>
 
-    <Button onClick={backward} bg={'gray.200'} color={'black'}>
+    <Button onClick={backward}
+      bg={'gray.200'} color={'black'}>
       <i className="pi pi-angle-left" />
     </Button>
-    <Text fontWeight={'medium'} fontSize={'lg'} textAlign={'center'}>{useArray[usePage]}</Text>
+    <Text fontWeight={'medium'} fontSize={'lg'} textAlign={'center'}>{useNames[usePage]}</Text>
     <Button onClick={forward} bg={'gray.200'} color={'black'}>
       <i className="pi pi-angle-right" />
     </Button>
-  
+
   </Flex>)
 }
 

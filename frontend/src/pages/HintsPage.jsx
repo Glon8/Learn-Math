@@ -1,13 +1,15 @@
-import { Flex, Text, Separator, Stack, Button } from "@chakra-ui/react"
+import { Flex, Text, Separator, Stack } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useState } from "react";
 
 import TwoTitlesSlot from "../components/TwoTitlesSlot";
 import TopicBut from "../components/TopicBut";
 import Spin from "../components/Spin";
+import TextArea from "../components/TextArea";
 
 function HintsPage() {
   const [useSchool, setSchool] = useState(true);
+  const [useTop, setTop] = useState('sum_substract');
 
   const topic_names = {
     sum_substract: 'sum & substract',
@@ -23,8 +25,11 @@ function HintsPage() {
     geometry: 'geometry',
     quadratic_equation: 'quadratic equation',
     circles: 'circles',
-    exam_advanced: 'exam: advanced'
+    exam_advanced: 'exam: advanced',
+    teach: 'Lets discuss with teach!'
   };
+
+
 
   return (<Flex justifyItems={'center'}
     flexDirection={"column"}
@@ -52,20 +57,20 @@ function HintsPage() {
       <Separator />
       <Flex hideFrom={'lg'}>
         <Spin classList={topic_names}
-          additional={
-            'Discuss With Teach!'} />
+          additional={{ teach: 'Discuss With Teach!' }}
+          getValue={(value) => setTop(value)} />
       </Flex>
 
       <Flex hideBelow={'lg'} justify={'space-between'}>
         <TopicBut pi_icon={'pi-list-check'}
           title={'Teenage-School'}
-          onClick={() => { setSchool(true) }}
+          onClick={() => setSchool(true)}
           showSub={true}
         />
 
         <TopicBut pi_icon={'pi-list-check'}
           title={'High-School'}
-          onClick={() => { setSchool(false) }}
+          onClick={() => setSchool(false)}
           showSub={true}
           dir={'row-reverse'}
         />
@@ -75,8 +80,12 @@ function HintsPage() {
 
         <Flex w={'full'} border borderColor={"gray.300"} borderWidth={1} justifyItems={'center'} rounded={'xl'} flexDirection={"column"} gapY={3} padding={5}>
 
-          <Text>Topics explanation here! This tab is scrollabble!</Text>
-
+          <Text>Topics explanation here! This tab is scrollabble! Current topic is {topic_names[useTop]}</Text>
+          {
+            useTop == 'teach' ? (<TextArea getValue={(value) => {
+              console.log(value)
+            }} />) : null
+          }
         </Flex>
         <Flex flexDirection={"column"} gapY={3} hideBelow={'lg'}>
 
@@ -84,25 +93,24 @@ function HintsPage() {
           <TopicBut
             pi_icon={'pi-question'}
             title={'Discuss With Teach!'}
-            onClick={() => { }}
+            onClick={() => setTop('teach')}
             showSub={true}
           />
           <Separator />
           {
-
             Object.entries(topic_names).map((topic, index) => {
               if (useSchool && index >= 0 && index < 7)
                 return (<TopicBut key={topic[0]}
                   pi_icon={'pi-hashtag'}
                   title={topic[1]}
-                  onClick={() => { setSchool(true) }}
+                  onClick={() => setTop(topic[0])}
                   showSub={true}
                 />)
-              else if (!useSchool && index >= 7)
+              else if (!useSchool && index >= 7 && index < 14)
                 return (<TopicBut key={topic[0]}
                   pi_icon={'pi-hashtag'}
                   title={topic[1]}
-                  onClick={() => { setSchool(true) }}
+                  onClick={() => setTop(topic[0])}
                   showSub={true}
                 />)
             })
