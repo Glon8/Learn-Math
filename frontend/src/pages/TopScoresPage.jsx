@@ -1,13 +1,10 @@
-import { Center, Stack, Text, Flex, Menu, Portal, Separator, Button } from "@chakra-ui/react"
+import { Center, Stack, Text, Flex, Separator, Button, useBreakpointValue } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useState } from "react";
 
-import CompareSlot from '../components/CompareSlot.jsx'
-import Slot from "../components/Slot.jsx";
 import TitleSlot from '../components/TitleSlot.jsx'
 import CheckCard from "../components/CheckCard.jsx";
 import FlexMenu from "../components/FlexMenu.jsx";
-import TwoTitlesSlot from "../components/TwoTitlesSlot.jsx";
 import GradesMenuComparable from "../components/GradesMenuComparable.jsx";
 import TopScoresSlot from "../components/TopScoresSlot.jsx";
 
@@ -125,9 +122,10 @@ function ScorePage() {
     exam_advanced: 'exam: advanced'
   };
 
-   {/*{sm: , md: , lg: , xl: }*/}
+  {/*{sm: , md: , lg: , xl: }*/ }
 
   const [use_compare, set_compare] = useState(false);
+  const [useToCompare, setToCompare] = useState(0);
   let temp = 0;
 
   return (<Center paddingTop={'3rem'}
@@ -155,56 +153,55 @@ function ScorePage() {
           }
           {
             user_list.map((user, i) => {
-              return (
+              return (<Flex key={i}>
+                <Flex display={{ sm: 'flex', md: 'flex', lg: 'none', xl: 'none' }}>
 
+                  <TopScoresSlot i={i}
+                    user={user}
+                    user_scores_list={user_scores_list}
+                    topic_names={topic_names}
+                    use_compare={use_compare}
+                    my_user={my_user}
+                    my_scores={my_scores}
+                    temp={temp} />
 
-                <Flex>
-                  {
-                    true ?
-                      // if it medium screen size, it ll show two fields, of menu + users scores
-                      // if it large screem size, it ll show three fields, menu + users scores + compare field
-                      (<TopScoresSlot i={i}
-                        user={user}
-                        user_scores_list={user_scores_list}
-                        topic_names={topic_names}
-                        use_compare={use_compare}
-                        my_user={my_user}
-                        my_scores={my_scores}
-                        temp={temp} />) :
-                      (<Button color={'black'}>
-                        <Flex width={'xs'} flexDirection={'row'} justify={'space-between'}>
+                </Flex>
+                <Flex display={{ sm: 'none', md: 'none', lg: 'flex', xl: 'flex' }}>
+                  <Button color={'black'}
+                    onClick={() => setToCompare(i)}>
+                    <Flex width={'xs'} flexDirection={'row'} justify={'space-between'}>
 
-                          <Flex flexDirection={'row'} gap={3}>
-                            <Text>{1 + i}</Text>
-                            <i className="pi pi-trophy" />
-                            <Text textAlign={'center'}>{user.name}</Text>
-                          </Flex>
-                          <Text>
-                            {
-                              !user_scores_list && user_scores_list.length <= 0 ? '0' : temp = 0
-                            }
-                            {
-                              user_scores_list.map((scores) => {
-                                if (user._id === scores._id) {
-                                  Object.entries(topic_names).map((topic) => {
-                                    const score = scores[topic[0]];
+                      <Flex flexDirection={'row'} gap={3}>
+                        <Text>{1 + i}</Text>
+                        <i className="pi pi-trophy" />
+                        <Text textAlign={'center'}>{user.name}</Text>
+                      </Flex>
+                      <Text>
+                        {
+                          !user_scores_list && user_scores_list.length <= 0 ? '0' : temp = 0
+                        }
+                        {
+                          user_scores_list.map((scores) => {
+                            if (user._id === scores._id) {
+                              Object.entries(topic_names).map((topic) => {
+                                const score = scores[topic[0]];
 
-                                    temp = temp + score;
-                                  })
-
-                                  temp = temp / 13;
-
-                                  return (`${temp.toFixed(2)}`)
-                                }
+                                temp = temp + score;
                               })
+
+                              temp = temp / 13;
+
+                              return (`${temp.toFixed(2)}`)
                             }
-                          </Text>
+                          })
+                        }
+                      </Text>
 
-                        </Flex>
-                      </Button>)
-                  }
+                    </Flex>
+                  </Button>
+                </Flex>
 
-                </Flex>)
+              </Flex>)
             })
           }
         </Stack>
@@ -224,8 +221,8 @@ function ScorePage() {
 
       </Stack>
 
-      <GradesMenuComparable display={{sm: 'none', md: 'none', lg: 'flex', xl: 'flex'}}
-        title_type={0}
+      <GradesMenuComparable display={{ sm: 'none', md: 'none', lg: 'flex', xl: 'flex' }}
+        title_type={1}
         pi_icon={'pi-trophy'}
         title={'PROGRESS'}
         title_info={{
@@ -241,11 +238,16 @@ function ScorePage() {
         }
         topic_names={topic_names}
         my_scores={my_scores}
-        comparable={0}
-        compare_to_grades={user_scores_list[1]}
+        comparable={useBreakpointValue({ sm: 0, md: 0, lg: (use_compare ? 2 : 0), xl: (use_compare ? 1 : 0) })}
+        compare_to_grades={useBreakpointValue({
+          sm: user_scores_list[0],
+          md: user_scores_list[0],
+          lg: user_scores_list[useToCompare],
+          xl: user_scores_list[useToCompare]
+        })}
+        compare_to={user_list[useToCompare].name}
       />
-
-      <GradesMenuComparable display={{sm: 'none', md: 'none', lg: 'none', xl: 'flex'}}
+      <GradesMenuComparable display={{ sm: 'none', md: 'none', lg: 'none', xl: 'flex' }}
         title_type={1}
         pi_icon={'pi-trophy'}
         title={'PROGRESS'}
@@ -256,13 +258,13 @@ function ScorePage() {
           },
           title_b: {
             pi_icon: '',
-            title: 'someone not Ruslan'
+            title: user_list[useToCompare].name
           }
         }
         }
         topic_names={topic_names}
-        my_scores={user_scores_list[1]}
-        comparable={0}
+        my_scores={user_scores_list[useToCompare]}
+        comparable={use_compare ? 1 : 0}
         compare_to_grades={my_scores}
       />
 

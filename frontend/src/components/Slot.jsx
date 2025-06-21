@@ -1,19 +1,48 @@
-import { Text, Flex, Editable } from "@chakra-ui/react"
-import "primeicons/primeicons.css";
+import { Text, Flex, Input } from "@chakra-ui/react"
+import { useEffect, useState } from "react";
 
-function Slot({ value, category, edit, color }) {
-    return (<Flex width={'1xs'} flexDirection={'row'} justify={'space-between'}>
+function Slot({ placeholder, value, getValue, category, edit, color, dir, auto }) {
+    const [useValue, setValue] = useState(value ? value : '');
 
-        <Editable.Root width={'fit'}
-         edit={edit? true : false}
-          fontSize={'xl'}
-           textAlign={'center'}
-            defaultValue={`${value}`}
-            color={color? color : ''}>
-            <Editable.Preview />
-            <Editable.Input />
-        </Editable.Root>
-        <Text textAlign={'right'}>{category}</Text>
+    useEffect(() => {
+        setValue(value)
+    },[value]);
+
+    /*
+    <Slot placeholder={'optional titles'}
+     value={'any title'}
+     category={'title'}
+     auto={true}
+     getValue((value) => {console.log(value)})
+     />
+    */
+
+    return (<Flex w={'1xs'}
+        flexDirection={dir ? dir : 'row'}
+        justify={'space-between'}>
+        <Input width={auto ? 'fit' : '15rem'}
+            placeholder={placeholder ? placeholder : ''}
+            disabled={edit ? false : true}
+            value={useValue}
+            color={color ? color : ''}
+            maxLength={16}
+            borderWidth={edit === true ? 1 : 0}
+            textAlign={edit ? 'center' : ''}
+            fontSize={'xl'}
+            padding={0}
+            rounded={'md'}
+            onChange={(el) => {
+                const value = el.target.value;
+
+                setValue(value);
+                getValue ? getValue(value) : null;
+            }}
+            opacity={!edit && useValue ? 1 : ''}
+            paddingStart={edit ? 0 : 1}
+        />
+        <Text
+            w={auto ? 'full' :'7rem'}
+            textAlign={'right'}>{category}</Text>
 
     </Flex>)
 }

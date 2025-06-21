@@ -1,6 +1,7 @@
 import { Separator, Button, Flex, Text } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useState } from "react";
+import { useColorMode } from "./ui/color-mode.jsx";
 
 import SelectionCheckMenu from "./SelectionCheckMenu";
 import SelectionCheckSwitchMenu from "./SelectionCheckSwitchMenu";
@@ -8,6 +9,7 @@ import SelectionCheckSwitchMenu from "./SelectionCheckSwitchMenu";
 function NavMenu({ hidden, user, navPosition, signUpForm, signInForm, modeState, useShort }) {
     const [navSide, setNavSide] = useState(user ? user.navPosition : 'top');
 
+    const { colorMode, toggleColorMode } = useColorMode();
     const [use_languages, set_languages] = useState(true);
     const [use_settings, set_settings] = useState(true);
     const [use_position, set_position] = useState(true);
@@ -143,7 +145,7 @@ function NavMenu({ hidden, user, navPosition, signUpForm, signInForm, modeState,
         <Separator />
         <Button backgroundColor={'white'}
             color={'black'}
-            onClick={modeState}>
+            onClick={toggleColorMode}>
 
             <Flex width={'full'}
                 alignItems={'center'}
