@@ -1,5 +1,6 @@
-import { Text, Flex, Menu, Portal, Separator } from "@chakra-ui/react"
+import { Text, Flex, Menu, Portal, Separator, Button } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
+import { useEffect, useState } from "react";
 
 import TitleSlot from "./TitleSlot";
 import Slot from "./Slot";
@@ -17,40 +18,54 @@ import TwoTitlesSlot from "./TwoTitlesSlot";
    />
 */
 
-function TopScoresSlot({ i, user, user_scores_list, topic_names, use_compare, my_user, my_scores, temp }) {
-  return (<Menu.Root>
+function TopScoresSlot({ i, user, user_scores_list, topic_names, use_compare, my_user, my_scores, temp, close, autoClose }) {
+  const [useOpen, setOpen] = useState(close ? close : false);
 
-    <Menu.Trigger>
+  useEffect(() => {
+    setOpen(close);
+  }, [close]);
 
-      <Flex width={'xs'} flexDirection={'row'} justify={'space-between'}>
+  return (<Menu.Root open={useOpen}
+    onInteractOutside={autoClose? null : () => setOpen(false)}>
 
-        <Flex flexDirection={'row'} gap={3}>
-          <Text>{1 + i}</Text>
-          <i className="pi pi-trophy" />
-          <Text textAlign={'center'}>{user.name}</Text>
+    <Menu.Trigger asChild>
+
+      <Button flexDirection={'row'}
+        onClick={() => setOpen(!useOpen)}
+        color={'black'}>
+
+        <Flex width={'xs'}
+          justify={'space-between'}>
+
+          <Flex flexDirection={'row'} gap={3}>
+            <Text>{1 + i}</Text>
+            <i className="pi pi-trophy" />
+            <Text textAlign={'center'}>{user.name}</Text>
+          </Flex>
+          <Text>
+            {
+              !user_scores_list && user_scores_list.length <= 0 ? '0' : temp = 0
+            }
+            {
+              user_scores_list.map((scores) => {
+                if (user._id === scores._id) {
+                  Object.entries(topic_names).map((topic) => {
+                    const score = scores[topic[0]];
+
+                    temp = temp + score;
+                  })
+
+                  temp = temp / 13;
+
+                  return (`${temp.toFixed(2)}`)
+                }
+              })
+            }
+          </Text>
+
         </Flex>
-        <Text>
-          {
-            !user_scores_list && user_scores_list.length <= 0 ? '0' : temp = 0
-          }
-          {
-            user_scores_list.map((scores) => {
-              if (user._id === scores._id) {
-                Object.entries(topic_names).map((topic) => {
-                  const score = scores[topic[0]];
 
-                  temp = temp + score;
-                })
-
-                temp = temp / 13;
-
-                return (`${temp.toFixed(2)}`)
-              }
-            })
-          }
-        </Text>
-
-      </Flex>
+      </Button>
 
     </Menu.Trigger>
     <Portal>

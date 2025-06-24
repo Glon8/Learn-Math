@@ -78,7 +78,16 @@ function HintsPage() {
       <Flex gap={3}
         flexDirection={useSchool ? 'row-reverse' : 'row'}>
 
-        <Flex w={'full'} border borderColor={"gray.300"} borderWidth={1} justifyItems={'center'} rounded={'xl'} flexDirection={"column"} gapY={3} padding={5}>
+        <Flex position={'relative'}
+          w={'full'}
+          border
+          borderColor={"gray.300"}
+          borderWidth={1}
+          justifyItems={'center'}
+          rounded={'xl'}
+          flexDirection={"column"}
+          gapY={3}
+          padding={5}>
 
           <Text>Topics explanation here! This tab is scrollabble! Current topic is {topic_names[useTop]}</Text>
           {
