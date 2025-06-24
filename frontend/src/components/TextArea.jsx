@@ -6,9 +6,10 @@ function TextArea({ getValue }) {
 
     return (<Field.Root>
         <Textarea value={useValue}
+            bottom={0}
             onChange={(el) => {
                 const value = el.target.value;
-                
+
                 setvalue(value);
                 getValue(value);
             }}

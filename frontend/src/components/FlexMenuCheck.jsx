@@ -1,14 +1,24 @@
-import { Flex, Menu, Portal, Text } from "@chakra-ui/react"
+import { Flex, Menu, Portal, Text, Button } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
+import { useEffect, useState } from "react";
 
-function FlexMenuCheck({ close, disabled, pi_icon, title, list, list_checked }) {
-    return (<Menu.Root positioning={{ placement: 'left-start', gutter: 2 }} closeOnSelect={close ? false : true}>
+function FlexMenuCheck({ close, disabled, pi_icon, title, list, list_checked, autoClose }) {
+    const [useOpen, setOpen] = useState(close ? close : false);
 
-        <Menu.Trigger disabled={disabled ? disabled : false}>
+    useEffect(() => {
+        setOpen(close);
+    }, [close]);
 
-            <Flex flexDirection={'row'} gap={3}>
+    return (<Menu.Root open={useOpen}
+        positioning={{ placement: 'left-start', gutter: 2 }}
+        closeOnSelect={close ? false : true}
+        onInteractOutside={autoClose ? null : () => setOpen(false)}>
+
+        <Menu.Trigger asChild disabled={disabled ? disabled : false}>
+
+            <Button onClick={() => setOpen(!useOpen)} flexDirection={'row'} gap={3}>
                 <i className={`pi ${pi_icon}`} /><Text textAlign={'center'}>{title}</Text>
-            </Flex>
+            </Button>
 
         </Menu.Trigger>
         <Portal>
