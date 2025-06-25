@@ -35,7 +35,7 @@ function SignForm({ isIn, isUp, close, callToast }) {
       }}
       right={0}
       top={0}
-      zIndex={5}></Flex>
+      zIndex={10}></Flex>
     {
       // form itself
     }
@@ -55,7 +55,7 @@ function SignForm({ isIn, isUp, close, callToast }) {
       flexDirection={'column'}
       paddingY={7}
       paddingX={5}
-      zIndex={10}
+      zIndex={15}
       gap={3}>
 
       <Flex width={'full'}

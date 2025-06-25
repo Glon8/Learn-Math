@@ -1,5 +1,5 @@
 import './App.css'
-import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 import NavBar from './components/NavBar.jsx'
 import WelcomePage from './pages/WelcomePage.jsx'
@@ -16,12 +16,12 @@ function App() {
 
     <Routes>
 
-      <Route path='/' element={<WelcomePage/>} />
-      <Route path='/profile' element={<ProfilePage/>} />
-      <Route path='/top-scores' element={<TopScoresPage/>} />
-      <Route path='/hints' element={<HintsPage/>} />
-      <Route path='/schools' element={<SchoolsPage/>} />
-      <Route path='/exercise' element={<ExercisePage/>} />
+      <Route path='/' element={<WelcomePage />} />
+      <Route path='/profile' element={<ProfilePage />} />
+      <Route path='/top-scores' element={<TopScoresPage />} />
+      <Route path='/hints' element={<HintsPage />} />
+      <Route path='/schools' element={<SchoolsPage />} />
+      <Route path='/exercise' element={<ExercisePage />} />
 
     </Routes>
 

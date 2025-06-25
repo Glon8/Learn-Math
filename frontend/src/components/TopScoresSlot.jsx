@@ -25,7 +25,7 @@ function TopScoresSlot({ i, user, user_scores_list, topic_names, use_compare, my
     setOpen(close);
   }, [close]);
 
-  return (<Menu.Root open={useOpen}
+  return (<Menu.Root open={useOpen} onOpenChange={close === false? () => setOpen(!useOpen) : null}
     onInteractOutside={autoClose? null : () => setOpen(false)}>
 
     <Menu.Trigger asChild>
@@ -72,7 +72,11 @@ function TopScoresSlot({ i, user, user_scores_list, topic_names, use_compare, my
 
       <Menu.Positioner>
 
-        <Menu.Content width={'xs'} paddingX={5} paddingY={3} marginStart={5}>
+        <Menu.Content display={close === false? "none" : ''}
+         width={'xs'}
+         paddingX={5}
+          paddingY={3}
+           marginStart={5}>
 
           <TitleSlot pi_icon={'pi-graduation-cap'} title={'Scores'} />
           {

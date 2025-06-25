@@ -157,6 +157,7 @@ function ScorePage() {
                 <Flex display={{ sm: 'flex', md: 'flex', lg: 'none', xl: 'none' }}>
 
                   <TopScoresSlot i={i}
+                    close = {useBreakpointValue({lg: false, xl: false})}
                     user={user}
                     user_scores_list={user_scores_list}
                     topic_names={topic_names}

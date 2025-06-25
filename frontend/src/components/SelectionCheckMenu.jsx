@@ -1,10 +1,12 @@
 import {
-    Flex, Button
+    Flex, Button, Menu, Portal, Text
 } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useEffect, useState } from "react";
 
-function SelectionCheckMenu({ width, options, default_options, disabled, navPosition, hidden }) {
+function SelectionCheckMenu({ options, default_options, disabled, navPosition, title, pi_icon, close }) {
+    const [useOpen, setOpen] = useState(close ? close : false);
+
     const [use_switches, set_switches] = useState([]);
     let applied_switches = [];
 
@@ -38,35 +40,65 @@ function SelectionCheckMenu({ width, options, default_options, disabled, navPosi
         if (applied_switches.length === 0) fill_active();
     }, []);
 
-    return (<Flex
-        hidden={hidden ? true : false}
-        flexDirection={navPosition === 'bottom' ? "column-reverse" : 'column'}
-        width={width ? width : '13rem'}
-        rounded={'lg'}
-        border
-        borderColor={'black'}
-        bg={"white"}
-        borderWidth={1}>
-        {
-            options?.map((option, index) => {
-                const value = option.value;
+    useEffect(() => {
+        setOpen(close);
+    }, [close]);
 
-                return (
-                    <Button key={value}
-                        disabled={disabled ? disabled : false}
-                        onClick={() => { update_switches(index, option.onClick) }}
-                        color={"black"}
-                    >
+    return (<Menu.Root positioning={
+        navPosition === 'top' ? { placement: 'left' } :
+            navPosition === 'left' ? { placement: 'right-end' } :
+                navPosition === 'bottom' ? { placement: 'left' } :
+                    navPosition === 'right' ? { placement: 'left-end' } : { placement: 'left' }}>
 
-                        <Flex width={'full'}
-                            justify={"space-between"}>
-                            {option.title}<i className={`pi ${use_switches[index] === true ? 'pi-check' : ''}`} />
-                        </Flex>
+        <Menu.Trigger asChild>
+            <Button color={'black'}
+                onClick={() => setOpen(!useOpen)}
+                bg={'white'}
+                w={'full'}>
 
-                    </Button>)
-            })
-        }
-    </Flex>)
+                <Flex w={'full'} justifyContent={'start'} gapX={3}>
+                    <i className={`pi ${pi_icon}`} />
+                    <Text>{title}</Text>
+                </Flex>
+
+            </Button>
+        </Menu.Trigger>
+        <Portal>
+
+            <Menu.Positioner>
+
+                <Menu.Content>
+
+                    <Flex flexDirection={'column'} gapY={1}>
+                        {
+                            options?.map((option, index) => {
+                                const value = option.value;
+
+                                return (
+                                    <Button key={value}
+                                        disabled={disabled ? disabled : false}
+                                        onClick={() => { update_switches(index, option.onClick) }}
+                                        color={"black"}
+                                    >
+
+                                        <Flex width={'full'}
+                                            gapX={3}
+                                            justify={"space-between"}>
+                                            {option.title}<i className={`pi ${use_switches[index] === true ? 'pi-check' : ''}`} />
+                                        </Flex>
+
+                                    </Button>)
+                            })
+                        }
+                    </Flex>
+
+                </Menu.Content>
+
+            </Menu.Positioner>
+
+        </Portal>
+
+    </Menu.Root>)
 }
 
 export default SelectionCheckMenu
