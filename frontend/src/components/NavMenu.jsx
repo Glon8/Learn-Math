@@ -1,28 +1,31 @@
-import { Separator, Button, Flex, Text } from "@chakra-ui/react"
+import { Button, Flex, Text, Menu, Portal } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useColorMode } from "./ui/color-mode.jsx";
 
 import SelectionCheckMenu from "./SelectionCheckMenu";
 import SelectionCheckSwitchMenu from "./SelectionCheckSwitchMenu";
+import Tool from "./Tooltip.jsx";
 
-function NavMenu({ hidden, user, navPosition, signUpForm, signInForm, modeState, useShort }) {
+function NavMenu({ user, navPosition, signUpForm, signInForm, close, autoClose, navShort, title, pi_icon }) {
+    const [useOpen, setOpen] = useState(close ? close : false);
+
     const [navSide, setNavSide] = useState(user ? user.navPosition : 'top');
 
     const { colorMode, toggleColorMode } = useColorMode();
-    const [use_languages, set_languages] = useState(true);
-    const [use_settings, set_settings] = useState(true);
-    const [use_position, set_position] = useState(true);
 
     const languages = [{
         value: 'english',
-        title: 'EN'
+        title: 'EN',
+        onClick: () => console.log('language selected english!')
     }, {
         value: 'hebrew',
-        title: 'HE'
+        title: 'HE',
+        onClick: () => console.log('language selected hebrew!')
     }, {
         value: 'russian',
-        title: 'RU'
+        title: 'RU',
+        onClick: () => console.log('language selected russian!')
     }];
     const default_languages = user ? user.language : 'english';
 
@@ -41,18 +44,22 @@ function NavMenu({ hidden, user, navPosition, signUpForm, signInForm, modeState,
     const toTop = () => {
         navPosition('top')
         setNavSide('top')
+        setOpen(false)
     }
     const toLeft = () => {
         navPosition('left')
         setNavSide('left')
+        setOpen(false)
     }
     const toBottom = () => {
         navPosition('bottom')
         setNavSide('bottom')
+        setOpen(false)
     }
     const toRight = () => {
         navPosition('right')
         setNavSide('right')
+        setOpen(false)
     }
 
     const menu_pos = [{
@@ -74,252 +81,163 @@ function NavMenu({ hidden, user, navPosition, signUpForm, signInForm, modeState,
     }];
     const default_menu_pos = navSide;
 
-    return (<Flex padding={1} gap={3}
-        hidden={hidden ? hidden : false}
-        flexDirection={navSide === 'bottom' ? "column-reverse" : 'column'}
-        width={'13rem'}
-        rounded={'md'}
-        border
-        borderColor={'black'}
-        bg={"white"}
-        borderWidth={1}
-    >
-        {
-            user ? (<Text marginStart={4}>{user.status === 0 ? 'Local' : 'Online'} user: {user.name}</Text>) :
-                (<Text marginStart={4}>No user connected!</Text>)
-        }
-        {
-            user ? (<Button
-                backgroundColor={'white'}
-                onClick={() => { console.log('sign out') }}
-                color={"black"}
-            >
+    useEffect(() => {
+        setOpen(close);
+    }, [close]);
 
-                <Flex width={'full'}
-                    alignItems={'center'}
-                    gap={3}>
+    return (<Tool navSide={navSide}
+        navShort={navShort}
+        title={title}
+        value={
+            <Menu.Root open={useOpen}
+                onInteractOutside={autoClose ? null : () => setOpen(false)}
+                positioning={navSide === 'top' ? { placement: 'bottom' } :
+                    navSide === 'left' ? { placement: 'right-end' } :
+                        navSide === 'bottom' ? { placement: 'top' } :
+                            navSide === 'right' ? { placement: 'left-end' } : ''}>
 
-                    <i className={`pi pi-sign-out`} />
-                    <Text>Sign Out</Text>
+                <Menu.Trigger asChild>
 
-                </Flex>
-
-            </Button>) :
-                (<Flex flexDirection={navSide === 'bottom' ? "column-reverse" : 'column'}>
-
-                    <Button
-                        backgroundColor={'white'}
-                        onClick={signUpForm}
-                        color={"black"}
-                    >
-
-                        <Flex width={'full'}
-                            alignItems={'center'}
-                            gap={3}>
-
-                            <i className={`pi pi-user-edit`} />
-                            <Text>Sign Up</Text>
-
-                        </Flex>
-
-                    </Button>
-                    <Button
-                        backgroundColor={'white'}
-                        onClick={signInForm}
-                        color={"black"}
-                    >
-
-                        <Flex width={'full'}
-                            alignItems={'center'}
-                            gap={3}>
-
-                            <i className={`pi pi-sign-in`} />
-                            <Text>Sign In</Text>
-
-                        </Flex>
-
+                    <Button bg={'black'} onClick={() => setOpen(!useOpen)}>
+                        <i className={`pi ${pi_icon}`} />
+                        {
+                            navShort ? null : <Text>{title}</Text>
+                        }
                     </Button>
 
-                </Flex>)
-        }
-        <Separator />
-        <Button backgroundColor={'white'}
-            color={'black'}
-            onClick={toggleColorMode}>
+                </Menu.Trigger>
+                <Portal>
 
-            <Flex width={'full'}
-                alignItems={'center'}
-                gap={3}>
+                    <Menu.Positioner>
 
-                <i className={`pi pi-moon`} />
-                <Text>Mode</Text>
+                        <Menu.Content>
 
-            </Flex>
+                            <Menu.ItemGroup>
+                                <Menu.ItemGroupLabel>
+                                    {
+                                        user ? (`${user.status === 0 ? 'Local' : 'Online'} user: ${user.name}`) :
+                                            ('No user connected!')
+                                    }
+                                </Menu.ItemGroupLabel>
+                                <Menu.Item>
+                                    <Button hidden={user ? false : true}
+                                        backgroundColor={'white'}
+                                        onClick={() => { console.log('sign out') }}
+                                        color={"black"}
+                                        w={'full'}
+                                    >
 
-        </Button>
-        <Button
-            backgroundColor={'white'}
-            onClick={() => {
-                set_position(true)
-                set_languages(!use_languages)
-                set_settings(true)
-            }}
-            color={"black"}
-        >
+                                        <Flex width={'full'}
+                                            alignItems={'center'}
+                                            gap={3}>
 
-            <Flex width={'full'}
-                alignItems={'center'}
-                gap={3}>
+                                            <i className={`pi pi-sign-out`} />
+                                            <Text>Sign Out</Text>
 
-                <i className={`pi pi-language`} />
-                <Text>Language</Text>
+                                        </Flex>
 
-            </Flex>
+                                    </Button>
+                                </Menu.Item>
+                                <Menu.Item>
+                                    <Button hidden={user ? true : false}
+                                        backgroundColor={'white'}
+                                        onClick={() => {
+                                            setOpen(false);
+                                            signUpForm()
+                                        }}
+                                        color={"black"}
+                                        w={'full'}
+                                    >
 
-        </Button>
-        <Button
-            backgroundColor={'white'}
-            onClick={() => {
-                set_position(true)
-                set_settings(!use_settings)
-                set_languages(true)
-            }}
-            color={"black"}
-        >
+                                        <Flex width={'full'}
+                                            alignItems={'center'}
+                                            gap={3}>
 
-            <Flex width={'full'}
-                alignItems={'center'}
-                gap={3}>
+                                            <i className={`pi pi-user-edit`} />
+                                            <Text>Sign Up</Text>
 
-                <i className={`pi pi-cog`} />
-                <Text>Lesson Settings</Text>
+                                        </Flex>
 
-            </Flex>
+                                    </Button>
+                                </Menu.Item>
+                                <Menu.Item>
+                                    <Button hidden={user ? true : false}
+                                        backgroundColor={'white'}
+                                        onClick={() => {
+                                            setOpen(false);
+                                            signInForm()
+                                        }}
+                                        color={"black"}
+                                        w={'full'}
+                                    >
 
-        </Button>
-        <Button
-            backgroundColor={'white'}
-            onClick={() => {
-                set_position(!use_position)
-                set_languages(true)
-                set_settings(true)
-            }}
-            color={"black"}
-        >
+                                        <Flex width={'full'}
+                                            alignItems={'center'}
+                                            gap={3}>
 
-            <Flex width={'full'}
-                alignItems={'center'}
-                gap={3}>
+                                            <i className={`pi pi-sign-in`} />
+                                            <Text>Sign In</Text>
 
-                <i className={`pi pi-angle-down`} />
-                <Text>Menu Position</Text>
+                                        </Flex>
 
-            </Flex>
+                                    </Button>
+                                </Menu.Item>
 
-        </Button>
-        <Flex onMouseLeave={() => { set_languages(true) }}
-            position={'absolute'}
-            width={'auto'}
-            right={
-                useShort ? (navSide === 'right' ? 0.75 :
-                    navSide === 'top' ? 0.75 :
-                        navSide === 'bottom' ? 0.75 : 'auto') :
-                    (navSide === 'right' ? '13rem' :
-                        navSide === 'top' ? '13rem' :
-                            navSide === 'bottom' ? '13rem' : 'auto')
-            }
-            left={
-                useShort ? (navSide === 'left' ? 0.75 : 'auto') :
-                    (navSide === 'left' ? '13rem' : 'auto')
-            }
-            top={
-                useShort ? (navSide === 'right' ? '15.2rem' :
-                    navSide === 'left' ? '15.2rem' :
-                        navSide === 'top' ? '15.2rem' : 'auto') :
-                    (navSide === 'right' ? '12.5rem' :
-                        navSide === 'left' ? '12.5rem' :
-                            navSide === 'top' ? '12.5rem' : 'auto')
-            }
-            bottom={
-                useShort ? (navSide === 'bottom' ? '15.2rem' : 'auto') :
-                    (navSide === 'bottom' ? '12.5rem' : 'auto')
-            }
-            flexDirection={navSide === 'bottom' ? "column-reverse" : 'column'}
-        >
-            <SelectionCheckSwitchMenu default_option={default_languages}
-                hidden={use_languages}
-                options={languages}
-            />
-        </Flex>
-        <Flex onMouseLeave={() => { set_settings(true) }}
-            position={'absolute'}
-            width={'auto'}
-            right={
-                useShort ? (navSide === 'top' ? 0.75 :
-                    navSide === 'left' ? '0.3rem' :
-                        navSide === 'bottom' ? 0.75 : 'auto') :
-                    (navSide === 'right' ? '13rem' :
-                        navSide === 'top' ? '13rem' :
-                            navSide === 'bottom' ? '13rem' : 'auto')
-            }
-            left={
-                useShort ? (navSide === 'left' ? '0.3rem' : 'auto') :
-                    (navSide === 'left' ? '13rem' : 'auto')
-            }
-            top={
-                useShort ? (navSide === 'right' ? '18.5rem' :
-                    navSide === 'left' ? '18.5rem' :
-                        navSide === 'top' ? '18.5rem' : 'auto') :
-                    (navSide === 'right' ? '15.5rem' :
-                        navSide === 'left' ? '15.5rem' :
-                            navSide === 'top' ? '15.5rem' : 'auto')
-            }
-            bottom={
-                useShort ? (navSide === 'bottom' ? '18.5rem' : 'auto') :
-                    (navSide === 'bottom' ? '15.5rem' : 'auto')
-            }
-            flexDirection={navSide === 'bottom' ? "column-reverse" : 'column'}>
-            <SelectionCheckMenu default_options={default_lesson_settings}
-                hidden={use_settings}
-                width={'20rem'}
-                switch_board={true}
-                options={lesson_settings} />
-        </Flex>
-        <Flex onMouseLeave={() => { set_position(true) }}
-            position={'absolute'}
-            width={'auto'}
-            right={
-                useShort ? (navSide === 'right' ? 0.75 :
-                    navSide === 'top' ? 0.75 :
-                        navSide === 'bottom' ? 0.75 : 'auto') :
-                    (navSide === 'right' ? '13rem' :
-                        navSide === 'top' ? '13rem' :
-                            navSide === 'bottom' ? '13rem' : 'auto')
-            }
-            left={
-                useShort ? (navSide === 'left' ? 0.75 : 'auto') :
-                    navSide === 'left' ? '13rem' : 'auto'
-            }
-            top={
-                useShort ? (navSide === 'right' ? '21.6rem' :
-                    navSide === 'left' ? '21.6rem' :
-                        navSide === 'top' ? '21.6rem' : 'auto') :
-                    (navSide === 'right' ? '19rem' :
-                        navSide === 'left' ? '19rem' :
-                            navSide === 'top' ? '19rem' : 'auto')
-            }
-            bottom={
-                useShort ? (navSide === 'bottom' ? '21.6rem' : 'auto') :
-                    (navSide === 'bottom' ? '19rem' : 'auto')
-            }
-            flexDirection={navSide === 'bottom' ? "column-reverse" : 'column'} >
-            <SelectionCheckSwitchMenu default_option={default_menu_pos}
-                hidden={use_position}
-                options={menu_pos}
-            />
-        </Flex>
+                            </Menu.ItemGroup>
+                            <Menu.Separator />
+                            <Menu.ItemGroup paddingX={3}>
+                                <Menu.Item>
+                                    <Button backgroundColor={'white'}
+                                        color={'black'}
+                                        w={'full'}
+                                        onClick={toggleColorMode}>
 
-    </Flex>)
+                                        <Flex width={'full'}
+                                            alignItems={'center'}
+                                            gap={3}>
+
+                                            <i className={`pi pi-moon`} />
+                                            <Text>Mode</Text>
+
+                                        </Flex>
+
+                                    </Button>
+                                </Menu.Item>
+                                <Menu.Item>
+                                    <SelectionCheckSwitchMenu title={'Languages'}
+                                        pi_icon={'pi-language'}
+                                        navSide={navSide}
+                                        default_option={default_languages}
+                                        options={languages}
+                                    />
+                                </Menu.Item>
+                                <Menu.Item>
+                                    <SelectionCheckMenu
+                                        title={'Lesson Settings'}
+                                        pi_icon={'pi-cog'}
+                                        navSide={navSide}
+                                        default_options={default_lesson_settings}
+                                        switch_board={true}
+                                        options={lesson_settings} />
+                                </Menu.Item>
+                                <Menu.Item>
+                                    <SelectionCheckSwitchMenu title={'Menu Position'}
+                                        pi_icon={'pi-angle-down'}
+                                        navSide={navSide}
+                                        default_option={default_menu_pos}
+                                        options={menu_pos}
+                                    />
+                                </Menu.Item>
+                            </Menu.ItemGroup>
+
+                        </Menu.Content>
+
+                    </Menu.Positioner>
+
+                </Portal>
+
+            </Menu.Root>}
+    />)
 }
 
 export default NavMenu

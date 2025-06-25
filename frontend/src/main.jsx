@@ -5,6 +5,7 @@ import App from './App.jsx'
 import { Provider } from "./components/ui/provider"
 import { ChakraProvider, defaultSystem } from '@chakra-ui/react';
 import { ColorModeProvider } from './components/ui/color-mode.jsx'
+import { Toaster } from "./components/ui/toaster.jsx";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -15,6 +16,7 @@ createRoot(document.getElementById('root')).render(
 
         <ColorModeProvider>
 
+          <Toaster />
           <App />
 
         </ColorModeProvider>
