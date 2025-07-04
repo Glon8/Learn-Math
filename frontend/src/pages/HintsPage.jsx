@@ -25,8 +25,7 @@ function HintsPage() {
     geometry: 'geometry',
     quadratic_equation: 'quadratic equation',
     circles: 'circles',
-    exam_advanced: 'exam: advanced',
-    teach: 'Lets discuss with teach!'
+    exam_advanced: 'exam: advanced'
   };
 
 

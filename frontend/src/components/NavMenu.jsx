@@ -1,34 +1,39 @@
 import { Button, Flex, Text, Menu, Portal } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useId } from "react";
 import { useColorMode } from "./ui/color-mode.jsx";
+
+import { userContext } from './UserContext.jsx'
 
 import SelectionCheckMenu from "./SelectionCheckMenu";
 import SelectionCheckSwitchMenu from "./SelectionCheckSwitchMenu";
 import Tool from "./Tooltip.jsx";
 
-function NavMenu({ user, navPosition, signUpForm, signInForm, close, autoClose, navShort, title, pi_icon }) {
-    const [useOpen, setOpen] = useState(close ? close : false);
+function NavMenu({ signUpForm, signInForm, close, autoClose, navShort, title, pi_icon }) {
+    const { pos, mode, upUser, user, out, lang, set } = userContext();
 
-    const [navSide, setNavSide] = useState(user ? user.navPosition : 'top');
-
+    const triggerId = useId();
     const { colorMode, toggleColorMode } = useColorMode();
 
+    const [useOpen, setOpen] = useState(close ? close : false);
+
+    //========================< language settings
     const languages = [{
         value: 'english',
         title: 'EN',
-        onClick: () => console.log('language selected english!')
+        onClick: () => upUser('language', 'english')
     }, {
         value: 'hebrew',
         title: 'HE',
-        onClick: () => console.log('language selected hebrew!')
+        onClick: () => upUser('language', 'hebrew')
     }, {
         value: 'russian',
         title: 'RU',
-        onClick: () => console.log('language selected russian!')
+        onClick: () => upUser('language', 'russian')
     }];
-    const default_languages = user ? user.language : 'english';
+    const default_languages = lang ? lang : 'english';
 
+    //========================< lesson settings
     const lesson_settings = [{
         value: 'set1',
         title: 'Form awaits to be fully filled'
@@ -39,27 +44,29 @@ function NavMenu({ user, navPosition, signUpForm, signInForm, close, autoClose, 
         value: 'set3',
         title: '...'
     }];
-    const default_lesson_settings = ['set1'];
+    const default_lesson_settings = set ? set : [];
 
+
+    //========================< menu position settings
     const toTop = () => {
-        navPosition('top')
-        setNavSide('top')
-        setOpen(false)
+        setOpen(false);
+
+        upUser('navPosition', 'top');
     }
     const toLeft = () => {
-        navPosition('left')
-        setNavSide('left')
-        setOpen(false)
+        setOpen(false);
+
+        upUser('navPosition', 'left');
     }
     const toBottom = () => {
-        navPosition('bottom')
-        setNavSide('bottom')
-        setOpen(false)
+        setOpen(false);
+
+        upUser('navPosition', 'bottom');
     }
     const toRight = () => {
-        navPosition('right')
-        setNavSide('right')
-        setOpen(false)
+        setOpen(false);
+
+        upUser('navPosition', 'right');
     }
 
     const menu_pos = [{
@@ -79,26 +86,32 @@ function NavMenu({ user, navPosition, signUpForm, signInForm, close, autoClose, 
         title: 'Right',
         onClick: () => toRight()
     }];
-    const default_menu_pos = navSide;
 
+    //========================< useStates
     useEffect(() => {
         setOpen(close);
     }, [close]);
 
-    return (<Tool navSide={navSide}
+    useEffect(() => {
+        toggleColorMode(mode === 'light' ? 'light' : 'dark');
+    }, [mode]);
+
+    return (<Tool navSide={pos}
         navShort={navShort}
         title={title}
         value={
             <Menu.Root open={useOpen}
                 onInteractOutside={autoClose ? null : () => setOpen(false)}
-                positioning={navSide === 'top' ? { placement: 'bottom' } :
-                    navSide === 'left' ? { placement: 'right-end' } :
-                        navSide === 'bottom' ? { placement: 'top' } :
-                            navSide === 'right' ? { placement: 'left-end' } : ''}>
+                positioning={pos === 'top' ? { placement: 'bottom' } :
+                    pos === 'left' ? { placement: 'right-end' } :
+                        pos === 'bottom' ? { placement: 'top' } :
+                            pos === 'right' ? { placement: 'left-end' } : ''}>
 
                 <Menu.Trigger asChild>
 
-                    <Button bg={'black'} onClick={() => setOpen(!useOpen)}>
+                    <Button bg={'black'}
+                        onClick={() => setOpen(!useOpen)}
+                        w={'full'}>
                         <i className={`pi ${pi_icon}`} />
                         {
                             navShort ? null : <Text>{title}</Text>
@@ -115,14 +128,16 @@ function NavMenu({ user, navPosition, signUpForm, signInForm, close, autoClose, 
                             <Menu.ItemGroup>
                                 <Menu.ItemGroupLabel>
                                     {
-                                        user ? (`${user.status === 0 ? 'Local' : 'Online'} user: ${user.name}`) :
+                                        user._id != null ? (`${!user.status ? 'Local' : 'Online'} user: ${user.name}`) :
                                             ('No user connected!')
                                     }
                                 </Menu.ItemGroupLabel>
-                                <Menu.Item>
-                                    <Button hidden={user ? false : true}
-                                        backgroundColor={'white'}
-                                        onClick={() => { console.log('sign out') }}
+                                <Menu.Item display={user._id != null ? '' : 'none'}>
+                                    <Button backgroundColor={'white'}
+                                        onClick={() => {
+                                            out();
+                                            setOpen(false);
+                                        }}
                                         color={"black"}
                                         w={'full'}
                                     >
@@ -138,12 +153,11 @@ function NavMenu({ user, navPosition, signUpForm, signInForm, close, autoClose, 
 
                                     </Button>
                                 </Menu.Item>
-                                <Menu.Item>
-                                    <Button hidden={user ? true : false}
-                                        backgroundColor={'white'}
+                                <Menu.Item display={user._id != null ? 'none' : ''}>
+                                    <Button backgroundColor={'white'}
                                         onClick={() => {
                                             setOpen(false);
-                                            signUpForm()
+                                            signUpForm();
                                         }}
                                         color={"black"}
                                         w={'full'}
@@ -160,12 +174,11 @@ function NavMenu({ user, navPosition, signUpForm, signInForm, close, autoClose, 
 
                                     </Button>
                                 </Menu.Item>
-                                <Menu.Item>
-                                    <Button hidden={user ? true : false}
-                                        backgroundColor={'white'}
+                                <Menu.Item display={user._id != null ? 'none' : ''}>
+                                    <Button backgroundColor={'white'}
                                         onClick={() => {
                                             setOpen(false);
-                                            signInForm()
+                                            signInForm();
                                         }}
                                         color={"black"}
                                         w={'full'}
@@ -190,7 +203,11 @@ function NavMenu({ user, navPosition, signUpForm, signInForm, close, autoClose, 
                                     <Button backgroundColor={'white'}
                                         color={'black'}
                                         w={'full'}
-                                        onClick={toggleColorMode}>
+                                        onClick={() => {
+                                            mode === 'light' ?
+                                                upUser('mode', 'dark') :
+                                                upUser('mode', 'light')
+                                        }}>
 
                                         <Flex width={'full'}
                                             alignItems={'center'}
@@ -206,7 +223,7 @@ function NavMenu({ user, navPosition, signUpForm, signInForm, close, autoClose, 
                                 <Menu.Item>
                                     <SelectionCheckSwitchMenu title={'Languages'}
                                         pi_icon={'pi-language'}
-                                        navSide={navSide}
+                                        navSide={pos}
                                         default_option={default_languages}
                                         options={languages}
                                     />
@@ -215,16 +232,17 @@ function NavMenu({ user, navPosition, signUpForm, signInForm, close, autoClose, 
                                     <SelectionCheckMenu
                                         title={'Lesson Settings'}
                                         pi_icon={'pi-cog'}
-                                        navSide={navSide}
+                                        navSide={pos}
                                         default_options={default_lesson_settings}
                                         switch_board={true}
-                                        options={lesson_settings} />
+                                        options={lesson_settings}
+                                        getSwitches={(thing) => {thing != set ? upUser('settings', thing) : null}} />
                                 </Menu.Item>
                                 <Menu.Item>
                                     <SelectionCheckSwitchMenu title={'Menu Position'}
                                         pi_icon={'pi-angle-down'}
-                                        navSide={navSide}
-                                        default_option={default_menu_pos}
+                                        navSide={pos}
+                                        default_option={pos}
                                         options={menu_pos}
                                     />
                                 </Menu.Item>

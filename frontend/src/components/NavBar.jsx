@@ -1,7 +1,9 @@
 import { Flex, useBreakpointValue } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useNavigate } from 'react-router-dom'
-import { useEffect, useState } from "react";
+import { useState } from "react";
+
+import { userContext } from "./UserContext.jsx";
 
 import NavMenu from './NavMenu.jsx'
 import NavBut from "./NavBut.jsx";
@@ -10,23 +12,9 @@ import SignForm from './SignForm.jsx'
 function NavBar() {
     const navigate = useNavigate();
 
-    const user = false
-
-    /*const user = {
-        _id: 1110,
-        status: 0,
-        shared: false,
-        name: 'Ruslan',
-        email: null,
-        password: null,
-        secret: null,
-        answer: null,
-        language: 'english',
-        navPosition: 'left'
-    };*/
+    const { pos } = userContext();
 
     const navShort = useBreakpointValue({ sm: true, md: true, lg: false, xl: false });
-    const [navSide, setNavSide] = useState(user ? user.navPosition : 'top');
     const [useSignUp, setSignUp] = useState(false);
     const [useSignIn, setSignIn] = useState(false);
 
@@ -59,10 +47,6 @@ function NavBar() {
         },
     ];
 
-    useEffect(() => {
-        user.navPosition ? setNavSide(user.navPosition) : setNavSide('top');
-    }, [user.navPosition]);
-
     /*
     import { toaster } from "./ui/toaster.jsx";
 
@@ -80,22 +64,21 @@ function NavBar() {
         h={'100vh'}
         position={'absolute'}
     >
-
         <Flex border
-            borderStartWidth={navSide === 'right' ? 2 : 0}
-            borderEndWidth={navSide === 'left' ? 2 : 0}
-            borderTopWidth={navSide === 'bottom' ? 2 : 0}
-            borderBottomWidth={navSide === 'top' ? 2 : 0}
+            borderStartWidth={pos === 'right' ? 2 : 0}
+            borderEndWidth={pos === 'left' ? 2 : 0}
+            borderTopWidth={pos === 'bottom' ? 2 : 0}
+            borderBottomWidth={pos === 'top' ? 2 : 0}
             borderColor={'blackAlpha.500'}
             position={'fixed'}
-            width={navSide === 'top' || navSide === 'bottom' ? '100%' : 20}
-            height={navSide === 'top' || navSide === 'bottom' ? 20 : '100%'}
+            width={pos === 'top' || pos === 'bottom' ? '100%' : 20}
+            height={pos === 'top' || pos === 'bottom' ? 20 : '100%'}
             padding={3}
-            flexDir={navSide === 'top' || navSide === 'bottom' ? 'row' : 'column-reverse'}
-            right={navSide === 'right' ? 0 : 'auto'}
-            left={navSide === 'left' ? 0 : "auto"}
-            top={navSide === 'top' ? 0 : 'auto'}
-            bottom={navSide === 'bottom' ? 0 : 'auto'}
+            flexDir={pos === 'top' || pos === 'bottom' ? 'row' : 'column-reverse'}
+            right={pos === 'right' ? 0 : 'auto'}
+            left={pos === 'left' ? 0 : "auto"}
+            top={pos === 'top' ? 0 : 'auto'}
+            bottom={pos === 'bottom' ? 0 : 'auto'}
             justify={'space-between'}
             backgroundColor={'rgb(166, 166, 166)'}
             zIndex={5}
@@ -108,11 +91,11 @@ function NavBar() {
                 <NavBut title={'Learn Math'}
                     pi_icon={'pi-sparkles'}
                     navShort={navShort}
-                    navSide={navSide}
+                    navSide={pos}
                     onClick={to_main} />
 
             </Flex>
-            <Flex flexDirection={navSide === 'top' || navSide === 'bottom' ? 'row' : 'column-reverse'}
+            <Flex flexDirection={pos === 'top' || pos === 'bottom' ? 'row' : 'column-reverse'}
                 alignItems={'center'}
                 gap={navShort ? 0.5 : 3}>
                 {
@@ -121,23 +104,27 @@ function NavBar() {
                             title={butt.title}
                             pi_icon={butt.pi_icon}
                             navShort={navShort}
-                            navSide={navSide}
+                            navSide={pos}
                             onClick={butt.onClick} />)
                     })
                 }
-                <NavMenu title={'Menu'}
-                    pi_icon={'pi-align-justify'}
-                    navShort={navShort}
-                    navPosition={(side) => setNavSide(side)}
-                    user={user}
-                    signInForm={() => {
-                        setSignUp(false)
-                        setSignIn(!useSignIn)
-                    }}
-                    signUpForm={() => {
-                        setSignUp(!useSignUp)
-                        setSignIn(false)
-                    }} />
+                <Flex marginStart={navShort ? 0 : (pos === 'left' ? 24 : 0)}
+                    marginEnd={navShort ? 0 : (pos === 'right' ? 24 : 0)}
+                    w={navShort ? 'auto' :
+                        (pos === 'right' || pos === 'left' ? '9rem' : 'auto')}
+                    maxW={'20rem'}>
+                    <NavMenu title={'Menu'}
+                        pi_icon={'pi-align-justify'}
+                        navShort={navShort}
+                        signInForm={() => {
+                            setSignUp(false)
+                            setSignIn(!useSignIn)
+                        }}
+                        signUpForm={() => {
+                            setSignUp(!useSignUp)
+                            setSignIn(false)
+                        }} />
+                </Flex>
 
             </Flex>
 

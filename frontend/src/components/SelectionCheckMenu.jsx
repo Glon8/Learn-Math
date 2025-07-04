@@ -4,25 +4,11 @@ import {
 import "primeicons/primeicons.css";
 import { useEffect, useState } from "react";
 
-function SelectionCheckMenu({ options, default_options, disabled, navPosition, title, pi_icon, close }) {
+function SelectionCheckMenu({ options, default_options, disabled, navPosition, title, pi_icon, close, getSwitches }) {
     const [useOpen, setOpen] = useState(close ? close : false);
 
-    const [use_switches, set_switches] = useState([]);
+    const [use_switches, set_switches] = useState(default_options ? default_options : []);
     let applied_switches = [];
-
-    const fill_active = () => {
-        options.map((option) => {
-            let def_value;
-
-            default_options.map((def) => {
-                if (option.value === def) def_value = def;
-            });
-
-            def_value ? applied_switches.push(true) : applied_switches.push(false);
-        });
-
-        set_switches(applied_switches)
-    }
 
     // func. to apply multiple inputs as switches
     const update_switches = (index, onclick) => {
@@ -32,13 +18,13 @@ function SelectionCheckMenu({ options, default_options, disabled, navPosition, t
 
         set_switches(applied_switches);
 
-        if (applied_switches[index]) onclick();
+        if (applied_switches[index]) onclick ? onclick() : null;
         else { console.log("there could be a pull out func.") }
     };
 
-    useEffect(() => {
-        if (applied_switches.length === 0) fill_active();
-    }, []);
+    getSwitches ? useEffect(() => {
+        getSwitches(use_switches);
+    }, [use_switches]) : null;
 
     useEffect(() => {
         setOpen(close);
@@ -77,7 +63,7 @@ function SelectionCheckMenu({ options, default_options, disabled, navPosition, t
                                 return (
                                     <Button key={value}
                                         disabled={disabled ? disabled : false}
-                                        onClick={() => { update_switches(index, option.onClick) }}
+                                        onClick={() => update_switches(index, option.onClick)}
                                         color={"black"}
                                     >
 

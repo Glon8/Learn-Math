@@ -2,12 +2,14 @@ import { Flex, Stack, Text, Separator, Button } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from 'react'
+import { userContext } from "../components/UserContext.jsx";
 
 import TwoTitlesSlot from '../components/TwoTitlesSlot.jsx'
 
 function ExercisePage() {
     const navigate = useNavigate();
     const location = useLocation();
+    const { upScore } = userContext();
 
     const [useGrade, setGrade] = useState(0);
 
@@ -32,6 +34,7 @@ function ExercisePage() {
 
     const { exerciseId, exerciseWritten } = location.state || {};
     const toMain = () => { navigate('/'); }
+    const addGrade = () => { upScore(exerciseId, useGrade) }
 
     const exerciseCheckList = () => {
         return exercisesList && exercisesList.length !== 0
@@ -84,6 +87,8 @@ function ExercisePage() {
                 }) :
                     (<Text><i className="pi pi-wrench" /> Oooopps... its seems like something wrong, try to reconnect to internet or refresh the page.</Text>)
             }
+
+            <Button bg={'black'} onClick={() => addGrade()}>Done</Button>
 
         </Stack>
 
