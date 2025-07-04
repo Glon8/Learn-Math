@@ -84,11 +84,11 @@ function TopScoresSlot({ i, user, user_scores_list, topic_names, use_compare, my
               (<TwoTitlesSlot title_info={{
                 title_a: {
                   pi_icon: '',
-                  title: user.name
+                  title: user.name? user.name : 'Name'
                 },
                 title_b: {
                   pi_icon: '',
-                  title: my_user.name
+                  title: my_user.name? my_user.name : 'Name'
                 }
               }}
                 boldness={'normal'} />) : ''

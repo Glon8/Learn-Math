@@ -1,8 +1,6 @@
 import { Flex, Image } from "@chakra-ui/react"
 import { useNavigate } from 'react-router-dom'
 
-import NavMenu from "../components/NavMenu";
-
 function WelcomePage() {
     const navigate = useNavigate();
 
@@ -11,6 +9,7 @@ function WelcomePage() {
     return (<Flex w={'100vw'}
         h={'100vh'}
         justifyContent={'center'}
+        alignItems={'center'}
         paddingX={'20%'}
         paddingY={'10%'}
         onClick={null}
