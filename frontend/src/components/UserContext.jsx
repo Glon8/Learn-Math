@@ -25,7 +25,12 @@ export const UserProvider = ({ children }) => {
     }
   }
 
-  //const signIn = () => { }
+  const signIn = () => {
+     // will pass the user data to the server side
+     // server ll return the token with user data
+     // token will manually overwritten in to, token, empty-user, empty-score
+     // user data that comes from the server ll be passed directly to useUser, useScore, useToken  
+  }
 
   const signOut = () => {
     // update user in  the cookies
@@ -41,13 +46,14 @@ export const UserProvider = ({ children }) => {
 
   const updateUser = () => {
     // update user in  the cookies
-    setCookie(1, "learn_math_user", { token: useToken, user: useUser, score: useScore });
+    if (!useToken && useUser._id === 0)
+      setCookie(1, "learn_math_user", { token: useToken, user: useUser, score: useScore }); // <==== only if user is offline, or if online for token only!
 
     console.log('user update:\r\n')
     console.log(useUser)
 
     // update user in the db
-    if (useUser._id != null && useUser.status === true) {
+    if (useUser._id != null && useUser.status === true || useToken != null) {
       //console.log('must save in data base');
     }
   }
@@ -58,9 +64,12 @@ export const UserProvider = ({ children }) => {
     console.log('fetch data print:')
     console.log(extractedUser)
 
-    if (extractedUser && (extractedUser.token || extractedUser.user.name)) {
-      if (extractedUser.user != false || extractedUser.user._id != null) return extractedUser; // cookies check
-      else if (extractedUser.token != false) { // server pull request with token
+    if (extractedUser && (extractedUser.token || extractedUser.user._id !== null)) {
+      if (!extractedUser.token && extractedUser.user._id === 0)
+        return extractedUser; // cookies check
+      else if (extractedUser.token != null && extractedUser.user._id === null) {
+        // server pull request with token
+        console.log('user online')
       }
     }
     else return { // empty user return
@@ -142,12 +151,12 @@ export const UserProvider = ({ children }) => {
     const fetchData = async () => {
       const extractedUser = await fetchUser();
 
-      await setToken(extractedUser.token);
-      await setUser(extractedUser.user);
-      await setScore(extractedUser.score);
+      setToken(extractedUser.token);
+      setUser(extractedUser.user);
+      setScore(extractedUser.score);
     }
 
-    fetchData()
+    fetchData();
   }, []);
 
   return (<UserContext.Provider

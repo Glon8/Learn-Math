@@ -3,19 +3,22 @@ import { createContext, useContext, useState, useEffect } from 'react'
 const TopScoresContext = createContext();
 
 export const TopScoresProvider = ({ children }) => {
-    const [useUsers, setUsers] = useState(null);
-    const [useScores, setScores] = useState(null);
+    const [useUsers, setUsers] = useState(false);
+    const [useScores, setScores] = useState(false);
 
     // to consider to connect getTopUsers and getTopScores in one function, which fetches:
     // const Top = {users: [], scores: []}
+
     const fetchTop = () => {
         if (false) {
             // server
         }
-        else return {
-            users: [],
-            scores: []
-        }
+        else return ({
+            users: [
+            ],
+            scores: [
+            ]
+        })
     }
 
     const upTop = (token) => {
@@ -33,10 +36,14 @@ export const TopScoresProvider = ({ children }) => {
     }
 
     useEffect(() => {
-        const topScores = fetchTop();
+        const fetch = async () => {
+            const topScores = await fetchTop();
 
-        setUsers(topScores.users);
-        setScores(topScores.scores);
+            setUsers(topScores.users);
+            setScores(topScores.scores);
+        }
+
+        fetch();
     }, []);
 
     return (<TopScoresContext.Provider

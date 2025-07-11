@@ -25,16 +25,18 @@ function TopScoresSlot({ i, user, user_scores_list, topic_names, use_compare, my
     setOpen(close);
   }, [close]);
 
-  return (<Menu.Root open={useOpen} onOpenChange={close === false? () => setOpen(!useOpen) : null}
-    onInteractOutside={autoClose? null : () => setOpen(false)}>
+  return (<Menu.Root open={useOpen} onOpenChange={close === false ? () => setOpen(!useOpen) : null}
+    onInteractOutside={autoClose ? null : () => setOpen(false)}>
 
     <Menu.Trigger asChild>
 
       <Button flexDirection={'row'}
+        w={'full'}
         onClick={() => setOpen(!useOpen)}
         color={'black'}>
 
-        <Flex width={'xs'}
+        <Flex
+          w={'full'}
           justify={'space-between'}>
 
           <Flex flexDirection={'row'} gap={3}>
@@ -72,11 +74,12 @@ function TopScoresSlot({ i, user, user_scores_list, topic_names, use_compare, my
 
       <Menu.Positioner>
 
-        <Menu.Content display={close === false? "none" : ''}
-         width={'xs'}
-         paddingX={5}
+        <Menu.Content display={close === false ? "none" : ''}
+          width={'fit'}
+          maxW={'20rem'}
+          paddingX={5}
           paddingY={3}
-           marginStart={5}>
+          marginStart={5}>
 
           <TitleSlot pi_icon={'pi-graduation-cap'} title={'Scores'} />
           {
@@ -84,11 +87,11 @@ function TopScoresSlot({ i, user, user_scores_list, topic_names, use_compare, my
               (<TwoTitlesSlot title_info={{
                 title_a: {
                   pi_icon: '',
-                  title: user.name? user.name : 'Name'
+                  title: user.name ? user.name : 'No User'
                 },
                 title_b: {
                   pi_icon: '',
-                  title: my_user.name? my_user.name : 'Name'
+                  title: my_user.name ? my_user.name : 'No User'
                 }
               }}
                 boldness={'normal'} />) : ''
@@ -96,50 +99,49 @@ function TopScoresSlot({ i, user, user_scores_list, topic_names, use_compare, my
           <Separator />
           {
             !user_scores_list || user_scores_list.length <= 0 ?
-              (<Text>Whoops! Something went wrong, no grades awailable.</Text>) : ''
-          }
-          {
-            // split users grades list in to seperate lists per user
-            user_scores_list.map((scores, i2) => {
-              // split user grades list into seperate topics
-              if (!use_compare) { // < without compare
-                // checking if user id match list id
-                if (user._id === scores._id)
+              (<Text>Whoops! Something went wrong, no grades awailable.</Text>) :
+              // split users grades list in to seperate lists per user
+              user_scores_list.map((scores, i2) => {
+                // split user grades list into seperate topics
+                if (!use_compare && user._id === scores._id) { // < without compare
+                  // checking if user id match list id
                   return Object.entries(topic_names).map((topic) => {
                     const score = scores[topic[0]];
 
-                    if (topic[0] === 'equasions_basic')
-                      return (
-                        <Separator key={i2 + topic[1]}>
-                          <Slot value={score ? score : ''}
-                            category={topic[1]}
-                            auto={true}
-                            placeholder={'0'} />
-                        </Separator>)
-                    else return (<Slot key={i2 + topic[1]}
-                      value={score ? score : ''}
-                      category={topic[1]}
-                      auto={true}
-                      placeholder={'0'} />)
+                    if (topic[0] === 'equasions_basic') {
+                      return <Separator key={i2 + topic[1]}>
+                        <Slot value={score ? score : ''}
+                          category={topic[1]}
+                          auto={true}
+                          placeholder={'0'} />
+                      </Separator>
+                    } else {
+                      return <Slot key={i2 + topic[1]}
+                        value={score ? score : ''}
+                        category={topic[1]}
+                        auto={true}
+                        placeholder={'0'} />
+                    }
                   })
-              } else { // < with compare
-                if (user._id === scores._id)
+                }
+                else { // < with compare
                   return Object.entries(topic_names).map((topic) => {
                     const score = scores[topic[0]];
                     const user_score = my_scores[topic[0]];
 
-                    if (topic[0] === 'equasions_basic')
-                      return (
-                        <Separator key={i2 + topic[1]}>
-                          <CompareSlot value_a={score ? score : 0} value_b={user_score ? user_score : 0} category={topic[1]} />
-                        </Separator>)
-                    else return (<CompareSlot key={i2 + topic[1]}
-                      value_a={score ? score : 0}
-                      value_b={user_score ? user_score : 0}
-                      category={topic[1]} />)
+                    if (topic[0] === 'equasions_basic') {
+                      return <Separator key={i2 + topic[1]}>
+                        <CompareSlot value_a={score ? score : 0} value_b={user_score ? user_score : 0} category={topic[1]} />
+                      </Separator>
+                    } else {
+                      return <CompareSlot key={i2 + topic[1]}
+                        value_a={score ? score : 0}
+                        value_b={user_score ? user_score : 0}
+                        category={topic[1]} />
+                    }
                   })
-              }
-            })
+                }
+              })
           }
 
         </Menu.Content>

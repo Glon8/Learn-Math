@@ -2,45 +2,36 @@ import { Flex, Text, Separator, Stack } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useState } from "react";
 
+import { userContext } from "../components/UserContext";
+import { getTopicNames } from "../util/Statics.js";
+
 import TwoTitlesSlot from "../components/TwoTitlesSlot";
 import TopicBut from "../components/TopicBut";
 import Spin from "../components/Spin";
 import TextArea from "../components/TextArea";
 
 function HintsPage() {
+  const { pos } = userContext();
   const [useSchool, setSchool] = useState(true);
   const [useTop, setTop] = useState('sum_substract');
 
-  const topic_names = {
-    sum_substract: 'sum & substract',
-    multiply_divide: 'multiply & divide',
-    mixed: 'mixed',
-    power_root: 'power & root',
-    fraction_fractionMixed: 'fractions',
-    forms_sizes: 'forms & sizes',
-    exam_basic: 'exam: basic',
-    equasions_basic: 'equasions: basic',
-    equations_two_more: 'equasions: two & more',
-    verbal_problems: 'verbal problems',
-    geometry: 'geometry',
-    quadratic_equation: 'quadratic equation',
-    circles: 'circles',
-    exam_advanced: 'exam: advanced'
-  };
+const [topic, setTopic] = useState(getTopicNames());
 
-
-
-  return (<Flex justifyItems={'center'}
+  return (<Flex alignItems={'center'}
     flexDirection={"column"}
-    paddingTop={'3rem'}
-    paddingX={'20%'}
-    paddingY={'10%'}>
+    w={'100vw'}
+  paddingLeft={pos === 'left' ? '5rem' : ''}
+    paddingRight={pos === 'right' ? '5rem' : ''}
+    paddingTop={pos === 'top' ? { base: '5rem', sm: '5rem', md: '10%'} : {md: '5%'}}
+    paddingBottom={pos === 'bottom' ? '5rem' : ''}>
 
-    <Stack border borderColor={"black"} borderWidth={1}
+    <Stack border borderColor={"black"}
+      borderWidth={1}
       paddingX={5}
       paddingY={7}
       rounded={'xl'}
-      gap={3}>
+      gap={3}
+      maxW={'65rem'}>
 
       <TwoTitlesSlot title_info={{
         title_a: {
@@ -55,7 +46,7 @@ function HintsPage() {
       }} />
       <Separator />
       <Flex hideFrom={'lg'}>
-        <Spin classList={topic_names}
+        <Spin classList={topic}
           additional={{ teach: 'Discuss With Teach!' }}
           getValue={(value) => setTop(value)} />
       </Flex>
@@ -88,7 +79,7 @@ function HintsPage() {
           gapY={3}
           padding={5}>
 
-          <Text>Topics explanation here! This tab is scrollabble! Current topic is {topic_names[useTop]}</Text>
+          <Text>Topics explanation here! This tab is scrollabble! Current topic is {topic[useTop]}</Text>
           {
             useTop == 'teach' ? (<TextArea getValue={(value) => {
               console.log(value)
@@ -106,7 +97,7 @@ function HintsPage() {
           />
           <Separator />
           {
-            Object.entries(topic_names).map((topic, index) => {
+            Object.entries(topic).map((topic, index) => {
               if (useSchool && index >= 0 && index < 7)
                 return (<TopicBut key={topic[0]}
                   pi_icon={'pi-hashtag'}
