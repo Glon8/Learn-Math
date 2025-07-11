@@ -1,10 +1,8 @@
-import {
-    Flex, Button, Menu, Portal, Text
-} from "@chakra-ui/react"
+import { Flex, Button, Menu, Portal, Text, useBreakpointValue } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useEffect, useState } from "react";
 
-function SelectionCheckMenu({ options, default_options, disabled, navPosition, title, pi_icon, close, getSwitches }) {
+function SelectionCheckMenu({ options, default_options, disabled, navSide, title, pi_icon, close, getSwitches }) {
     const [useOpen, setOpen] = useState(close ? close : false);
 
     const [use_switches, set_switches] = useState(default_options ? default_options : []);
@@ -31,11 +29,10 @@ function SelectionCheckMenu({ options, default_options, disabled, navPosition, t
     }, [close]);
 
     return (<Menu.Root positioning={
-        navPosition === 'top' ? { placement: 'left' } :
-            navPosition === 'left' ? { placement: 'right-end' } :
-                navPosition === 'bottom' ? { placement: 'left' } :
-                    navPosition === 'right' ? { placement: 'left-end' } : { placement: 'left' }}>
-
+        navSide === 'top' ? { placement:'left' } :
+            navSide === 'left' ? { placement: 'right-end' } :
+                navSide === 'bottom' ? { placement: 'left' } :
+                    navSide === 'right' ? { placement: 'left-end' } : { placement: 'left' }}>
         <Menu.Trigger asChild>
             <Button color={'black'}
                 onClick={() => setOpen(!useOpen)}

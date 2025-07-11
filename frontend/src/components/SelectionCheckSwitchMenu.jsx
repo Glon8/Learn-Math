@@ -4,7 +4,7 @@ import {
 import "primeicons/primeicons.css";
 import { useState, useEffect } from "react";
 
-function SelectionCheckSwitchMenu({ title, pi_icon, options, default_option, navPosition, close }) {
+function SelectionCheckSwitchMenu({ title, pi_icon, options, default_option, navSide, close }) {
     const [useOpen, setOpen] = useState(close ? close : false);
 
     const [use_value, set_value] = useState(default_option ? default_option : '');
@@ -14,10 +14,10 @@ function SelectionCheckSwitchMenu({ title, pi_icon, options, default_option, nav
     }, [close]);
 
     return (<Menu.Root positioning={
-        navPosition === 'top' ? { placement: 'left' } :
-            navPosition === 'left' ? { placement: 'right-end' } :
-                navPosition === 'bottom' ? { placement: 'left' } :
-                    navPosition === 'right' ? { placement: 'left-end' } : ''}>
+        navSide === 'top' ? { placement: 'left' } :
+            navSide === 'left' ? { placement: 'right-end' } :
+                navSide === 'bottom' ? { placement: 'left' } :
+                    navSide === 'right' ? { placement: 'left-end' } : {placement: 'left'}}>
         <Menu.Trigger asChild>
             <Button color={'black'}
                 onClick={() => setOpen(!useOpen)}

@@ -1,22 +1,18 @@
 import { Flex, useBreakpointValue } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useNavigate } from 'react-router-dom'
-import { useState } from "react";
 
 import { userContext } from "./UserContext.jsx";
 
-import NavMenu from './NavMenu.jsx'
+import NavMenu from './NavMenu.jsx';
 import NavBut from "./NavBut.jsx";
-import SignForm from './SignForm.jsx'
 
 function NavBar() {
     const navigate = useNavigate();
 
     const { pos } = userContext();
 
-    const navShort = useBreakpointValue({ sm: true, md: true, lg: false, xl: false });
-    const [useSignUp, setSignUp] = useState(false);
-    const [useSignIn, setSignIn] = useState(false);
+    const navShort = useBreakpointValue({base:true, sm: true, md: true, lg: false, xl: false });
 
     const to_main = () => { navigate('/'); }
     const to_profile = () => { navigate('/profile') }
@@ -60,11 +56,7 @@ function NavBar() {
                     })}>Toaster</Button>
     */
 
-    return (<Flex w={'100vw'}
-        h={'100vh'}
-        position={'absolute'}
-    >
-        <Flex border
+    return (<Flex border
             borderStartWidth={pos === 'right' ? 2 : 0}
             borderEndWidth={pos === 'left' ? 2 : 0}
             borderTopWidth={pos === 'bottom' ? 2 : 0}
@@ -116,30 +108,12 @@ function NavBar() {
                     <NavMenu title={'Menu'}
                         pi_icon={'pi-align-justify'}
                         navShort={navShort}
-                        signInForm={() => {
-                            setSignUp(false)
-                            setSignIn(!useSignIn)
-                        }}
-                        signUpForm={() => {
-                            setSignUp(!useSignUp)
-                            setSignIn(false)
-                        }} />
+                         />
                 </Flex>
 
             </Flex>
 
-        </Flex >
-        <SignForm isIn={useSignIn}
-            isUp={useSignUp}
-            close={() => {
-                setSignIn(false);
-                setSignUp(false);
-            }}
-            callToast={(title, desc, color) => {
-                callToast(title, desc, color)
-            }} />
-
-    </Flex>)
+        </Flex >)
 }
 
 export default NavBar

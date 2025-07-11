@@ -4,13 +4,15 @@ import { useEffect, useState, useId } from "react";
 import { useColorMode } from "./ui/color-mode.jsx";
 
 import { userContext } from './UserContext.jsx'
+import { signContext } from "./Signcontext.jsx";
 
 import SelectionCheckMenu from "./SelectionCheckMenu";
 import SelectionCheckSwitchMenu from "./SelectionCheckSwitchMenu";
 import Tool from "./Tooltip.jsx";
 
-function NavMenu({ signUpForm, signInForm, close, autoClose, navShort, title, pi_icon }) {
+function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
     const { pos, mode, upUser, user, out, lang, set } = userContext();
+    const { isIn, isUp } = signContext();
 
     const triggerId = useId();
     const { colorMode, toggleColorMode } = useColorMode();
@@ -157,7 +159,7 @@ function NavMenu({ signUpForm, signInForm, close, autoClose, navShort, title, pi
                                     <Button backgroundColor={'white'}
                                         onClick={() => {
                                             setOpen(false);
-                                            signUpForm();
+                                            isUp(true);
                                         }}
                                         color={"black"}
                                         w={'full'}
@@ -178,7 +180,7 @@ function NavMenu({ signUpForm, signInForm, close, autoClose, navShort, title, pi
                                     <Button backgroundColor={'white'}
                                         onClick={() => {
                                             setOpen(false);
-                                            signInForm();
+                                            isIn(true);
                                         }}
                                         color={"black"}
                                         w={'full'}
@@ -198,7 +200,7 @@ function NavMenu({ signUpForm, signInForm, close, autoClose, navShort, title, pi
 
                             </Menu.ItemGroup>
                             <Menu.Separator />
-                            <Menu.ItemGroup paddingX={3}>
+                            <Menu.ItemGroup>
                                 <Menu.Item>
                                     <Button backgroundColor={'white'}
                                         color={'black'}
@@ -236,7 +238,7 @@ function NavMenu({ signUpForm, signInForm, close, autoClose, navShort, title, pi
                                         default_options={default_lesson_settings}
                                         switch_board={true}
                                         options={lesson_settings}
-                                        getSwitches={(thing) => {thing != set ? upUser('settings', thing) : null}} />
+                                        getSwitches={(thing) => { thing != set ? upUser('settings', thing) : null }} />
                                 </Menu.Item>
                                 <Menu.Item>
                                     <SelectionCheckSwitchMenu title={'Menu Position'}

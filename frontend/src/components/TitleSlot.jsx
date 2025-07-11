@@ -3,7 +3,6 @@ import "primeicons/primeicons.css";
 
 function TitleSlot({pi_icon, title}) {
     return (<Flex width={'1xs'} flexDirection={'row'} alignItems={'center'} gapX={2}>
-
         {
             pi_icon ? <i className={`pi ${pi_icon}`} /> : null
         }

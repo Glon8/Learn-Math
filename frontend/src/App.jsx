@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { UserProvider } from './components/UserContext.jsx'
 import { TopScoresProvider } from './components/TopScoresContext.jsx'
 import { LanguagesProvider } from './components/LanguagesContext.jsx'
+import { SignProvider } from './components/Signcontext.jsx'
 
 import NavBar from './components/NavBar.jsx'
 import WelcomePage from './pages/WelcomePage.jsx'
@@ -20,7 +21,9 @@ function App() {
 
       <LanguagesProvider>
 
-        <NavBar />
+        <SignProvider>
+          <NavBar />
+        </SignProvider>
 
         <Routes>
 

@@ -9,7 +9,7 @@ import TwoTitlesSlot from '../components/TwoTitlesSlot.jsx'
 function ExercisePage() {
     const navigate = useNavigate();
     const location = useLocation();
-    const { upScore } = userContext();
+    const { upScore, pos } = userContext();
 
     const [useGrade, setGrade] = useState(0);
 
@@ -40,18 +40,22 @@ function ExercisePage() {
         return exercisesList && exercisesList.length !== 0
     }
 
-    return (<Flex justifyItems={'center'}
+    return (<Flex alignItems={'center'}
         flexDirection={"column"}
-        paddingTop={'3rem'}
-        paddingX={'20%'}
-        paddingY={'10%'}
+        paddingLeft={pos === 'left' ? '5rem' : ''}
+        paddingRight={pos === 'right' ? '5rem' : ''}
+        paddingTop={pos === 'top' ? { base: '5rem', sm: '5rem', md: '10%' } : { md: '5%' }}
+        paddingBottom={pos === 'bottom' ? '5rem' : ''}
     >
 
-        <Stack border borderColor={"black"} borderWidth={1}
+        <Stack border borderColor={"black"}
+            borderWidth={1}
             paddingX={5}
             paddingY={7}
             rounded={'xl'}
-            gap={3}>
+            gap={3}
+            h={'fit'}
+            maxW={'65rem'}>
 
             <TwoTitlesSlot title_info={exerciseCheckList() ? {
                 title_a: {

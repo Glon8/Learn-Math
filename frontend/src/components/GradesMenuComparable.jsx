@@ -78,7 +78,7 @@ function GradesMenuComparable({ display,
             topic_names && my_scores ?
                 (Object.entries(topic_names).map((topic, i) => {
                     const score = my_scores[topic[0]];
-                    const other_score = compare_to_grades[topic[0]];
+                    const other_score = compare_to_grades? compare_to_grades[topic[0]] : [];
 
                     switch (comparable) {
                         case 0: {

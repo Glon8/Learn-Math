@@ -1,23 +1,23 @@
 import { Text, Flex, Input } from "@chakra-ui/react"
 import { useEffect, useState } from "react";
 
+/*
+<Slot placeholder={'optional titles'}
+ value={'any title'}
+ category={'title'}
+ auto={true}
+ getValue((value) => {console.log(value)})
+ />
+*/
+
 function Slot({ placeholder, value, getValue, category, edit, color, dir, auto }) {
     const [useValue, setValue] = useState(value ? value : '');
 
     useEffect(() => {
         setValue(value)
-    },[value]);
+    }, [value]);
 
-    /*
-    <Slot placeholder={'optional titles'}
-     value={'any title'}
-     category={'title'}
-     auto={true}
-     getValue((value) => {console.log(value)})
-     />
-    */
-
-    return (<Flex w={'1xs'}
+    return (<Flex w={'full'} //1xs
         flexDirection={dir ? dir : 'row'}
         justify={'space-between'}>
             
@@ -42,7 +42,7 @@ function Slot({ placeholder, value, getValue, category, edit, color, dir, auto }
             paddingStart={edit ? 0 : 1}
         />
         <Text
-            w={auto ? 'full' :'7rem'}
+            w={auto ? 'full' : '7rem'}
             textAlign={'right'}>{category}</Text>
 
     </Flex>)

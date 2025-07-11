@@ -5,23 +5,11 @@ import TitleSlot from "../components/TitleSlot";
 import TwoTitlesSlot from "../components/TwoTitlesSlot";
 import Slot from "../components/Slot";
 
-/* 
-<GradesMenu display={'flex'}
-        title_type={0 one, 1 two}
-        pi_icon={if title_type 0}
-        title={if title_type 0}
-        title_info={if title_type 1}
-        topic_names={topic_names}
-        my_scores={my_scores}
-        size={0 short, 1 long}
-        part={if size is 0, 0 first part, 1 second part}
-    />
-*/
-
 function GradesMenu({display, title_type, pi_icon, title, title_info, topic_names, my_scores, size, part}) {
     return (<Flex display={display ? display : 'none'}
-        height={'fit'}
-        width={'25rem'}
+        h={'fit'}
+        width={{base: 'full',sm:'25rem'}}
+        justifyContent={'center'}
         gapY={3}
         paddingX={5}
         paddingY={7}
