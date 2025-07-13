@@ -92,7 +92,7 @@ function HintsPage() {
 
           }}>
 
-          <Text>Topics explanation here! This tab is scrollabble! Current topic is {topic[useTop]}</Text>
+          <Text color={{ _light: '#1D282E', _dark: 'white' }}>Topics explanation here! This tab is scrollabble! Current topic is {topic[useTop]}</Text>
           {
             useTop == 'teach' ? (<TextArea getValue={(value) => {
               console.log(value)

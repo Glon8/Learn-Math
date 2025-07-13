@@ -17,11 +17,12 @@ function Slot({ placeholder, value, getValue, category, edit, color, dir, auto }
         setValue(value)
     }, [value]);
 
-    return (<Flex w={'full'} //1xs
+    return (<Flex w={'full'}
+        minW={'xs'}
         flexDirection={dir ? dir : 'row'}
         justify={'space-between'}>
 
-        <Input width={auto ? 'fit' : '15rem'}
+        <Input width={auto ? '4rem' : '15rem'}
             value={useValue}
             placeholder={placeholder ? placeholder : ''}
             disabled={edit ? false : true}

@@ -17,8 +17,16 @@ function TextArea({ getValue }) {
             placeholder="Ask teach!"
             autoresize
             maxH={'10rem'}
-            maxLength={350} />
-        <Field.HelperText>Max 350 characters</Field.HelperText>
+            maxLength={350} 
+            _light={{
+                color:'#1D282E',
+                borderColor: '#B1B7BA/20'
+            }}
+            _dark={{}}
+            />
+        <Field.HelperText
+        color={{_light: '#1D282E', _dark: 'white'}}
+        >Max 350 characters</Field.HelperText>
     </Field.Root>)
 }
 

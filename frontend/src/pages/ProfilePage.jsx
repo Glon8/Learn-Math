@@ -31,11 +31,11 @@ function ProfilePage() {
   const update = () => {
     //validation goes here HERE!!!
 
-    user.name != name ? upUser('name', name) : null;
-    user.email != email ? upUser('email', email) : null;
-    user.password != newPass ? upUser('password', newPass) : null;
-    user.secret != secQues ? upUser('secret', secQues) : null;
-    user.answer != secAns ? upUser('answer', secAns) : null;
+    user.name != name && name != null ? upUser('name', name) : null;
+    user.email != email && name != null ? upUser('email', email) : null;
+    user.password != newPass && name != null ? upUser('password', newPass) : null;
+    user.secret != secQues && name != null ? upUser('secret', secQues) : null;
+    user.answer != secAns && name != null ? upUser('answer', secAns) : null;
   }
 
   return (<Flex gap={5} w={'100%'}
