@@ -2,8 +2,10 @@ import { Text, Flex } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 
 function CompareSlot({ value_a, value_b, category }) {
-    return (<Flex width={'1xs'}
+    return (<Flex width={'full'}
+        minW={'xs'}
         flexDirection={'row'}
+        alignItems={'center'}
         position={'relative'}
         h={'2rem'}
     >

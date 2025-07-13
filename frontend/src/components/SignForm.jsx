@@ -95,15 +95,18 @@ function SignForm({ isIn, isUp, close }) {
       align={'center'}
       border
       borderWidth={1}
-      borderColor={'black'}
       marginY={'10rem'}
-      bg={'white'}
       rounded={'xl'}
       flexDirection={'column'}
       paddingY={7}
       paddingX={5}
       zIndex={15}
-      gap={3}>
+      gap={3}
+      _light={{
+        borderColor: "#1D282E",
+        backgroundColor: 'white'
+      }}
+      _dark={{}}>
 
       <Flex width={'full'}
         flexDirection={'column'}
@@ -112,11 +115,20 @@ function SignForm({ isIn, isUp, close }) {
         <Flex justify={'space-between'}>
 
           <TitleSlot pi_icon={useIn ? 'pi-sign-in' : 'pi-user-edit'} title={`SIGN ${useIn ? 'IN' : 'UP'}`} />
-          <Button color={"black"}
+          <Button focusRing={'inside'}
             onClick={() => {
               close();
               setOffline(false);
-            }}><i className="pi pi-times" /></Button>
+            }}
+            _light={{
+              background: "white",
+              borderColor: "#B1B7BA/20",
+              focusRingColor: '#B1B7BA',
+              color: '#1D282E'
+            }}
+            _dark={{
+            }}
+          ><i className="pi pi-times" /></Button>
 
         </Flex>
         <Separator />
@@ -127,7 +139,7 @@ function SignForm({ isIn, isUp, close }) {
             <Text textAlign={'center'}
               fontSize={'sm'}>To create an offline user email or password are not rquired.
               It will be stored in your cookies for a week, if you clear cookies or switch
-               user, your progress will be gone. To save the progress, you can sign up as an online user.
+              user, your progress will be gone. To save the progress, you can sign up as an online user.
             </Text>
           </Flex>) :
             (<Flex flexDirection={'column'}
@@ -151,10 +163,20 @@ function SignForm({ isIn, isUp, close }) {
         }
         <Separator />
 
-        <Button color={"black"} onClick={() => {
-          setSend(!send);
-          close();
-        }}>Send</Button>
+        <Button focusRing={'inside'}
+          onClick={() => {
+            setSend(!send);
+            close();
+          }}
+          _light={{
+            background: "white",
+            borderColor: "#B1B7BA/20",
+            focusRingColor: '#B1B7BA',
+            color: '#1D282E'
+          }}
+          _dark={{
+          }}
+        >Send</Button>
         {
           useUp ? (<CheckCard ifChange={() => { setOffline(!useOffline) }}
             pi_icon={'pi-thumbtack'}

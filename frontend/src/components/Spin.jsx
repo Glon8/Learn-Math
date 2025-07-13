@@ -10,12 +10,12 @@ function Spin({ classList, additional, getValue }) {
   const forward = () => {
     usePage >= useNames.length - 1 ? setPage(0) : setPage(usePage + 1);
 
-    getValue(useTitles[usePage >= useNames.length - 1? 0 : usePage + 1]);
+    getValue(useTitles[usePage >= useNames.length - 1 ? 0 : usePage + 1]);
   }
   const backward = () => {
     usePage <= 0 ? setPage(useNames.length - 1) : setPage(usePage - 1);
 
-    getValue(useTitles[usePage <= 0? useNames.length - 1 : usePage - 1]);
+    getValue(useTitles[usePage <= 0 ? useNames.length - 1 : usePage - 1]);
   }
 
 
@@ -44,11 +44,36 @@ function Spin({ classList, additional, getValue }) {
     width={'full'}>
 
     <Button onClick={backward}
-      bg={'gray.200'} color={'black'}>
+      focusRing={'inside'}
+      _light={{
+        color: '#1D282E',
+        background: 'white',
+        borderColor: '#B1B7BA/20',
+        focusRingColor: '#B1B7BA'
+      }}
+      _dark={{
+
+      }}
+    >
       <i className="pi pi-angle-left" />
     </Button>
-    <Text fontWeight={'medium'} fontSize={'lg'} textAlign={'center'}>{useNames[usePage]}</Text>
-    <Button onClick={forward} bg={'gray.200'} color={'black'}>
+    <Text fontWeight={'medium'}
+      fontSize={'lg'}
+      textAlign={'center'}
+      color={{ _light: '#1D282E', _dark: 'white' }}
+    >{useNames[usePage]}</Text>
+    <Button onClick={forward}
+      focusRing={'inside'}
+      _light={{
+        color: '#1D282E',
+        background: 'white',
+        borderColor: '#B1B7BA/20',
+        focusRingColor: '#B1B7BA'
+      }}
+      _dark={{
+
+      }}
+    >
       <i className="pi pi-angle-right" />
     </Button>
 

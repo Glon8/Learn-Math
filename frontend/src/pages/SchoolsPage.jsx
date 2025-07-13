@@ -62,11 +62,6 @@ function SchoolsPage() {
           textAlign={'center'}
           color={{ _light: '#1D282E', _dark: 'white' }}
           fontWeight={'medium'}
-          border
-          borderWidth={1}
-          borderColor={{_light:'#B1B7BA/20', _dark: ''}}
-          rounded={'xl'}
-          padding={1}
         >Select topic that you would like to exercise at!</Text>
         <TopicBut
           pi_icon={'pi-list-check'}
