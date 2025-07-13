@@ -16,8 +16,13 @@ function NavBut({ display, pi_icon, title, navShort, navSide, onClick }) {
     return (<Flex display={display ? 'none' : 'flex'}
         justifyContent={'center'}
         maxW={'20rem'}
-        marginStart={navShort ? 0 : (navSide === 'left' ? 24 : 0)}
-        marginEnd={navShort ? 0 : (navSide === 'right' ? 24 : 0)}>
+        marginStart={navShort ? (navSide === 'left' ? 2 : 0) :
+            (navSide === 'left' ? 24 : 0)}
+        marginEnd={navShort ? (navSide === 'right' ? 2 : 0) :
+            (navSide === 'right' ? 24 : 0)}
+        marginTop={navShort ? (navSide === 'top' ? 2 : 0) : 0}
+        marginBottom={navShort ? (navSide === 'bottom' ? 2 : 0) : 0}
+        >
 
         <Tool title={title}
             disabled={navShort}

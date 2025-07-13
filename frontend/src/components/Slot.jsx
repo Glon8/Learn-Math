@@ -18,11 +18,10 @@ function Slot({ placeholder, value, getValue, category, edit, color, dir, auto }
     }, [value]);
 
     return (<Flex w={'full'}
-        minW={'xs'}
         flexDirection={dir ? dir : 'row'}
         justify={'space-between'}>
 
-        <Input width={auto ? '4rem' : '15rem'}
+        <Input width={auto ? '7rem' : '15rem'}
             value={useValue}
             placeholder={placeholder ? placeholder : ''}
             disabled={edit ? false : true}

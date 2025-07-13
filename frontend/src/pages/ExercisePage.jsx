@@ -42,10 +42,10 @@ function ExercisePage() {
 
     return (<Flex alignItems={'center'}
         flexDirection={"column"}
-        paddingLeft={pos === 'left' ? '5rem' : ''}
-        paddingRight={pos === 'right' ? '5rem' : ''}
-        paddingTop={pos === 'top' ? { base: '5rem', sm: '5rem', md: '10%' } : { md: '5%' }}
-        paddingBottom={pos === 'bottom' ? '5rem' : ''}
+        paddingLeft={pos === 'left' ? { base: '3rem', sm: '3rem', md: '3rem', lg: '5rem' } : ''}
+        paddingRight={pos === 'right' ? { base: '3rem', sm: '3rem', md: '3rem', lg: '5rem' } : ''}
+        paddingTop={pos === 'top' ? { base: '2.5rem', sm: '2.5rem', md: '2.5rem', lg: '10%' } : { md: '5%' }}
+        paddingBottom={pos === 'bottom' ? { base: '2.5rem', sm: '2.5rem', md: '2.5rem', lg: '5rem' } : ''}
     >
 
         <Stack border

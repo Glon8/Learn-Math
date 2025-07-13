@@ -32,10 +32,10 @@ function ScorePage() {
   let temp = 0;
 
   return (<Flex gap={5} w={'100%'}
-    paddingLeft={pos === 'left' ? '5rem' : ''}
-    paddingRight={pos === 'right' ? '5rem' : ''}
-    paddingTop={pos === 'top' ? { base: '5rem', sm: '5rem', md: '10%' } : { md: '5%' }}
-    paddingBottom={pos === 'bottom' ? '5rem' : ''}
+    paddingLeft={pos === 'left' ? { base: '3rem', sm: '3rem', md: '3rem', lg: '5rem' } : ''}
+    paddingRight={pos === 'right' ? { base: '3rem', sm: '3rem', md: '3rem', lg: '5rem' } : ''}
+    paddingTop={pos === 'top' ? { base: '2.5rem', sm: '2.5rem', md: '2.5rem', lg: '10%' } : { md: '5%' }}
+    paddingBottom={pos === 'bottom' ? { base: '2.5rem', sm: '2.5rem', md: '2.5rem', lg: '5rem' } : ''}
     flexDirection={{ sm: 'column', md: 'row' }}
     alignItems={{ sm: 'center', md: '' }}
     justifyContent={{ sm: '', md: 'center' }}>
@@ -64,7 +64,8 @@ function ScorePage() {
         <Separator />
         {
           !users || users.length <= 0 ?
-            (<Text>Whoops! Something went wrong or no users shared their scores.</Text>) :
+            (<Text color={{ _light: '#1D282E', _dark: 'white' }}
+            >Whoops! Something went wrong or no users shared their scores.</Text>) :
             (users.map((useri, i) => {
               return (<Flex key={i}>
                 <Flex display={{ base: 'flex', sm: 'flex', md: 'flex', lg: 'none', xl: 'none' }}
@@ -82,8 +83,7 @@ function ScorePage() {
 
                 </Flex>
                 <Flex display={{ base: 'none', sm: 'none', md: 'none', lg: 'flex', xl: 'flex' }}>
-                  <Button color={'black'}
-                    onClick={() => setToCompare(i)}
+                  <Button onClick={() => setToCompare(i)}
                     _light={{
                       backgroundColor: 'white',
                       borderColor: '#B1B7BA/20',

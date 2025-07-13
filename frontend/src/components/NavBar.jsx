@@ -63,8 +63,8 @@ function NavBar() {
         borderBottomWidth={pos === 'top' ? 2 : 0}
         borderColor={'blackAlpha.500'}
         position={'fixed'}
-        width={pos === 'top' || pos === 'bottom' ? '100%' : 20}
-        height={pos === 'top' || pos === 'bottom' ? 20 : '100%'}
+        width={pos === 'top' || pos === 'bottom' ? '100%' : { base: 15, sm: 15, md: 15, lg: 20, xl: 20 }}
+        height={pos === 'top' || pos === 'bottom' ? { base: 15, sm: 15, md: 15, lg: 20, xl: 20 } : '100%'}
         padding={3}
         flexDir={pos === 'top' || pos === 'bottom' ? 'row' : 'column-reverse'}
         right={pos === 'right' ? 0 : 'auto'}
@@ -106,8 +106,12 @@ function NavBar() {
                         onClick={butt.onClick} />)
                 })
             }
-            <Flex marginStart={navShort ? 0 : (pos === 'left' ? 24 : 0)}
-                marginEnd={navShort ? 0 : (pos === 'right' ? 24 : 0)}
+            <Flex marginStart={navShort ? (pos === 'left' ? 2 : 0) :
+                (pos === 'left' ? 24 : 0)}
+                marginEnd={navShort ? (pos === 'right' ? 2 : 0) :
+                    (pos === 'right' ? 24 : 0)}
+                marginTop={navShort ? (pos === 'top' ? 2 : 0) : 0}
+                marginBottom={navShort ? (pos === 'bottom' ? 2 : 0) : 0}
                 w={navShort ? 'auto' :
                     (pos === 'right' || pos === 'left' ? '9rem' : 'auto')}
                 maxW={'20rem'}>

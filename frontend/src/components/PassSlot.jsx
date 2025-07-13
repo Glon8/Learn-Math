@@ -6,7 +6,7 @@ function PassSlot({ placeholder, value, visible, getValue, edit, category, dir, 
     const [useValue, setValue] = useState(value ? ' ' + value : '');
     const [useVisible, setVisible] = useState(visible ? true : false);
 
-    return (<Flex width={'1xs'}
+    return (<Flex width={'full'}
         flexDirection={dir ? dir : 'row'}
         justify={'space-between'}
         position={'relative'}>
