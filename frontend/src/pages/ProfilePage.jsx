@@ -38,7 +38,7 @@ function ProfilePage() {
     user.answer != secAns ? upUser('answer', secAns) : null;
   }
 
-  return (<Flex gap={5} w={'100vw'}
+  return (<Flex gap={5} w={'100%'}
     h={useBreakpointValue({ lg: 'auto', xl: '100vh' })}
     justifyContent={'center'}
     alignItems={useBreakpointValue({ base: 'center', sm: 'center', md: 'center', lg: 'top' })}
@@ -143,7 +143,9 @@ function ProfilePage() {
 
             if (use_profile_edit) update();
           }} />
-        <Text textAlign={'center'}> (POPUP as error for local user)<br /> To share your grades, you must be an online user.<br />
+        <Text textAlign={'center'}
+          color={{ _light: '#1D282E', _dark: 'white' }}
+        > (POPUP as error for local user)<br /> To share your grades, you must be an online user.<br />
           You can check the profile for your status <br /> or in right top corner menu.</Text>
 
       </Flex>

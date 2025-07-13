@@ -8,7 +8,7 @@ const empty_user = {
     secret: null,
     answer: null,
     settings: [],
-    mode: 'light',
+    mode: 'dark',
     language: 'english',
     navPosition: 'top'
 }

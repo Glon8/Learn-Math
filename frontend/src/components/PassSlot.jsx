@@ -29,6 +29,12 @@ function PassSlot({ placeholder, value, visible, getValue, edit, category, dir, 
                 getValue ? getValue(value) : null;
             }}
             paddingStart={edit ? 0 : 1}
+            _light={{
+                backgroundColor: 'white',
+            }}
+            _dark={{
+
+            }}
         />
         <Button display={edit ? '' : 'none'}
             position={'absolute'}
@@ -36,12 +42,13 @@ function PassSlot({ placeholder, value, visible, getValue, edit, category, dir, 
             left={auto? '' : '11.5rem'}
             bg={'transparent'}
             onClick={() => setVisible(!useVisible)}
-            color={'gray.300'}
+            color={{_light:'#B1B7BA/40', _dark: 'white'}}
         >
             <i className="pi pi-eye" />
         </Button>
         <Text w={auto ? 'auto' : '7rem'}
             textAlign={'right'}
+            color={{_light:'#1D282E', _dark: 'white'}}
         >{category}</Text>
 
     </Flex>)

@@ -17,12 +17,20 @@ function SelectionCheckSwitchMenu({ title, pi_icon, options, default_option, nav
         navSide === 'top' ? { placement: 'left' } :
             navSide === 'left' ? { placement: 'right-end' } :
                 navSide === 'bottom' ? { placement: 'left' } :
-                    navSide === 'right' ? { placement: 'left-end' } : {placement: 'left'}}>
+                    navSide === 'right' ? { placement: 'left-end' } : { placement: 'left' }}>
         <Menu.Trigger asChild>
-            <Button color={'black'}
-                onClick={() => setOpen(!useOpen)}
-                bg={'white'}
-                w={'full'}>
+            <Button onClick={() => setOpen(!useOpen)}
+                w={'full'}
+                _light={{
+                    background: "white",
+                    borderColor: "#B1B7BA/20",
+                    focusRingColor: '#B1B7BA',
+                    color: '#1D282E'
+                }}
+                _dark={{
+
+                }}
+            >
 
                 <Flex w={'full'} justifyContent={'start'} gapX={3}>
                     <i className={`pi ${pi_icon}`} />
@@ -49,7 +57,15 @@ function SelectionCheckSwitchMenu({ title, pi_icon, options, default_option, nav
                                         set_value(value);
                                         func();
                                     }}
-                                    color={"black"}
+                                    _light={{
+                                        background: "white",
+                                        borderColor: "#B1B7BA/20",
+                                        focusRingColor: '#B1B7BA',
+                                        color: '#1D282E'
+                                    }}
+                                    _dark={{
+
+                                    }}
                                 >
 
                                     <Flex

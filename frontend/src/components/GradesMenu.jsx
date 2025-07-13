@@ -57,7 +57,7 @@ function GradesMenu({ display, title_type, pi_icon, title, title_info, topic_nam
                             }
                             else return (<Slot key={topic[1]} value={score ? score : 0} category={topic[1]} auto={true} />)
                         }
-                    })) : 'Something wrong, perhaps no list?'
+                    })) : (<Text color={{_light: '#1D282E', _dark: 'white'}}>Something wrong, perhaps no list?</Text>)
         }
     </Flex>)
 }

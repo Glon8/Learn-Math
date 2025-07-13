@@ -13,18 +13,27 @@ import "primeicons/primeicons.css";
    />
 */
 
-function TopicBut({ dir, display, pi_icon, title, onClick, subTitle, align, justify}) {
+function TopicBut({ dir, display, pi_icon, title, onClick, subTitle, align, justify }) {
     return (<Flex display={display ? 'none' : 'flex'}
         w={'full'}
         flexDirection={dir ? dir : "row"}
         alignItems={align ? align : 'center'}
-        justify={justify ? justify : 'space-between'}>
+        justify={justify ? justify : 'space-between'}
+    >
 
-        <Button bg={'gray.100'}
-            color={'black'}
-            minW={'14.5rem'}
-            w={{base: 'full', sm: 'full', md: 'fit', lg: 'fit', xl: 'fit'}}
+        <Button minW={'14.5rem'}
+            focusRing={'inside'}
+            w={{ base: 'full', sm: 'full', md: 'fit', lg: 'fit', xl: 'fit' }}
             onClick={onClick}
+            _light={{
+                backgroundColor: 'white',
+                borderColor: '#B1B7BA/20',
+                focusRingColor: '#B1B7BA',
+                color: '#1D282E'
+            }}
+            _dark={{
+
+            }}
         >
 
             <Flex width={'full'}
@@ -35,7 +44,8 @@ function TopicBut({ dir, display, pi_icon, title, onClick, subTitle, align, just
             </Flex>
 
         </Button>
-        <Flex display={subTitle ? 'flex' : 'none'}>
+        <Flex display={subTitle ? 'flex' : 'none'}
+        color={{_light: '#1D282E', _dark: 'white'}}>
             <Text>{subTitle}</Text>
         </Flex>
 
