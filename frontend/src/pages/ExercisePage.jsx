@@ -79,11 +79,13 @@ function ExercisePage() {
                     title: `Exercise ${exerciseWritten}`
                 }
             }} />
-
             {
                 exerciseCheckList() ?
                     (<Separator paddingTop={3}>
-                        <Text textAlign={'center'}>Solve exercises to recieve a grade! (Max grade is 100)</Text>
+                        <Text textAlign={'center'}
+                        color={{_light:'#1D282E', _black: 'white'}}
+                        fontWeight={'medium'}
+                        >Solve exercises to recieve a grade! (Max grade is 100)</Text>
                     </Separator>) : null
             }
             <Separator />
@@ -99,7 +101,16 @@ function ExercisePage() {
                     (<Text><i className="pi pi-wrench" /> Oooopps... its seems like something wrong, try to reconnect to internet or refresh the page.</Text>)
             }
 
-            <Button bg={'black'} onClick={() => addGrade()}>Done</Button>
+            <Button focusRing={'inside'}
+                onClick={() => addGrade()}
+                _light={{
+                    background: "white",
+                    borderColor: "#B1B7BA/20",
+                    focusRingColor: '#B1B7BA',
+                    color:'#1D282E'
+                }}
+                _dark={{
+                }}>Done</Button>
 
         </Stack>
 

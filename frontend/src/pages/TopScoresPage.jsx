@@ -22,7 +22,7 @@ function ScorePage() {
 
   const to_close = useBreakpointValue({ lg: false, xl: false });
   const to_compare = useBreakpointValue({ sm: 0, md: 0, lg: (use_compare ? 2 : 0), xl: (use_compare ? 1 : 0) });
-  const to_compare_grades = useBreakpointValue(scores.length != 0?{
+  const to_compare_grades = useBreakpointValue(scores.length != 0 ? {
     sm: scores[0],
     md: scores[0],
     lg: scores[useToCompare],
@@ -31,25 +31,25 @@ function ScorePage() {
 
   let temp = 0;
 
-  return (<Flex gap={5} w={'100vw'}
+  return (<Flex gap={5} w={'100%'}
     paddingLeft={pos === 'left' ? '5rem' : ''}
     paddingRight={pos === 'right' ? '5rem' : ''}
     paddingTop={pos === 'top' ? { base: '5rem', sm: '5rem', md: '10%' } : { md: '5%' }}
     paddingBottom={pos === 'bottom' ? '5rem' : ''}
-    flexDirection={{sm: 'column', md: 'row'}}
-    alignItems={{sm: 'center', md: ''}}
-    justifyContent={{sm: '', md: 'center'}}>
-      
+    flexDirection={{ sm: 'column', md: 'row' }}
+    alignItems={{ sm: 'center', md: '' }}
+    justifyContent={{ sm: '', md: 'center' }}>
+
     <Stack height={'fit'}
       paddingX={5}
       paddingY={7}
       gap={3}
-      alignSelf={{base: 'center', sm: 'center', md:'start'}}
+      alignSelf={{ base: 'center', sm: 'center', md: 'start' }}
       justifyItems={'center'}
       rounded={'xl'}
       border
       borderWidth={1}
-      w={{base: 'full', sm: '25rem'}}
+      w={{ base: 'full', sm: '25rem' }}
       _light={{
         backgroundColor: 'white',
         borderColor: '#B1B7BA'
@@ -57,7 +57,7 @@ function ScorePage() {
       _dark={{
 
       }}
-      >
+    >
 
       <Stack>
         <TitleSlot pi_icon={'pi-crown'} title={'TOP SCORES'} />
@@ -67,8 +67,8 @@ function ScorePage() {
             (<Text>Whoops! Something went wrong or no users shared their scores.</Text>) :
             (users.map((useri, i) => {
               return (<Flex key={i}>
-                <Flex display={{base:'flex', sm: 'flex', md: 'flex', lg: 'none', xl: 'none' }}
-                w={'full'}>
+                <Flex display={{ base: 'flex', sm: 'flex', md: 'flex', lg: 'none', xl: 'none' }}
+                  w={'full'}>
 
                   <TopScoresSlot i={i}
                     close={to_close}
@@ -81,9 +81,19 @@ function ScorePage() {
                     temp={temp} />
 
                 </Flex>
-                <Flex display={{base:'none', sm: 'none', md: 'none', lg: 'flex', xl: 'flex' }}>
+                <Flex display={{ base: 'none', sm: 'none', md: 'none', lg: 'flex', xl: 'flex' }}>
                   <Button color={'black'}
-                    onClick={() => setToCompare(i)}>
+                    onClick={() => setToCompare(i)}
+                    _light={{
+                      backgroundColor: 'white',
+                      borderColor: '#B1B7BA/20',
+                      focusRingColor: '#B1B7BA/20',
+                      color: '#1D282E'
+                    }}
+                    _dark={{
+
+                    }}
+                  >
                     <Flex width={'xs'} flexDirection={'row'} justify={'space-between'}>
 
                       <Flex flexDirection={'row'} gap={3}>
@@ -135,7 +145,9 @@ function ScorePage() {
 
             <CheckCard pi_icon={'pi-thumbtack'} title={'Compare with my grades'} ifChange={() => set_compare(!use_compare)} />
 
-            <Text textAlign={'center'}> (POPUP as error for local user)<br /> To share your grades, you must be an online user.<br />
+            <Text textAlign={'center'}
+              color={{ _light: '#1D282E', _dark: 'dark' }}
+            > (POPUP as error for local user)<br /> To share your grades, you must be an online user.<br />
               You can check the profile for your status <br /> or in right top corner menu.</Text>
 
           </Flex>)
@@ -143,7 +155,7 @@ function ScorePage() {
     </Stack>
     {
       !users || users.length <= 0 || !scores || scores.length <= 0 ? null :
-        (<GradesMenuComparable display={{base:'none', sm: 'none', md: 'none', lg: 'flex', xl: 'flex' }}
+        (<GradesMenuComparable display={{ base: 'none', sm: 'none', md: 'none', lg: 'flex', xl: 'flex' }}
           title_type={1}
           pi_icon={'pi-trophy'}
           title={'PROGRESS'}
@@ -167,7 +179,7 @@ function ScorePage() {
     }
     {
       !users || users.length <= 0 || !scores || scores.length <= 0 ? null :
-        (<GradesMenuComparable display={{base:'none', sm: 'none', md: 'none', lg: 'none', xl: 'flex' }}
+        (<GradesMenuComparable display={{ base: 'none', sm: 'none', md: 'none', lg: 'none', xl: 'flex' }}
           title_type={1}
           pi_icon={'pi-trophy'}
           title={'PROGRESS'}

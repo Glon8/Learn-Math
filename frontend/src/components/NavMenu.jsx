@@ -1,6 +1,6 @@
 import { Button, Flex, Text, Menu, Portal } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
-import { useEffect, useState, useId } from "react";
+import { useEffect, useState } from "react";
 import { useColorMode } from "./ui/color-mode.jsx";
 
 import { userContext } from './UserContext.jsx'
@@ -14,7 +14,6 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
     const { pos, mode, upUser, user, out, lang, set } = userContext();
     const { isIn, isUp } = signContext();
 
-    const triggerId = useId();
     const { colorMode, toggleColorMode } = useColorMode();
 
     const [useOpen, setOpen] = useState(close ? close : false);
@@ -107,7 +106,8 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
                 positioning={pos === 'top' ? { placement: 'bottom' } :
                     pos === 'left' ? { placement: 'right-end' } :
                         pos === 'bottom' ? { placement: 'top' } :
-                            pos === 'right' ? { placement: 'left-end' } : ''}>
+                            pos === 'right' ? { placement: 'left-end' } : ''}
+            >
 
                 <Menu.Trigger asChild>
 
@@ -137,20 +137,33 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
                         <Menu.Content>
 
                             <Menu.ItemGroup>
-                                <Menu.ItemGroupLabel>
+                                <Menu.ItemGroupLabel _light={{
+                                    color: '#1D282E'
+                                }}
+                                    _dark={{
+
+                                    }}>
                                     {
                                         user._id != null ? (`${!user.status ? 'Local' : 'Online'} user: ${user.name}`) :
                                             ('No user connected!')
                                     }
                                 </Menu.ItemGroupLabel>
                                 <Menu.Item display={user._id != null ? '' : 'none'}>
-                                    <Button backgroundColor={'white'}
-                                        onClick={() => {
-                                            out();
-                                            setOpen(false);
-                                        }}
+                                    <Button onClick={() => {
+                                        out();
+                                        setOpen(false);
+                                    }}
                                         color={"black"}
                                         w={'full'}
+                                        _light={{
+                                            background: "white",
+                                            borderColor: "#B1B7BA/20",
+                                            focusRingColor: '#B1B7BA',
+                                            color: '#1D282E'
+                                        }}
+                                        _dark={{
+
+                                        }}
                                     >
 
                                         <Flex width={'full'}
@@ -165,13 +178,20 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
                                     </Button>
                                 </Menu.Item>
                                 <Menu.Item display={user._id != null ? 'none' : ''}>
-                                    <Button backgroundColor={'white'}
-                                        onClick={() => {
-                                            setOpen(false);
-                                            isUp(true);
-                                        }}
-                                        color={"black"}
+                                    <Button onClick={() => {
+                                        setOpen(false);
+                                        isUp(true);
+                                    }}
                                         w={'full'}
+                                        _light={{
+                                            background: "white",
+                                            borderColor: "#B1B7BA/20",
+                                            focusRingColor: '#B1B7BA',
+                                            color: '#1D282E'
+                                        }}
+                                        _dark={{
+
+                                        }}
                                     >
 
                                         <Flex width={'full'}
@@ -186,13 +206,20 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
                                     </Button>
                                 </Menu.Item>
                                 <Menu.Item display={user._id != null ? 'none' : ''}>
-                                    <Button backgroundColor={'white'}
-                                        onClick={() => {
-                                            setOpen(false);
-                                            isIn(true);
-                                        }}
-                                        color={"black"}
+                                    <Button onClick={() => {
+                                        setOpen(false);
+                                        isIn(true);
+                                    }}
                                         w={'full'}
+                                        _light={{
+                                            background: "white",
+                                            borderColor: "#B1B7BA/20",
+                                            focusRingColor: '#B1B7BA',
+                                            color: '#1D282E'
+                                        }}
+                                        _dark={{
+
+                                        }}
                                     >
 
                                         <Flex width={'full'}
@@ -211,14 +238,22 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
                             <Menu.Separator />
                             <Menu.ItemGroup>
                                 <Menu.Item>
-                                    <Button backgroundColor={'white'}
-                                        color={'black'}
-                                        w={'full'}
+                                    <Button w={'full'}
                                         onClick={() => {
                                             mode === 'light' ?
                                                 upUser('mode', 'dark') :
                                                 upUser('mode', 'light')
-                                        }}>
+                                        }}
+                                        _light={{
+                                            background: "white",
+                                            borderColor: "#B1B7BA/20",
+                                            focusRingColor: '#B1B7BA',
+                                            color: '#1D282E'
+                                        }}
+                                        _dark={{
+
+                                        }}
+                                    >
 
                                         <Flex width={'full'}
                                             alignItems={'center'}

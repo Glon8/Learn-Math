@@ -78,13 +78,19 @@ function HintsPage() {
         <Flex position={'relative'}
           w={'full'}
           border
-          borderColor={"gray.300"}
           borderWidth={1}
           justifyItems={'center'}
           rounded={'xl'}
           flexDirection={"column"}
           gapY={3}
-          padding={5}>
+          padding={5}
+          _light={{
+            borderColor: '#B1B7BA/40',
+            color: '#1D282E'
+          }}
+          _dark={{
+
+          }}>
 
           <Text>Topics explanation here! This tab is scrollabble! Current topic is {topic[useTop]}</Text>
           {

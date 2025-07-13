@@ -139,7 +139,7 @@ function GradesMenuComparable({ display,
                             />)
                         }
                     }
-                })) : 'Something missing... maybe a list.'
+                })) : (<Text color={{_light:'#1D282E', _dark:'white'}}>Something missing... maybe a list.</Text>)
         }
     </Flex>)
 }

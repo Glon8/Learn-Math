@@ -20,12 +20,12 @@ function Slot({ placeholder, value, getValue, category, edit, color, dir, auto }
     return (<Flex w={'full'} //1xs
         flexDirection={dir ? dir : 'row'}
         justify={'space-between'}>
-            
+
         <Input width={auto ? 'fit' : '15rem'}
             value={useValue}
             placeholder={placeholder ? placeholder : ''}
             disabled={edit ? false : true}
-            color={color ? color : ''}
+            color={color ? color : ({ _light: '#1D282E', _dark: 'white' })}
             maxLength={16}
             borderWidth={edit === true ? 1 : 0}
             textAlign={edit ? 'center' : ''}
@@ -40,10 +40,17 @@ function Slot({ placeholder, value, getValue, category, edit, color, dir, auto }
             }}
             opacity={!edit && useValue ? 1 : ''}
             paddingStart={edit ? 0 : 1}
+            _light={{
+                backgroundColor: 'white',
+            }}
+            _dark={{
+
+            }}
         />
-        <Text
-            w={auto ? 'full' : '7rem'}
-            textAlign={'right'}>{category}</Text>
+        <Text w={auto ? 'full' : '7rem'}
+            textAlign={'right'}
+            color={{ _light: '#1D282E', _dark: 'white' }}
+        >{category}</Text>
 
     </Flex>)
 }

@@ -31,9 +31,18 @@ function TopScoresSlot({ i, user, user_scores_list, topic_names, use_compare, my
     <Menu.Trigger asChild>
 
       <Button flexDirection={'row'}
+        focusRing={'inside'}
         w={'full'}
         onClick={() => setOpen(!useOpen)}
-        color={'black'}>
+        _light={{
+          backgroundColor: 'white',
+          borderColor: '#B1B7BA/20',
+          focusRingColor: '#B1B7BA',
+          color: '#1D282E'
+        }}
+        _dark={{
+
+        }}>
 
         <Flex
           w={'full'}

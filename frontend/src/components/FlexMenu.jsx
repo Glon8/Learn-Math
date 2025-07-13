@@ -21,7 +21,17 @@ function FlexMenu({ pi_icon, title, inner_title, options, close, disabled, autoC
                 width={'xs'}
                 flexDirection={'row'}
                 gap={3}
-                color={'black'}>
+                color={'black'}
+                focusRing={'inside'}
+                _light={{
+                    backgroundColor: 'white',
+                    borderColor: '#B1B7BA/20',
+                    focusRingColor: '#B1B7BA/20',
+                    color: '#1D282E'
+                }}
+                _dark={{
+
+                }}>
                 <i className={`pi ${pi_icon}`} /><Text textAlign={'center'}>{title}</Text>
             </Button>
 
@@ -33,7 +43,11 @@ function FlexMenu({ pi_icon, title, inner_title, options, close, disabled, autoC
                 <Menu.Content width={'xs'} marginStart={5}>
                     {
                         inner_title ?
-                            (<Text fontWeight={'medium'} fontSize={'lg'} textAlign={'center'}>{inner_title}</Text>) : ''
+                            (<Text fontWeight={'medium'}
+                                fontSize={'lg'}
+                                textAlign={'center'}
+                                color={{ _light: '#1D282E', _dark: 'white' }}
+                            >{inner_title}</Text>) : ''
                     }
                     {
                         inner_title ?
@@ -41,7 +55,10 @@ function FlexMenu({ pi_icon, title, inner_title, options, close, disabled, autoC
                     }
                     {
                         options.map((value, index) => {
-                            return (<Menu.Item key={index} value={`${value}`}>{value}</Menu.Item>)
+                            return (<Menu.Item key={index}
+                                value={`${value}`}
+                                color={{ _light: '#1D282E', _dark: 'white' }}
+                            >{value}</Menu.Item>)
                         })
                     }
                 </Menu.Content>

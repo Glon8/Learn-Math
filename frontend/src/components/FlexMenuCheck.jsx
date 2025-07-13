@@ -16,7 +16,10 @@ function FlexMenuCheck({ close, disabled, pi_icon, title, list, list_checked, au
 
         <Menu.Trigger asChild disabled={disabled ? disabled : false}>
 
-            <Button onClick={() => setOpen(!useOpen)} flexDirection={'row'} gap={3}>
+            <Button onClick={() => setOpen(!useOpen)}
+                flexDirection={'row'}
+                gap={3}
+                >
                 <i className={`pi ${pi_icon}`} /><Text textAlign={'center'}>{title}</Text>
             </Button>
 
