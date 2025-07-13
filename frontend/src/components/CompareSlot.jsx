@@ -7,7 +7,6 @@ function CompareSlot({ value_a, value_b, category }) {
         position={'relative'}
         h={'2rem'}
     >
-
         <Text fontSize={'xl'}
             textAlign={'center'}
             color={`${value_a > value_b ? 'green' : ''}`}

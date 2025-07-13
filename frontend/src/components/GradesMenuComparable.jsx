@@ -46,10 +46,17 @@ function GradesMenuComparable({ display,
         paddingX={5}
         paddingY={7}
         flexDirection={"column"}
-        border borderRadius={"xl"}
-        borderColor={'black'}
+        border
+        borderRadius={"xl"}
         borderWidth={1}
-        textAlign={'center'} >
+        textAlign={'center'}
+        _light={{
+            backgroundColor: 'white',
+            borderColor: '#B1B7BA'
+        }}
+        _dark={{
+
+        }} >
         {
             title_type === 0 ? (<TitleSlot pi_icon={pi_icon ? pi_icon : ''} title={title ? title : 'Deffault Title'} />) :
                 (title_type === 1 && title_info ? (comparable === 2 ?
@@ -78,8 +85,8 @@ function GradesMenuComparable({ display,
             topic_names && my_scores ?
                 (Object.entries(topic_names).map((topic, i) => {
                     const score = my_scores[topic[0]];
-                    const other_score = compare_to_grades? compare_to_grades[topic[0]] : [];
-
+                    const other_score = compare_to_grades? compare_to_grades[topic[0]] : null;
+                    
                     switch (comparable) {
                         case 0: {
                             if (topic[0] === 'equasions_basic')

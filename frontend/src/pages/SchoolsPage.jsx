@@ -29,14 +29,21 @@ function SchoolsPage() {
     paddingTop={pos === 'top' ? { base: '5rem', sm: '5rem', md: '10%' } : { md: '5%' }}
     paddingBottom={pos === 'bottom' ? '5rem' : ''}>
 
-    <Stack border borderColor={"black"} borderWidth={1}
+    <Stack border borderWidth={1}
       paddingX={5}
       paddingY={7}
       rounded={'xl'}
       gap={3}
       w={{ base: 'full', sm: 'auto' }}
       minW={{ base: 'auto', sm: '25rem' }}
-      maxW={'65rem'}>
+      maxW={'65rem'}
+      _light={{
+        backgroundColor: 'white',
+        borderColor: '#B1B7BA'
+      }}
+      _dark={{
+
+      }}>
 
       <TitleSlot pi_icon={'pi-list-check'} title={'SCHOOLS TOPICS'} />
       <Separator />

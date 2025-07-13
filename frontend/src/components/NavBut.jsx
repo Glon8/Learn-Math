@@ -24,22 +24,35 @@ function NavBut({ display, pi_icon, title, navShort, navSide, onClick }) {
             navSide={navSide}
             value={
                 <Button backgroundColor={'black'}
+                    focusRing={'inside'}
                     onClick={onClick}
                     width={navShort ? 'auto' :
-                        (navSide === 'right' || navSide === 'left' ? '9rem' : 'auto')} >
+                        (navSide === 'right' || navSide === 'left' ? '9rem' : 'auto')}
+                    _light={{
+                        background: "#1D282E",
+                        borderColor: "#1D282E",
+                        focusRingColor: '#B1B7BA'
+                    }}
+                    _dark={{
+                    }}>
 
                     <Flex flexDirection={'row'} gap={3}>
                         <i className={`pi ${pi_icon ? pi_icon : ''}`} />
                         {
                             navShort ? null :
-                                (<Text textAlign={'center'}>{title}</Text>)
+                                (<Text textAlign={'center'}
+                                    _light={{
+                                        color: '#EEF6F9'
+                                    }}
+                                    _dark={{
+                                    }}>{title}</Text>)
                         }
                     </Flex>
 
                 </Button>
             } />
 
-    </Flex>)
+    </Flex >)
 }
 
 export default NavBut

@@ -15,8 +15,29 @@ export const TopScoresProvider = ({ children }) => {
         }
         else return ({
             users: [
+                {
+                    _id: 1111,
+                    name: 'Jack'
+                }
             ],
             scores: [
+                {
+                    _id: 1111,
+                    sum_substract: 67,
+                    multiply_divide: null,
+                    mixed: null,
+                    power_root: null,
+                    fraction_fractionMixed: null,
+                    forms_sizes: null,
+                    exam_basic: null,
+                    equasions_basic: null,
+                    equations_two_more: null,
+                    verbal_problems: null,
+                    geometry: null,
+                    quadratic_equation: null,
+                    circles: null,
+                    exam_advanced: null
+                }
             ]
         })
     }

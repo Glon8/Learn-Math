@@ -22,13 +22,12 @@ function ScorePage() {
 
   const to_close = useBreakpointValue({ lg: false, xl: false });
   const to_compare = useBreakpointValue({ sm: 0, md: 0, lg: (use_compare ? 2 : 0), xl: (use_compare ? 1 : 0) });
-  const to_compare_grades = useBreakpointValue(scores?{
+  const to_compare_grades = useBreakpointValue(scores.length != 0?{
     sm: scores[0],
     md: scores[0],
     lg: scores[useToCompare],
     xl: scores[useToCompare]
   } : '');
-
 
   let temp = 0;
 
@@ -48,9 +47,16 @@ function ScorePage() {
       alignSelf={{base: 'center', sm: 'center', md:'start'}}
       justifyItems={'center'}
       rounded={'xl'}
-      border borderColor={'black'}
+      border
       borderWidth={1}
       w={{base: 'full', sm: '25rem'}}
+      _light={{
+        backgroundColor: 'white',
+        borderColor: '#B1B7BA'
+      }}
+      _dark={{
+
+      }}
       >
 
       <Stack>

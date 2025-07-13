@@ -12,7 +12,7 @@ function NavBar() {
 
     const { pos } = userContext();
 
-    const navShort = useBreakpointValue({base:true, sm: true, md: true, lg: false, xl: false });
+    const navShort = useBreakpointValue({ base: true, sm: true, md: true, lg: false, xl: false });
 
     const to_main = () => { navigate('/'); }
     const to_profile = () => { navigate('/profile') }
@@ -57,63 +57,69 @@ function NavBar() {
     */
 
     return (<Flex border
-            borderStartWidth={pos === 'right' ? 2 : 0}
-            borderEndWidth={pos === 'left' ? 2 : 0}
-            borderTopWidth={pos === 'bottom' ? 2 : 0}
-            borderBottomWidth={pos === 'top' ? 2 : 0}
-            borderColor={'blackAlpha.500'}
-            position={'fixed'}
-            width={pos === 'top' || pos === 'bottom' ? '100%' : 20}
-            height={pos === 'top' || pos === 'bottom' ? 20 : '100%'}
-            padding={3}
-            flexDir={pos === 'top' || pos === 'bottom' ? 'row' : 'column-reverse'}
-            right={pos === 'right' ? 0 : 'auto'}
-            left={pos === 'left' ? 0 : "auto"}
-            top={pos === 'top' ? 0 : 'auto'}
-            bottom={pos === 'bottom' ? 0 : 'auto'}
-            justify={'space-between'}
-            backgroundColor={'rgb(166, 166, 166)'}
-            zIndex={5}
-        >
-            <Flex flexDirection={'row'}
-                justifyContent={'center'}
-                alignItems={'center'}
-                gap={3}>
+        borderStartWidth={pos === 'right' ? 2 : 0}
+        borderEndWidth={pos === 'left' ? 2 : 0}
+        borderTopWidth={pos === 'bottom' ? 2 : 0}
+        borderBottomWidth={pos === 'top' ? 2 : 0}
+        borderColor={'blackAlpha.500'}
+        position={'fixed'}
+        width={pos === 'top' || pos === 'bottom' ? '100%' : 20}
+        height={pos === 'top' || pos === 'bottom' ? 20 : '100%'}
+        padding={3}
+        flexDir={pos === 'top' || pos === 'bottom' ? 'row' : 'column-reverse'}
+        right={pos === 'right' ? 0 : 'auto'}
+        left={pos === 'left' ? 0 : "auto"}
+        top={pos === 'top' ? 0 : 'auto'}
+        bottom={pos === 'bottom' ? 0 : 'auto'}
+        justify={'space-between'}
+        backgroundColor={'rgb(166, 166, 166)'}
+        zIndex={5}
+        _light={{
+            background: '#A0835C',
+            borderColor: '#1D282E'
+        }}
+        _dark={{
+        }}
+    >
+        <Flex flexDirection={'row'}
+            justifyContent={'center'}
+            alignItems={'center'}
+            gap={3}>
 
-                <NavBut title={'Learn Math'}
-                    pi_icon={'pi-sparkles'}
-                    navShort={navShort}
-                    navSide={pos}
-                    onClick={to_main} />
+            <NavBut title={'Learn Math'}
+                pi_icon={'pi-sparkles'}
+                navShort={navShort}
+                navSide={pos}
+                onClick={to_main} />
 
-            </Flex>
-            <Flex flexDirection={pos === 'top' || pos === 'bottom' ? 'row' : 'column-reverse'}
-                alignItems={'center'}
-                gap={navShort ? 0.5 : 3}>
-                {
-                    navButList.map((butt, index) => {
-                        return (<NavBut key={index}
-                            title={butt.title}
-                            pi_icon={butt.pi_icon}
-                            navShort={navShort}
-                            navSide={pos}
-                            onClick={butt.onClick} />)
-                    })
-                }
-                <Flex marginStart={navShort ? 0 : (pos === 'left' ? 24 : 0)}
-                    marginEnd={navShort ? 0 : (pos === 'right' ? 24 : 0)}
-                    w={navShort ? 'auto' :
-                        (pos === 'right' || pos === 'left' ? '9rem' : 'auto')}
-                    maxW={'20rem'}>
-                    <NavMenu title={'Menu'}
-                        pi_icon={'pi-align-justify'}
+        </Flex>
+        <Flex flexDirection={pos === 'top' || pos === 'bottom' ? 'row' : 'column-reverse'}
+            alignItems={'center'}
+            gap={navShort ? 0.5 : 3}>
+            {
+                navButList.map((butt, index) => {
+                    return (<NavBut key={index}
+                        title={butt.title}
+                        pi_icon={butt.pi_icon}
                         navShort={navShort}
-                         />
-                </Flex>
-
+                        navSide={pos}
+                        onClick={butt.onClick} />)
+                })
+            }
+            <Flex marginStart={navShort ? 0 : (pos === 'left' ? 24 : 0)}
+                marginEnd={navShort ? 0 : (pos === 'right' ? 24 : 0)}
+                w={navShort ? 'auto' :
+                    (pos === 'right' || pos === 'left' ? '9rem' : 'auto')}
+                maxW={'20rem'}>
+                <NavMenu title={'Menu'}
+                    pi_icon={'pi-align-justify'}
+                    navShort={navShort}
+                />
             </Flex>
 
-        </Flex >)
+        </Flex>
+
+    </Flex >)
 }
 
 export default NavBar

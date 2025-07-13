@@ -125,10 +125,9 @@ function SignForm({ isIn, isUp, close }) {
             gapY={5}>
             <Slot placeholder={'name'} category={'Name'} edit={true} getValue={(value) => setName(value)} />
             <Text textAlign={'center'}
-              fontSize={'sm'}>To create offline user it not rquire password
-              or email. It ll be stored in your cookies for a week,
-              if you clear cookies or switch user, your progress ll be gone.
-              To save the progress, you can sign up as online user.
+              fontSize={'sm'}>To create an offline user email or password are not rquired.
+              It will be stored in your cookies for a week, if you clear cookies or switch
+               user, your progress will be gone. To save the progress, you can sign up as an online user.
             </Text>
           </Flex>) :
             (<Flex flexDirection={'column'}
@@ -139,7 +138,7 @@ function SignForm({ isIn, isUp, close }) {
               <PassSlot placeholder={'password'} category={'Password'} edit={true} getValue={(value) => setPassword(value)} />
               <PassSlot placeholder={'confirm password'} category={'Confirm Password'} edit={true} getValue={(value) => setConfPass(value)} />
               <Slot placeholder={'secret question'} category={'Secret Question'} edit={true} getValue={(value) => setSecQues(value)} />
-              <Slot placeholder={'answer on the question'} category={'Secret Answer'} edit={true} getValue={(value) => setSecAns(value)} />
+              <Slot placeholder={'answer to the question'} category={'Secret Answer'} edit={true} getValue={(value) => setSecAns(value)} />
             </Flex>)
         }
 

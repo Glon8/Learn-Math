@@ -111,9 +111,18 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
 
                 <Menu.Trigger asChild>
 
-                    <Button bg={'black'}
+                    <Button focusRing={'inside'}
                         onClick={() => setOpen(!useOpen)}
-                        w={'full'}>
+                        w={'full'}
+                        _light={{
+                            background: "#1D282E",
+                            borderColor: "#1D282E",
+                            focusRingColor: '#B1B7BA',
+                            color: '#EEF6F9'
+                        }}
+                        _dark={{
+
+                        }}>
                         <i className={`pi ${pi_icon}`} />
                         {
                             navShort ? null : <Text>{title}</Text>

@@ -48,14 +48,21 @@ function ExercisePage() {
         paddingBottom={pos === 'bottom' ? '5rem' : ''}
     >
 
-        <Stack border borderColor={"black"}
+        <Stack border
             borderWidth={1}
             paddingX={5}
             paddingY={7}
             rounded={'xl'}
             gap={3}
             h={'fit'}
-            maxW={'65rem'}>
+            maxW={'65rem'}
+            _light={{
+                backgroundColor: 'white',
+                borderColor: '#B1B7BA'
+            }}
+            _dark={{
+
+            }}>
 
             <TwoTitlesSlot title_info={exerciseCheckList() ? {
                 title_a: {

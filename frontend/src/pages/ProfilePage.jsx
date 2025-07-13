@@ -53,9 +53,15 @@ function ProfilePage() {
       h={'fit'}
       flexDirection={"column"}
       rounded={"xl"}
-      borderColor={'black'}
       borderWidth={1}
-      textAlign={'center'}>
+      textAlign={'center'}
+      _light={{
+        backgroundColor: 'white',
+        borderColor: '#B1B7BA'
+      }}
+      _dark={{
+
+      }}>
 
       <TitleSlot pi_icon={'pi-id-card'} title={'PROFILE'} />
       <Separator />
@@ -131,7 +137,7 @@ function ProfilePage() {
           disabled={stat ? true : false} />
         <CheckCard pi_icon={'pi-thumbtack'}
           title={'Edit Profile'}
-          disabled={user._id ? false : true}
+          disabled={user._id != null ? false : true}
           ifChange={() => {
             set_profile_edit(!use_profile_edit);
 

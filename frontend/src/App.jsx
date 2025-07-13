@@ -4,9 +4,10 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { UserProvider } from './components/UserContext.jsx'
 import { TopScoresProvider } from './components/TopScoresContext.jsx'
 import { LanguagesProvider } from './components/LanguagesContext.jsx'
-import { SignProvider } from './components/Signcontext.jsx'
+import { SignProvider } from './components/SignContext.jsx'
 
 import NavBar from './components/NavBar.jsx'
+import BackGroundImage from './components/BackGroundImage.jsx'
 import WelcomePage from './pages/WelcomePage.jsx'
 import ProfilePage from './pages/ProfilePage.jsx'
 import TopScoresPage from './pages/TopScoresPage.jsx'
@@ -24,6 +25,8 @@ function App() {
         <SignProvider>
           <NavBar />
         </SignProvider>
+
+        <BackGroundImage />
 
         <Routes>
 

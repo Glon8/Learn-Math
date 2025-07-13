@@ -15,23 +15,30 @@ function HintsPage() {
   const [useSchool, setSchool] = useState(true);
   const [useTop, setTop] = useState('sum_substract');
 
-const [topic, setTopic] = useState(getTopicNames());
+  const [topic, setTopic] = useState(getTopicNames());
 
   return (<Flex alignItems={'center'}
     flexDirection={"column"}
     w={'100vw'}
-  paddingLeft={pos === 'left' ? '5rem' : ''}
+    paddingLeft={pos === 'left' ? '5rem' : ''}
     paddingRight={pos === 'right' ? '5rem' : ''}
-    paddingTop={pos === 'top' ? { base: '5rem', sm: '5rem', md: '10%'} : {md: '5%'}}
+    paddingTop={pos === 'top' ? { base: '5rem', sm: '5rem', md: '10%' } : { md: '5%' }}
     paddingBottom={pos === 'bottom' ? '5rem' : ''}>
 
-    <Stack border borderColor={"black"}
+    <Stack border
       borderWidth={1}
       paddingX={5}
       paddingY={7}
       rounded={'xl'}
       gap={3}
-      maxW={'65rem'}>
+      maxW={'65rem'}
+      _light={{
+        backgroundColor: 'white',
+        borderColor: '#B1B7BA'
+      }}
+      _dark={{
+
+      }}>
 
       <TwoTitlesSlot title_info={{
         title_a: {
