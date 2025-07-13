@@ -137,7 +137,9 @@ function SignForm({ isIn, isUp, close }) {
             gapY={5}>
             <Slot placeholder={'name'} category={'Name'} edit={true} getValue={(value) => setName(value)} />
             <Text textAlign={'center'}
-              fontSize={'sm'}>To create an offline user email or password are not rquired.
+              fontSize={'sm'}
+              color={{ _light: '#1D282E', _dark: 'white' }}
+            >To create an offline user email or password are not rquired.
               It will be stored in your cookies for a week, if you clear cookies or switch
               user, your progress will be gone. To save the progress, you can sign up as an online user.
             </Text>
@@ -184,7 +186,9 @@ function SignForm({ isIn, isUp, close }) {
           />) : null
         }
         {
-          useIn ? (<Text fontSize={'sm'}>
+          useIn ? (<Text fontSize={'sm'}
+            color={{ _light: '#1D282E', _dark: 'white' }}
+          >
             Have no accout? <Link onClick={() => {
               setIn(false);
               setUp(true);
@@ -192,7 +196,9 @@ function SignForm({ isIn, isUp, close }) {
               console.log('I need an account')
             }}>SIGN UP!</Link>
           </Text>) :
-            (<Text fontSize={'sm'}>
+            (<Text fontSize={'sm'}
+              color={{ _light: '#1D282E', _dark: 'white' }}
+            >
               Have an accout already? <Link onClick={() => {
                 setIn(true);
                 setUp(false);

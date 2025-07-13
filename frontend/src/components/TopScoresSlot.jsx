@@ -88,7 +88,11 @@ function TopScoresSlot({ i, user, user_scores_list, topic_names, use_compare, my
 
         <Menu.Content display={close === false ? "none" : ''}
           paddingX={5}
-          paddingY={3}>
+          paddingY={3}
+          marginLeft={my_user.navPosition === 'left'? '0.5rem' : 
+            (my_user.navPosition != 'right'? '1rem' : 0)}
+          marginRight={my_user.navPosition === 'right'? '0.5rem' : 
+            (my_user.navPosition != 'left'? '1rem' : 0)}>
 
           <TitleSlot pi_icon={'pi-graduation-cap'} title={'Scores'} />
           {

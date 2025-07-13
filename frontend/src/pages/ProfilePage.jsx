@@ -43,10 +43,10 @@ function ProfilePage() {
     justifyContent={'center'}
     alignItems={useBreakpointValue({ base: 'center', sm: 'center', md: 'center', lg: 'top' })}
     flexDirection={{ base: 'column', sm: 'column', md: 'column', lg: 'row' }}
-    paddingLeft={pos === 'left' ? '5rem' : ''}
-    paddingRight={pos === 'right' ? '5rem' : ''}
-    paddingTop={pos === 'top' ? { base: '5rem', sm: '5rem', md: '10%' } : { md: '5%' }}
-    paddingBottom={pos === 'bottom' ? '5rem' : ''}>
+    paddingLeft={pos === 'left' ? { base: '3rem', sm: '3rem', md: '3rem', lg: '5rem' } : ''}
+    paddingRight={pos === 'right' ? { base: '3rem', sm: '3rem', md: '3rem', lg: '5rem' } : ''}
+    paddingTop={pos === 'top' ? { base: '2.5rem', sm: '2.5rem', md: '2.5rem', lg: '10%' } : { md: '5%' }}
+    paddingBottom={pos === 'bottom' ? { base: '2.5rem', sm: '2.5rem', md: '2.5rem', lg: '5rem' } : ''}>
 
     <Flex width={{ base: 'full', sm: '25rem' }} gapY={3} paddingX={5} paddingY={7}
       alignSelf={'top'}
