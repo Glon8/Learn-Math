@@ -1,4 +1,4 @@
-import { Button, Flex, Text, Menu, Portal } from "@chakra-ui/react"
+import { Button, Flex, Text, Menu, Portal, Box } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useEffect, useState } from "react";
 import { useColorMode } from "./ui/color-mode.jsx";
@@ -114,15 +114,11 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
                     <Button focusRing={'inside'}
                         onClick={() => setOpen(!useOpen)}
                         w={'full'}
-                        _light={{
-                            background: "#1D282E",
-                            borderColor: "#1D282E",
-                            focusRingColor: '#B1B7BA',
-                            color: '#EEF6F9'
-                        }}
-                        _dark={{
-
-                        }}>
+                        background="#1D282E"
+                        borderColor="#1D282E"
+                        focusRingColor='#B1B7BA'
+                        color='#EEF6F9'
+                    >
                         <i className={`pi ${pi_icon}`} />
                         {
                             navShort ? null : <Text>{title}</Text>
@@ -134,25 +130,25 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
 
                     <Menu.Positioner>
 
-                        <Menu.Content>
+                        <Menu.Content _dark={{
+                            background: '#1D282E/95',
+                            borderColor: '#1D282E'
+                        }}>
 
                             <Menu.ItemGroup>
-                                <Menu.ItemGroupLabel _light={{
-                                    color: '#1D282E'
-                                }}
-                                    _dark={{
-
-                                    }}>
+                                <Menu.ItemGroupLabel
+                                    color={{ _light: '#1D282E', _dark: '#EEF6F9' }}>
                                     {
                                         user._id != null ? (`${!user.status ? 'Local' : 'Online'} user: ${user.name}`) :
                                             ('No user connected!')
                                     }
                                 </Menu.ItemGroupLabel>
                                 <Menu.Item display={user._id != null ? '' : 'none'}>
-                                    <Button onClick={() => {
-                                        out();
-                                        setOpen(false);
-                                    }}
+                                    <Button focusRing={'inside'}
+                                        onClick={() => {
+                                            out();
+                                            setOpen(false);
+                                        }}
                                         color={"black"}
                                         w={'full'}
                                         _light={{
@@ -162,7 +158,10 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
                                             color: '#1D282E'
                                         }}
                                         _dark={{
-
+                                            background: "#1D282E",
+                                            borderColor: "#737E80",
+                                            focusRingColor: '#B1B7BA',
+                                            color: '#EEF6F9'
                                         }}
                                     >
 
@@ -178,10 +177,11 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
                                     </Button>
                                 </Menu.Item>
                                 <Menu.Item display={user._id != null ? 'none' : ''}>
-                                    <Button onClick={() => {
-                                        setOpen(false);
-                                        isUp(true);
-                                    }}
+                                    <Button focusRing={'inside'}
+                                        onClick={() => {
+                                            setOpen(false);
+                                            isUp(true);
+                                        }}
                                         w={'full'}
                                         _light={{
                                             background: "white",
@@ -190,7 +190,10 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
                                             color: '#1D282E'
                                         }}
                                         _dark={{
-
+                                            background: "#1D282E",
+                                            borderColor: "#737E80",
+                                            focusRingColor: '#B1B7BA',
+                                            color: '#EEF6F9'
                                         }}
                                     >
 
@@ -206,10 +209,11 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
                                     </Button>
                                 </Menu.Item>
                                 <Menu.Item display={user._id != null ? 'none' : ''}>
-                                    <Button onClick={() => {
-                                        setOpen(false);
-                                        isIn(true);
-                                    }}
+                                    <Button focusRing={'inside'}
+                                        onClick={() => {
+                                            setOpen(false);
+                                            isIn(true);
+                                        }}
                                         w={'full'}
                                         _light={{
                                             background: "white",
@@ -218,7 +222,10 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
                                             color: '#1D282E'
                                         }}
                                         _dark={{
-
+                                            background: "#1D282E",
+                                            borderColor: "#737E80",
+                                            focusRingColor: '#B1B7BA',
+                                            color: '#EEF6F9'
                                         }}
                                     >
 
@@ -238,7 +245,8 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
                             <Menu.Separator />
                             <Menu.ItemGroup>
                                 <Menu.Item>
-                                    <Button w={'full'}
+                                    <Button focusRing={'inside'}
+                                        w={'full'}
                                         onClick={() => {
                                             mode === 'light' ?
                                                 upUser('mode', 'dark') :
@@ -251,7 +259,10 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
                                             color: '#1D282E'
                                         }}
                                         _dark={{
-
+                                            background: "#1D282E/80",
+                                            borderColor: "#737E80",
+                                            focusRingColor: '#B1B7BA',
+                                            color: '#EEF6F9'
                                         }}
                                     >
 

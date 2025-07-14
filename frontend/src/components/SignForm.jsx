@@ -68,7 +68,7 @@ function SignForm({ isIn, isUp, close }) {
     justifyContent={'center'}
     alignItems={'center'}
     display={useIn || useUp ? 'flex' : 'none'}
-    bg={'gray.800/10'}
+    bg='#B1B7BA/40'
     zIndex={5}
   >
     {
@@ -86,11 +86,9 @@ function SignForm({ isIn, isUp, close }) {
     {
       // form itself
     }
-    <Flex w={'auto'}
-      minW={'25rem'}
-      maxW={'30rem'}
+    <Flex w={'full'}
+      maxW={'25rem'}
       h={'fit'}
-      minH={'25rem'}
       justify={'space-between'}
       align={'center'}
       border
@@ -106,7 +104,10 @@ function SignForm({ isIn, isUp, close }) {
         borderColor: "#1D282E",
         backgroundColor: 'white'
       }}
-      _dark={{}}>
+      _dark={{
+        background: '#8b8da0',
+        borderColor: '#1D282E',
+      }}>
 
       <Flex width={'full'}
         flexDirection={'column'}
@@ -127,6 +128,10 @@ function SignForm({ isIn, isUp, close }) {
               color: '#1D282E'
             }}
             _dark={{
+              background: "#1D282E",
+              borderColor: "#1D282E",
+              focusRingColor: '#B1B7BA',
+              color: '#EEF6F9'
             }}
           ><i className="pi pi-times" /></Button>
 
@@ -138,7 +143,7 @@ function SignForm({ isIn, isUp, close }) {
             <Slot placeholder={'name'} category={'Name'} edit={true} getValue={(value) => setName(value)} />
             <Text textAlign={'center'}
               fontSize={'sm'}
-              color={{ _light: '#1D282E', _dark: 'white' }}
+              color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
             >To create an offline user email or password are not rquired.
               It will be stored in your cookies for a week, if you clear cookies or switch
               user, your progress will be gone. To save the progress, you can sign up as an online user.
@@ -177,6 +182,10 @@ function SignForm({ isIn, isUp, close }) {
             color: '#1D282E'
           }}
           _dark={{
+            background: "#1D282E",
+            borderColor: "#1D282E",
+            focusRingColor: '#B1B7BA',
+            color: '#EEF6F9'
           }}
         >Send</Button>
         {
@@ -187,7 +196,7 @@ function SignForm({ isIn, isUp, close }) {
         }
         {
           useIn ? (<Text fontSize={'sm'}
-            color={{ _light: '#1D282E', _dark: 'white' }}
+            color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
           >
             Have no accout? <Link onClick={() => {
               setIn(false);
@@ -197,7 +206,7 @@ function SignForm({ isIn, isUp, close }) {
             }}>SIGN UP!</Link>
           </Text>) :
             (<Text fontSize={'sm'}
-              color={{ _light: '#1D282E', _dark: 'white' }}
+              color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
             >
               Have an accout already? <Link onClick={() => {
                 setIn(true);

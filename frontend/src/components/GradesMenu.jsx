@@ -23,7 +23,8 @@ function GradesMenu({ display, title_type, pi_icon, title, title_info, topic_nam
             borderColor: '#B1B7BA'
         }}
         _dark={{
-
+            background: '#8b8da0',
+            borderColor: '#1D282E',
         }} >
         {
             title_type === 0 ? (<TitleSlot pi_icon={pi_icon ? pi_icon : ''} title={title ? title : 'Deffault Title'} />) :
@@ -57,7 +58,7 @@ function GradesMenu({ display, title_type, pi_icon, title, title_info, topic_nam
                             }
                             else return (<Slot key={topic[1]} value={score ? score : 0} category={topic[1]} auto={true} />)
                         }
-                    })) : (<Text color={{_light: '#1D282E', _dark: 'white'}}>Something wrong, perhaps no list?</Text>)
+                    })) : (<Text color={{ _light: '#1D282E', _dark: '#EEF6F9' }}>Something wrong, perhaps no list?</Text>)
         }
     </Flex>)
 }

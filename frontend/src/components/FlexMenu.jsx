@@ -30,7 +30,10 @@ function FlexMenu({ pi_icon, title, inner_title, options, close, disabled, autoC
                     color: '#1D282E'
                 }}
                 _dark={{
-
+                    background: "#1D282E",
+                    borderColor: "#1D282E",
+                    focusRingColor: '#B1B7BA',
+                    color: '#EEF6F9'
                 }}>
                 <i className={`pi ${pi_icon}`} /><Text textAlign={'center'}>{title}</Text>
             </Button>
@@ -40,13 +43,18 @@ function FlexMenu({ pi_icon, title, inner_title, options, close, disabled, autoC
 
             <Menu.Positioner>
 
-                <Menu.Content width={'xs'} marginStart={5}>
+                <Menu.Content width={'xs'}
+                    marginStart={5}
+                    _dark={{
+                        background: '#1D282E/95',
+                        borderColor: '#1D282E'
+                    }}>
                     {
                         inner_title ?
                             (<Text fontWeight={'medium'}
                                 fontSize={'lg'}
                                 textAlign={'center'}
-                                color={{ _light: '#1D282E', _dark: 'white' }}
+                                color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
                             >{inner_title}</Text>) : ''
                     }
                     {
@@ -57,7 +65,7 @@ function FlexMenu({ pi_icon, title, inner_title, options, close, disabled, autoC
                         options.map((value, index) => {
                             return (<Menu.Item key={index}
                                 value={`${value}`}
-                                color={{ _light: '#1D282E', _dark: 'white' }}
+                                color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
                             >{value}</Menu.Item>)
                         })
                     }

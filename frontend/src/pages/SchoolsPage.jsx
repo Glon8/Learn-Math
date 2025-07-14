@@ -42,7 +42,8 @@ function SchoolsPage() {
         borderColor: '#B1B7BA'
       }}
       _dark={{
-
+        background: '#8b8da0',
+        borderColor: '#1D282E',
       }}>
 
       <TitleSlot pi_icon={'pi-list-check'} title={'SCHOOLS TOPICS'} />
@@ -60,7 +61,7 @@ function SchoolsPage() {
         <Text hideBelow={"xl"}
           width={'full'}
           textAlign={'center'}
-          color={{ _light: '#1D282E', _dark: 'white' }}
+          color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
           fontWeight={'medium'}
         >Select topic that you would like to exercise at!</Text>
         <TopicBut

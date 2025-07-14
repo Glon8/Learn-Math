@@ -17,6 +17,7 @@ function CheckCard({ pi_icon, title, ifChange, disabled, def_checked }) {
                 color: '#1D282E'
             }}
             _dark={{
+                color: '#EEF6F9'
             }}
         >
 

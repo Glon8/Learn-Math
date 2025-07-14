@@ -55,7 +55,8 @@ function ScorePage() {
         borderColor: '#B1B7BA'
       }}
       _dark={{
-
+        background: '#8b8da0',
+        borderColor: '#1D282E',
       }}
     >
 
@@ -64,7 +65,7 @@ function ScorePage() {
         <Separator />
         {
           !users || users.length <= 0 ?
-            (<Text color={{ _light: '#1D282E', _dark: 'white' }}
+            (<Text color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
             >Whoops! Something went wrong or no users shared their scores.</Text>) :
             (users.map((useri, i) => {
               return (<Flex key={i}>
@@ -91,7 +92,10 @@ function ScorePage() {
                       color: '#1D282E'
                     }}
                     _dark={{
-
+                      background: "#1D282E",
+                      borderColor: "#1D282E",
+                      focusRingColor: '#B1B7BA',
+                      color: '#EEF6F9'
                     }}
                   >
                     <Flex width={'xs'} flexDirection={'row'} justify={'space-between'}>
@@ -146,7 +150,7 @@ function ScorePage() {
             <CheckCard pi_icon={'pi-thumbtack'} title={'Compare with my grades'} ifChange={() => set_compare(!use_compare)} />
 
             <Text textAlign={'center'}
-              color={{ _light: '#1D282E', _dark: 'dark' }}
+              color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
             > (POPUP as error for local user)<br /> To share your grades, you must be an online user.<br />
               You can check the profile for your status <br /> or in right top corner menu.</Text>
 

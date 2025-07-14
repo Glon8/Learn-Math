@@ -3,15 +3,6 @@ import "primeicons/primeicons.css";
 
 import Tool from "./Tooltip";
 
-/*
-   <NavBut
-    title={'title}
-    pi_icon={'pi-cog'}
-    navShort={navShort}
-    navSide={navSide}
-    onClick={something} />
-*/
-
 function NavBut({ display, pi_icon, title, navShort, navSide, onClick }) {
     return (<Flex display={display ? 'none' : 'flex'}
         justifyContent={'center'}
@@ -22,35 +13,27 @@ function NavBut({ display, pi_icon, title, navShort, navSide, onClick }) {
             (navSide === 'right' ? 24 : 0)}
         marginTop={navShort ? (navSide === 'top' ? 2 : 0) : 0}
         marginBottom={navShort ? (navSide === 'bottom' ? 2 : 0) : 0}
-        >
+    >
 
         <Tool title={title}
             disabled={navShort}
             navSide={navSide}
             value={
-                <Button backgroundColor={'black'}
-                    focusRing={'inside'}
+                <Button focusRing={'inside'}
                     onClick={onClick}
                     width={navShort ? 'auto' :
                         (navSide === 'right' || navSide === 'left' ? '9rem' : 'auto')}
-                    _light={{
-                        background: "#1D282E",
-                        borderColor: "#1D282E",
-                        focusRingColor: '#B1B7BA'
-                    }}
-                    _dark={{
-                    }}>
+                    background="#1D282E"
+                    borderColor="#1D282E"
+                    focusRingColor='#B1B7BA'>
 
-                    <Flex flexDirection={'row'} gap={3}>
+                    <Flex flexDirection={'row'}
+                        gap={3}
+                        color='#EEF6F9'>
                         <i className={`pi ${pi_icon ? pi_icon : ''}`} />
                         {
                             navShort ? null :
-                                (<Text textAlign={'center'}
-                                    _light={{
-                                        color: '#EEF6F9'
-                                    }}
-                                    _dark={{
-                                    }}>{title}</Text>)
+                                (<Text textAlign={'center'}>{title}</Text>)
                         }
                     </Flex>
 

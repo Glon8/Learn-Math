@@ -26,10 +26,10 @@ export const UserProvider = ({ children }) => {
   }
 
   const signIn = () => {
-     // will pass the user data to the server side
-     // server ll return the token with user data
-     // token will manually overwritten in to, token, empty-user, empty-score
-     // user data that comes from the server ll be passed directly to useUser, useScore, useToken  
+    // will pass the user data to the server side
+    // server ll return the token with user data
+    // token will manually overwritten in to, token, empty-user, empty-score
+    // user data that comes from the server ll be passed directly to useUser, useScore, useToken  
   }
 
   const signOut = () => {
@@ -44,18 +44,26 @@ export const UserProvider = ({ children }) => {
     navigate('/');
   }
 
+  /*
+  crypto js structure package:
+  cookie:
+  "learn_math_user" => {
+    token: {server token}
+    package: {encrypted user}
+    key: {encryption key}
+    }
+  */
+
   const updateUser = () => {
     // update user in  the cookies
-    if (!useToken && useUser._id === 0)
+    if (!useToken && useUser._id === 0) // <=== must use cryptojs to make a light encryption
       setCookie(1, "learn_math_user", { token: useToken, user: useUser, score: useScore }); // <==== only if user is offline, or if online for token only!
-
-    console.log('user update:\r\n')
-    console.log(useUser)
-
-    // update user in the db
-    if (useUser._id != null && useUser.status === true || useToken != null) {
+    else {
+      // update user in the db
       //console.log('must save in data base');
     }
+    console.log('user update:\r\n');
+    console.log(useUser);
   }
 
   const fetchUser = () => {
@@ -63,6 +71,22 @@ export const UserProvider = ({ children }) => {
 
     console.log('fetch data print:')
     console.log(extractedUser)
+
+    /*
+    //checks for  encryptio included:
+
+    if(extractedUser.key != null){
+       // decrypt cookie and return its contains
+    }
+    else if(extractedUser.token != null) {
+       // fetch user from the server
+    }
+    else retrn { // empty user return
+      token: null,
+      user: getEmptyUser(),
+      score: getEmptyScore()
+    }
+    */
 
     if (extractedUser && (extractedUser.token || extractedUser.user._id !== null)) {
       if (!extractedUser.token && extractedUser.user._id === 0)
@@ -137,7 +161,7 @@ export const UserProvider = ({ children }) => {
     // < make a validation only as data changes, to remove useless
     // reloads
 
-    if ((useToken || useUser._id != null) && loaded) {
+    if ((useToken || (useUser._id === 0 && useUser.status === false)) && loaded) {
       console.log('data update: Updated')
       updateUser();
     }

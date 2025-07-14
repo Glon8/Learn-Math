@@ -55,15 +55,15 @@ function GradesMenuComparable({ display,
             borderColor: '#B1B7BA'
         }}
         _dark={{
-
+            background: '#8b8da0',
+            borderColor: '#1D282E',
         }} >
         {
             title_type === 0 ? (<TitleSlot pi_icon={pi_icon ? pi_icon : ''} title={title ? title : 'Deffault Title'} />) :
                 (title_type === 1 && title_info ? (comparable === 2 ?
                     (<TitleSlot pi_icon={pi_icon ? pi_icon : ''} title={title ? title : 'Deffault Title'} />) :
                     (<TwoTitlesSlot title_info={title_info ? title_info : ''} />)
-                ) :
-                    'error: "title_type" accepts 0 or 1')
+                ) : null)
         }
         {
             comparable === 2 && my_scores && title_info ?
@@ -78,21 +78,21 @@ function GradesMenuComparable({ display,
                     }
                 }}
                     boldness={'normal'} />)
-                : ''
+                : null
         }
         <Separator />
         {
             topic_names && my_scores ?
                 (Object.entries(topic_names).map((topic, i) => {
                     const score = my_scores[topic[0]];
-                    const other_score = compare_to_grades? compare_to_grades[topic[0]] : null;
-                    
+                    const other_score = compare_to_grades ? compare_to_grades[topic[0]] : null;
+
                     switch (comparable) {
                         case 0: {
                             if (topic[0] === 'equasions_basic')
                                 return (
                                     <Separator key={i + topic[1]}>
-                                        <Slot value={score ? score : ''}
+                                        <Slot value={score ? score : 0}
                                             placeholder={'0'}
                                             category={topic[1]}
                                             auto={true}
@@ -100,7 +100,7 @@ function GradesMenuComparable({ display,
                                     </Separator>)
                             else return (<Slot key={i + topic[1]}
                                 placeholder={'0'}
-                                value={score ? score : ''}
+                                value={score ? score : 0}
                                 category={topic[1]}
                                 auto={true}
                             />)
@@ -109,7 +109,7 @@ function GradesMenuComparable({ display,
                             if (topic[0] === 'equasions_basic')
                                 return (
                                     <Separator key={i + topic[1]}>
-                                        <Slot value={score ? score : ''}
+                                        <Slot value={score ? score : 0}
                                             placeholder={'0'}
                                             category={topic[1]}
                                             color={score > other_score ? 'green' : ''}
@@ -118,7 +118,7 @@ function GradesMenuComparable({ display,
                                     </Separator>)
                             else return (<Slot key={i + topic[1]}
                                 placeholder={'0'}
-                                value={score ? score : ''}
+                                value={score ? score : 0}
                                 category={topic[1]}
                                 color={score > other_score ? 'green' : ''}
                                 auto={true}
@@ -139,7 +139,7 @@ function GradesMenuComparable({ display,
                             />)
                         }
                     }
-                })) : (<Text color={{_light:'#1D282E', _dark:'white'}}>Something missing... maybe a list.</Text>)
+                })) : (<Text color={{ _light: '#1D282E', _dark: '#EEF6F9' }}>Something missing... maybe a list.</Text>)
         }
     </Flex>)
 }

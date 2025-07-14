@@ -58,10 +58,13 @@ function ExercisePage() {
             maxW={'65rem'}
             _light={{
                 backgroundColor: 'white',
-                borderColor: '#B1B7BA'
+                borderColor: '#B1B7BA',
+                color: '#1D282E'
             }}
             _dark={{
-
+                background: '#8b8da0',
+                borderColor: '#1D282E',
+                color: '#EEF6F9'
             }}>
 
             <TwoTitlesSlot title_info={exerciseCheckList() ? {
@@ -83,8 +86,7 @@ function ExercisePage() {
                 exerciseCheckList() ?
                     (<Separator paddingTop={3}>
                         <Text textAlign={'center'}
-                        color={{_light:'#1D282E', _black: 'white'}}
-                        fontWeight={'medium'}
+                            fontWeight={'medium'}
                         >Solve exercises to recieve a grade! (Max grade is 100)</Text>
                     </Separator>) : null
             }
@@ -107,9 +109,13 @@ function ExercisePage() {
                     background: "white",
                     borderColor: "#B1B7BA/20",
                     focusRingColor: '#B1B7BA',
-                    color:'#1D282E'
+                    color: '#1D282E'
                 }}
                 _dark={{
+                    background: "#1D282E",
+                    borderColor: "#1D282E",
+                    focusRingColor: '#B1B7BA',
+                    color: '#EEF6F9'
                 }}>Done</Button>
 
         </Stack>

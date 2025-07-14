@@ -6,7 +6,7 @@ function TitleSlot({ pi_icon, title }) {
         flexDirection={'row'}
         alignItems={'center'}
         gapX={2}
-        color={{_light: '#1D282E', _dark: 'white'}}>
+        color={{_light: '#1D282E', _dark: '#EEF6F9'}}>
         {
             pi_icon ? <i className={`pi ${pi_icon}`} /> : null
         }
