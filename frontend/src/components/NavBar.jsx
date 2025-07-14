@@ -43,19 +43,6 @@ function NavBar() {
         },
     ];
 
-    /*
-    import { toaster } from "./ui/toaster.jsx";
-
-                <Button bg={'black'}
-                    onClick={() => toaster.create({
-                        title: "Saved!",
-                        description: "Your file was successfully saved.",
-                        type: "success",
-                        closable: true,
-                        duration: 5000,
-                    })}>Toaster</Button>
-    */
-
     return (<Flex border
         borderStartWidth={pos === 'right' ? 2 : 0}
         borderEndWidth={pos === 'left' ? 2 : 0}
@@ -79,6 +66,8 @@ function NavBar() {
             borderColor: '#1D282E'
         }}
         _dark={{
+            background: '#50423d',
+            borderColor: '#8d7361'
         }}
     >
         <Flex flexDirection={'row'}

@@ -20,7 +20,7 @@ function BackGroundImage() {
             bg: '#EEF6F9'
         }}
         _dark={{
-
+            bg: '#c9bbae'
         }}>
 
         <Flex h={'auto'}

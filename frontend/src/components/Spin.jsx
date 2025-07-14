@@ -52,7 +52,10 @@ function Spin({ classList, additional, getValue }) {
         focusRingColor: '#B1B7BA'
       }}
       _dark={{
-
+        background: "#1D282E",
+        borderColor: "#1D282E",
+        focusRingColor: '#B1B7BA',
+        color: '#EEF6F9'
       }}
     >
       <i className="pi pi-angle-left" />
@@ -60,7 +63,7 @@ function Spin({ classList, additional, getValue }) {
     <Text fontWeight={'medium'}
       fontSize={'lg'}
       textAlign={'center'}
-      color={{ _light: '#1D282E', _dark: 'white' }}
+      color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
     >{useNames[usePage]}</Text>
     <Button onClick={forward}
       focusRing={'inside'}
@@ -71,7 +74,10 @@ function Spin({ classList, additional, getValue }) {
         focusRingColor: '#B1B7BA'
       }}
       _dark={{
-
+        background: "#1D282E",
+        borderColor: "#1D282E",
+        focusRingColor: '#B1B7BA',
+        color: '#EEF6F9'
       }}
     >
       <i className="pi pi-angle-right" />

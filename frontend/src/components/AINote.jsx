@@ -20,10 +20,13 @@ function AINote() {
         borderWidth={1}
         _light={{
             color: '#1D282E/50',
-            backgroundColor: 'white/60',
+            backgroundColor: '#EEF6F9/60',
             borderColor: '#B1B7BA/60'
         }}
         _dark={{
+            color: '#1D282E/50',
+            backgroundColor: '#EEF6F9/60',
+            borderColor: '#1D282E/60'
         }}>
         <Text fontWeight={'bold'}>Some images were created by AI</Text>
     </Flex>)

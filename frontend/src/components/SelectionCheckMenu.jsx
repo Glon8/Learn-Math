@@ -28,11 +28,14 @@ function SelectionCheckMenu({ options, default_options, disabled, navSide, title
         setOpen(close);
     }, [close]);
 
-    return (<Menu.Root positioning={
-        navSide === 'top' ? { placement: 'left' } :
+    /*
+    positioning={...}
+        navSide === 'top' || navSide === 'bottom' ? { placement: {base: 'bottom', sm: 'left'} } :
             navSide === 'left' ? { placement: 'right-end' } :
-                navSide === 'bottom' ? { placement: 'left' } :
-                    navSide === 'right' ? { placement: 'left-end' } : { placement: 'left' }}>
+                navSide === 'right' ? { placement: 'left-end' } : ''
+    */
+
+    return (<Menu.Root>
         <Menu.Trigger asChild>
             <Button onClick={() => setOpen(!useOpen)}
                 w={'full'}
@@ -43,7 +46,10 @@ function SelectionCheckMenu({ options, default_options, disabled, navSide, title
                     color: '#1D282E'
                 }}
                 _dark={{
-
+                    background: "#1D282E/80",
+                    borderColor: "#737E80",
+                    focusRingColor: '#B1B7BA',
+                    color: '#EEF6F9'
                 }}
             >
 
@@ -58,7 +64,11 @@ function SelectionCheckMenu({ options, default_options, disabled, navSide, title
 
             <Menu.Positioner>
 
-                <Menu.Content>
+                <Menu.Content _dark={{
+                    color: '#1D282E/50',
+                    background: '#1D282E/95',
+                    borderColor: '#1D282E'
+                }}>
 
                     <Flex flexDirection={'column'} gapY={1}>
                         {
@@ -76,7 +86,10 @@ function SelectionCheckMenu({ options, default_options, disabled, navSide, title
                                             color: '#1D282E'
                                         }}
                                         _dark={{
-
+                                            background: "#1D282E/80",
+                                            borderColor: "#737E80",
+                                            focusRingColor: '#B1B7BA',
+                                            color: '#EEF6F9',
                                         }}
                                     >
 

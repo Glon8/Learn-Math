@@ -32,7 +32,10 @@ function TopicBut({ dir, display, pi_icon, title, onClick, subTitle, align, just
                 color: '#1D282E'
             }}
             _dark={{
-
+                background: "#1D282E",
+                borderColor: "#1D282E",
+                focusRingColor: '#B1B7BA',
+                color: '#EEF6F9'
             }}
         >
 
@@ -45,7 +48,7 @@ function TopicBut({ dir, display, pi_icon, title, onClick, subTitle, align, just
 
         </Button>
         <Flex display={subTitle ? 'flex' : 'none'}
-        color={{_light: '#1D282E', _dark: 'white'}}>
+            color={{ _light: '#1D282E', _dark: '#EEF6F9' }}>
             <Text>{subTitle}</Text>
         </Flex>
 

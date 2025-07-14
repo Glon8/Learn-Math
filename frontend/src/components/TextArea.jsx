@@ -17,15 +17,19 @@ function TextArea({ getValue }) {
             placeholder="Ask teach!"
             autoresize
             maxH={'10rem'}
-            maxLength={350} 
+            maxLength={350}
             _light={{
-                color:'#1D282E',
+                color: '#1D282E',
                 borderColor: '#B1B7BA/20'
             }}
-            _dark={{}}
-            />
+            _dark={{
+                borderColor: '#1D282E',
+                color: '#EEF6F9',
+                background: '#1D282E'
+            }}
+        />
         <Field.HelperText
-        color={{_light: '#1D282E', _dark: 'white'}}
+            color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
         >Max 350 characters</Field.HelperText>
     </Field.Root>)
 }

@@ -35,11 +35,12 @@ function HintsPage() {
       gap={3}
       maxW={'65rem'}
       _light={{
-        backgroundColor: 'white',
+        background: 'white',
         borderColor: '#B1B7BA'
       }}
       _dark={{
-
+        background: '#8b8da0',
+        borderColor: '#1D282E',
       }}>
 
       <TwoTitlesSlot title_info={{
@@ -53,7 +54,7 @@ function HintsPage() {
         },
 
       }} />
-      <Separator />
+       <Separator colorPalette="green" />
       <Flex hideFrom={'lg'}>
         <Spin classList={topic}
           additional={{ teach: 'Discuss With Teach!' }}
@@ -91,10 +92,11 @@ function HintsPage() {
             color: '#1D282E'
           }}
           _dark={{
-
+            borderColor: '#1D282E',
+            color: '#EEF6F9'
           }}>
 
-          <Text color={{ _light: '#1D282E', _dark: 'white' }}>Topics explanation here! This tab is scrollabble! Current topic is {topic[useTop]}</Text>
+          <Text>Topics explanation here! This tab is scrollabble! Current topic is {topic[useTop]}</Text>
           {
             useTop == 'teach' ? (<TextArea getValue={(value) => {
               console.log(value)

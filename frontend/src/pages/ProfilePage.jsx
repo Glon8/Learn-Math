@@ -60,7 +60,8 @@ function ProfilePage() {
         borderColor: '#B1B7BA'
       }}
       _dark={{
-
+        background: '#8b8da0',
+        borderColor: '#1D282E'
       }}>
 
       <TitleSlot pi_icon={'pi-id-card'} title={'PROFILE'} />
@@ -144,7 +145,7 @@ function ProfilePage() {
             if (use_profile_edit) update();
           }} />
         <Text textAlign={'center'}
-          color={{ _light: '#1D282E', _dark: 'white' }}
+          color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
         > (POPUP as error for local user)<br /> To share your grades, you must be an online user.<br />
           You can check the profile for your status <br /> or in right top corner menu.</Text>
 
