@@ -57,11 +57,13 @@ function ExercisePage() {
             h={'fit'}
             maxW={'65rem'}
             _light={{
+                boxShadow: 'lg',
                 backgroundColor: 'white',
                 borderColor: '#B1B7BA',
                 color: '#1D282E'
             }}
             _dark={{
+                boxShadow: '0 0 2rem 0.5rem rgb(238, 246, 249)',
                 background: '#8b8da0',
                 borderColor: '#1D282E',
                 color: '#EEF6F9'

@@ -38,10 +38,12 @@ function SchoolsPage() {
       minW={{ base: 'auto', sm: '25rem' }}
       maxW={'65rem'}
       _light={{
+        boxShadow: 'lg',
         backgroundColor: 'white',
         borderColor: '#B1B7BA'
       }}
       _dark={{
+        boxShadow: '0 0 2rem 0.5rem rgb(238, 246, 249)',
         background: '#8b8da0',
         borderColor: '#1D282E',
       }}>
@@ -53,14 +55,22 @@ function SchoolsPage() {
         hideBelow={'md'}>
 
         <TopicBut pi_icon={'pi-list-check'}
-          title={'Teenage-School'}
+          title={'Elementary-School'}
           onClick={() => { setSchool(true) }}
           showSub={true}
         />
         {/* on mobile this explanation possible to add as toast! */}
         <Text hideBelow={"xl"}
+          border
           width={'full'}
           textAlign={'center'}
+          background={{ _dark: '#1D282E/65' }}
+          rounded={'xl'}
+          _light={{
+            borderColor: '#B1B7BA',
+            borderWidth: 1,
+            boxShadow: 'sm'
+          }}
           color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
           fontWeight={'medium'}
         >Select topic that you would like to exercise at!</Text>

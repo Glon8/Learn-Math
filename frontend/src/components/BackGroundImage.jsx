@@ -1,12 +1,17 @@
 import { Flex, Image } from "@chakra-ui/react";
+import { useColorMode } from "./ui/color-mode.jsx";
 
 import { userContext } from "../components/UserContext";
 
 import AINote from './AINote.jsx'
 import Girl from '../images/ChatGPTHighSchoolGirl.png'
+import SittingGirl from '../images/ChatGPTHighSchoolGirlSitting.png'
 import Boy from '../images/ChatGPTHighSchoolBoy.png'
 
 function BackGroundImage() {
+    
+    const { colorMode, toggleColorMode } = useColorMode();
+
     const { pos } = userContext();
 
     return (<Flex w={'100%'} h={'100%'}
@@ -31,7 +36,7 @@ function BackGroundImage() {
             display={{ base: 'none', sm: 'none', md: 'none', lg: 'none', xl: 'flex' }}
             >
             <Image maxH={'70%'}
-                src={Girl}
+                src={colorMode === 'light'? Girl : Girl}
                 alt="welcome-image" />
         </Flex>
         <Flex h={'auto'}
@@ -41,7 +46,7 @@ function BackGroundImage() {
             right={-1}
             display={{ base: 'none', sm: 'none', md: 'none', lg: 'none', xl: 'flex' }}>
             <Image maxH={'70%'}
-                src={Boy}
+                src={colorMode === 'light'? Boy : SittingGirl}
                 alt="welcome-image" />
         </Flex>
         <Flex display={{base: 'none',sm: 'none',md:'none',lg: 'none',xl: 'flex'}}>

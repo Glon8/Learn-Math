@@ -51,10 +51,12 @@ function ScorePage() {
       borderWidth={1}
       w={{ base: 'full', sm: '25rem' }}
       _light={{
+        boxShadow: 'lg',
         backgroundColor: 'white',
         borderColor: '#B1B7BA'
       }}
       _dark={{
+        boxShadow: '0 0 2rem 0.5rem rgb(238, 246, 249)',
         background: '#8b8da0',
         borderColor: '#1D282E',
       }}

@@ -5,7 +5,10 @@ function TwoTitlesSlot({ title_info, boldness }) {
     return (<Flex width={'1xs'}
         flexDirection={'row'}
         justify={'space-between'}
-        color={{_light: '#1D282E', _dark: '#EEF6F9'}}
+        color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
+        background={{ _dark: '#1D282E/65' }}
+        rounded={{ _dark: 'sm' }}
+        boxShadow={{ _dark: '0 0 5px 2px black' }}
     >
 
         {

@@ -68,7 +68,7 @@ function SignForm({ isIn, isUp, close }) {
     justifyContent={'center'}
     alignItems={'center'}
     display={useIn || useUp ? 'flex' : 'none'}
-    bg='#B1B7BA/40'
+    bg='#1D282E/65'
     zIndex={5}
   >
     {
@@ -82,7 +82,7 @@ function SignForm({ isIn, isUp, close }) {
       }}
       right={0}
       top={0}
-      zIndex={10}></Flex>
+      zIndex={10}/>
     {
       // form itself
     }
