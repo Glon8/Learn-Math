@@ -101,7 +101,9 @@ function TopScoresSlot({ i, user, user_scores_list, topic_names, use_compare, my
           }}
         >
 
-          <TitleSlot pi_icon={'pi-graduation-cap'} title={'Scores'} />
+          <TitleSlot pi_icon={'pi-graduation-cap'}
+            title={'Scores'}
+            disableDark={true} />
           {
             use_compare && user_scores_list && user_scores_list.length > 0 ?
               (<TwoTitlesSlot title_info={{
@@ -114,6 +116,7 @@ function TopScoresSlot({ i, user, user_scores_list, topic_names, use_compare, my
                   title: my_user.name ? my_user.name : 'No User'
                 }
               }}
+                disableDark={true}
                 boldness={'normal'} />) : ''
           }
           <Separator />
