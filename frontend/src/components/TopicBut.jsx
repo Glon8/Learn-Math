@@ -19,6 +19,8 @@ function TopicBut({ dir, display, pi_icon, title, onClick, subTitle, align, just
         flexDirection={dir ? dir : "row"}
         alignItems={align ? align : 'center'}
         justify={justify ? justify : 'space-between'}
+        gapX={3}
+        gapY={dir? 1 : ''}
     >
 
         <Button minW={'14.5rem'}
@@ -48,7 +50,11 @@ function TopicBut({ dir, display, pi_icon, title, onClick, subTitle, align, just
 
         </Button>
         <Flex display={subTitle ? 'flex' : 'none'}
-            color={{ _light: '#1D282E', _dark: '#EEF6F9' }}>
+            color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
+            background={{_dark: '#464547'}}
+            rounded={{_dark: 'sm'}}
+            w={'full'}
+            justifyContent={'right'}>
             <Text>{subTitle}</Text>
         </Flex>
 

@@ -2,7 +2,7 @@ import { Text, Flex, Input, Button } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useState } from "react";
 
-function PassSlot({ placeholder, value, visible, getValue, edit, category, dir, auto }) {
+function PassSlot({ placeholder, value, visible, getValue, edit, category, dir, auto, disableDark }) {
     const [useValue, setValue] = useState(value ? ' ' + value : '');
     const [useVisible, setVisible] = useState(visible ? true : false);
 
@@ -23,6 +23,7 @@ function PassSlot({ placeholder, value, visible, getValue, edit, category, dir, 
                 fontSize={'xl'}
                 padding={0}
                 rounded={'md'}
+                fontWeight={{ _dark: 'bold' }}
                 onChange={(el) => {
                     const value = el.target.value;
 
@@ -44,10 +45,14 @@ function PassSlot({ placeholder, value, visible, getValue, edit, category, dir, 
                 <i className="pi pi-eye" />
             </Button>
         </Flex>
-        <Text w={auto ? 'auto' : '7rem'}
-            textAlign={'right'}
-            color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
-        >{category}</Text>
+        <Flex w={auto ? 'auto' : '7rem'}
+            justifyContent={'end'}>
+            <Text textAlign={'right'}
+                color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
+                background={disableDark === true ? '' : { _dark: '#1D282E/65' }}
+                rounded={disableDark === true ? '' : { _dark: 'sm' }}
+            >{category}</Text>
+        </Flex>
 
     </Flex>)
 }

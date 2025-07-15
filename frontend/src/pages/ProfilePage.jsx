@@ -56,10 +56,12 @@ function ProfilePage() {
       borderWidth={1}
       textAlign={'center'}
       _light={{
+        boxShadow: 'lg',
         backgroundColor: 'white',
         borderColor: '#B1B7BA'
       }}
       _dark={{
+        boxShadow: '0 0 2rem 0.5rem rgb(238, 246, 249)',
         background: '#8b8da0',
         borderColor: '#1D282E'
       }}>
@@ -163,7 +165,7 @@ function ProfilePage() {
         },
         info_b: {
           pi_icon: 'pi-hashtag',
-          title: 'Teenage-School'
+          title: 'Elementary-School'
         }
       }}
       topic_names={topic}

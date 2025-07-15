@@ -63,6 +63,9 @@ function Spin({ classList, additional, getValue }) {
     <Text fontWeight={'medium'}
       fontSize={'lg'}
       textAlign={'center'}
+      background={{ _dark: '#1D282E/65' }}
+      rounded={{ _dark: 'xl' }}
+      paddingX={{_dark: '1rem'}}
       color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
     >{useNames[usePage]}</Text>
     <Button onClick={forward}

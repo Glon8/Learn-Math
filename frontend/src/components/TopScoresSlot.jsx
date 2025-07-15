@@ -97,9 +97,9 @@ function TopScoresSlot({ i, user, user_scores_list, topic_names, use_compare, my
           marginRight={my_user.navPosition === 'right' ? '0.5rem' :
             (my_user.navPosition != 'left' ? '1rem' : 0)}
           _dark={{
-            background:'#1D282E/95'
+            background: '#1D282E/95'
           }}
-          >
+        >
 
           <TitleSlot pi_icon={'pi-graduation-cap'} title={'Scores'} />
           {
@@ -133,14 +133,16 @@ function TopScoresSlot({ i, user, user_scores_list, topic_names, use_compare, my
                         <Slot value={score ? score : ''}
                           category={topic[1]}
                           auto={true}
-                          placeholder={'0'} />
+                          placeholder={'0'}
+                          disableDark={true} />
                       </Separator>
                     } else {
                       return <Slot key={i2 + topic[1]}
                         value={score ? score : ''}
                         category={topic[1]}
                         auto={true}
-                        placeholder={'0'} />
+                        placeholder={'0'}
+                        disableDark={true} />
                     }
                   })
                 }
@@ -151,13 +153,17 @@ function TopScoresSlot({ i, user, user_scores_list, topic_names, use_compare, my
 
                     if (topic[0] === 'equasions_basic') {
                       return <Separator key={i2 + topic[1]}>
-                        <CompareSlot value_a={score ? score : 0} value_b={user_score ? user_score : 0} category={topic[1]} />
+                        <CompareSlot value_a={score ? score : 0}
+                          value_b={user_score ? user_score : 0}
+                          category={topic[1]}
+                          disableDark={true} />
                       </Separator>
                     } else {
                       return <CompareSlot key={i2 + topic[1]}
                         value_a={score ? score : 0}
                         value_b={user_score ? user_score : 0}
-                        category={topic[1]} />
+                        category={topic[1]}
+                        disableDark={true} />
                     }
                   })
                 }

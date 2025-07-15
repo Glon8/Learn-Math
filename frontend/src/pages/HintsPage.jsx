@@ -35,10 +35,12 @@ function HintsPage() {
       gap={3}
       maxW={'65rem'}
       _light={{
+        boxShadow: 'lg',
         background: 'white',
         borderColor: '#B1B7BA'
       }}
       _dark={{
+        boxShadow: '0 0 2rem 0.5rem rgb(238, 246, 249)',
         background: '#8b8da0',
         borderColor: '#1D282E',
       }}>
@@ -63,7 +65,7 @@ function HintsPage() {
 
       <Flex hideBelow={'lg'} justify={'space-between'}>
         <TopicBut pi_icon={'pi-list-check'}
-          title={'Teenage-School'}
+          title={'Elementary-School'}
           onClick={() => setSchool(true)}
           showSub={true}
         />
@@ -93,7 +95,8 @@ function HintsPage() {
           }}
           _dark={{
             borderColor: '#1D282E',
-            color: '#EEF6F9'
+            color: '#EEF6F9',
+            background: '#464547'
           }}>
 
           <Text>Topics explanation here! This tab is scrollabble! Current topic is {topic[useTop]}</Text>
