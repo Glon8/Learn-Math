@@ -17,19 +17,37 @@ export const UserProvider = ({ children }) => {
   //const decrypt = () => { }
 
   const signUp = () => {
-    if (useUser._id === null && useUser.status) {
+    if (useUser._id === null && useUser.status && !!useUser.name && !!useUser.email && !!useUser.password) {
       // < Online sign up
 
       // making a request with existing user (from usUser or cookies)
       // over writing token and user (useUser and cookies) with new id
     }
+    else {
+      upUser('_id', null);
+      upUser('status', false);
+      upUser('name', null);
+      upUser('email', null);
+      upUser('password', null);
+      upUser('secret', null);
+      upUser('answer', null);
+    }
   }
 
   const signIn = () => {
-    // will pass the user data to the server side
-    // server ll return the token with user data
-    // token will manually overwritten in to, token, empty-user, empty-score
-    // user data that comes from the server ll be passed directly to useUser, useScore, useToken  
+    if (useUser._id === null && useUser.status && !!useUser.name && !!useUser.email && !!useUser.password) {
+      // will pass the user data to the server side
+      // server ll return the token with user data
+      // token will manually overwritten in to, token, empty-user, empty-score
+      // user data that comes from the server ll be passed directly to useUser, useScore, useToken  
+    }
+    else {
+      upUser('_id', null);
+      upUser('status', false);
+      upUser('name', null);
+      upUser('email', null);
+      upUser('password', null);
+    }
   }
 
   const signOut = () => {

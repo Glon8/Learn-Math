@@ -1,7 +1,9 @@
 import { Flex, Text, Separator, useBreakpointValue } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useState } from "react";
+import { callToast } from '../components/Toast.jsx'
 
+import { verString, verEmail, verPassword } from '../util/Statics.js'
 import { getTopicNames } from "../util/Statics.js";
 import { userContext } from '../components/UserContext.jsx'
 
@@ -20,7 +22,7 @@ function ProfilePage() {
 
   const [name, setName] = useState(user.name);
   const [email, setEmail] = useState(user.email);
-  const [password, setPassword] = useState(user.password);
+  const [password, setPassword] = useState(null);
   const [newPass, setNewPass] = useState(null);
   const [confPass, setConfPass] = useState(null);
   const [secQues, setSecQues] = useState(user.secret);
@@ -29,13 +31,82 @@ function ProfilePage() {
   const [topic, setTopic] = useState(getTopicNames());
 
   const update = () => {
-    //validation goes here HERE!!!
+    if (user.name != name) {
+      if (name == null)
+        callToast('Error', 'New user name cannot be empty!', '', 'error', pos);
+      else if (!verString(name))
+        callToast('Error', 'User name invalid, minimum length is 2, allowed small, capital letters, and digits!', '', 'error', pos);
+      else {
+        upUser('name', name);
 
-    user.name != name && name != null ? upUser('name', name) : null;
-    user.email != email && name != null ? upUser('email', email) : null;
-    user.password != newPass && name != null ? upUser('password', newPass) : null;
-    user.secret != secQues && name != null ? upUser('secret', secQues) : null;
-    user.answer != secAns && name != null ? upUser('answer', secAns) : null;
+        callToast('Success', 'Name changed', '', 'success', pos);
+      }
+    }
+
+    if (!!user._id && stat) {
+      if (user.email != email) {
+        if (email == null)
+          callToast('Error', 'New email cannot be empty!', '', 'error', pos);
+        else if (!verEmail(email))
+          callToast('Error', 'Email invalid, minimum length is 12, allowed small, capital letters, and digits!', '', 'error', pos);
+        else {
+          upUser('email', email);
+
+          callToast('Success', 'Email changed', '', 'success', pos);
+        }
+      }
+
+      if (password != null)
+        if (user.password != password)
+          callToast('Error', 'Current password must match!', '', 'error', pos);
+        else if (!verPassword(password))
+          callToast('Error', 'Password invalid, minimum length is 4, allowed small, capital letters, digits and symbols', '', 'error', pos);
+        else {
+          if (newPass == null)
+            callToast('Error', 'New password cannot be empty!', '', 'error', pos);
+          else if (password == newPass)
+            callToast('Error', 'New password cannot match with old password!', '', 'error', pos);
+          else if (!verPassword(newPass))
+            callToast('Error', 'New password invalid, minimum length is 4, allowed small, capital letters, digits and symbols', '', 'error', pos);
+          else {
+            if (confPass == null)
+              callToast('Error', 'Confirmation password cannot be empty!', '', 'error', pos);
+            else if (confPass != newPass)
+              callToast('Error', 'Confirmation password must match new password!', '', 'error', pos);
+            else if (!verPassword(confPass))
+              callToast('Error', 'Confirmation password invalid, minimum length is 4, allowed small, capital letters, digits and symbols', '', 'error', pos);
+            else {
+              upUser(newPass);
+
+              callToast('Success', 'Password changed changed', '', 'success', pos);
+            }
+          }
+        }
+
+      if (user.secret != secQues) {
+        if (secQues != null)
+          callToast('Error', 'New secret question cannot be empty!', '', 'error', pos);
+        else if (!verString(secQues))
+          callToast('Error', 'Secret question invalid, minimum length is 2, allowed small, capital letters, and digits.', '', 'error', pos);
+        else {
+          upUser('secret', secQues);
+
+          callToast('Success', 'Secret question changed.', '', 'success', pos);
+        }
+      }
+
+      if (user.answer != secAns) {
+        if (secAns != null)
+          callToast('Error', 'New secret answer cannot be empty!', '', 'error', pos);
+        else if (!verString(secAns))
+          callToast('Error', 'Secret answer invalid, minimum length is 2, allowed small, capital letters, and digits.', '', 'error', pos);
+        else {
+          upUser('answer', secAns);
+
+          callToast('Success', 'Secret answer changed.', '', 'success', pos);
+        }
+      }
+    }
   }
 
   return (<Flex gap={5} w={'100%'}
@@ -74,7 +145,7 @@ function ProfilePage() {
         getValue={(thing) => setName(thing)}
       />
       {
-        stat ?
+        stat && user._id != null && user._id != 0 ?
           <Slot value={user.email ? user.email : null}
             placeholder={'-----'}
             category={'Email'}
@@ -83,7 +154,7 @@ function ProfilePage() {
           /> : ''
       }
       {
-        use_profile_edit && stat ?
+        use_profile_edit && stat && user._id != null && user._id != 0 ?
           <PassSlot placeholder={'-----'}
             category={'Current Password'}
             edit={true}
@@ -91,7 +162,7 @@ function ProfilePage() {
           /> : ''
       }
       {
-        stat ?
+        stat && user._id != null && user._id != 0 ?
           <PassSlot value={user.password ? user.password : null}
             placeholder={'-----'}
             category={use_profile_edit && stat ? 'New Password' : 'Password'}
@@ -100,7 +171,7 @@ function ProfilePage() {
           /> : ''
       }
       {
-        use_profile_edit && stat ?
+        use_profile_edit && stat && user._id != null && user._id != 0 ?
           <PassSlot placeholder={'-----'}
             category={'Confirm Password'}
             edit={true}
@@ -108,7 +179,7 @@ function ProfilePage() {
           /> : ''
       }
       {
-        use_profile_edit && stat ?
+        use_profile_edit && stat && user._id != null && user._id != 0 ?
           <Slot value={user.secret ? user.secret : ''}
             placeholder={'-----'}
             category={'Secret Question'}
@@ -117,7 +188,7 @@ function ProfilePage() {
           /> : ''
       }
       {
-        use_profile_edit && stat ?
+        use_profile_edit && stat && user._id != null && user._id != 0 ?
           <Slot value={user.answer ? user.answer : ''}
             placeholder={'-----'}
             category={'Secret Answer'}
