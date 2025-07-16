@@ -46,7 +46,7 @@ const topic_names = {
     quadratic_equation: 'quadratic equation',
     circles: 'circles',
     exam_advanced: 'exam: advanced'
-  };
+};
 
 export const getEmptyUser = () => {
     return empty_user;
@@ -58,4 +58,30 @@ export const getEmptyScore = () => {
 
 export const getTopicNames = () => {
     return topic_names;
+}
+
+export const verString = (string) => {
+    if (string != null) {
+        if (string.trim() == "") return false;
+        else if (string.length < 2) return false;
+        else return !!string.match(/^[a-zA-Z0-9 ]{2,24}$/);
+    }
+}
+
+export const verEmail = (email) => {
+    if (email != null) {
+        if (email.trim() == "")
+            return false;
+        else if (email.length < 12) return false;
+        else return !!email.match(/^([a-zA-Z0-9._%+-]{2,})@([a-zA-Z0-9-]{3,8})\.([a-zA-Z]{2,4})(\.[a-zA-Z]{2,4})?$/);
+    }
+}
+
+export const verPassword = (password) => {
+    if (password != null) {
+        if (password.trim() == "")
+            return false;
+        else if (password.length < 4) return false;
+        else return !!password.match(/^[a-zA-Z0-9!@#$%^&*]{4,32}$/);
+    }
 }

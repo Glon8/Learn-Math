@@ -2,6 +2,7 @@ import { Button, Flex, Text, Menu, Portal} from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useEffect, useState } from "react";
 import { useColorMode } from "./ui/color-mode.jsx";
+import { callToast } from "./Toast.jsx";
 
 import { userContext } from './UserContext.jsx'
 import { signContext } from "./SignContext.jsx";
@@ -148,6 +149,7 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
                                         onClick={() => {
                                             out();
                                             setOpen(false);
+                                            callToast('Info:', 'You logged out', '', '', pos);
                                         }}
                                         color={"black"}
                                         w={'full'}

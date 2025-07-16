@@ -2,6 +2,9 @@
 import { Button, Flex, Separator, Text, Link } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import { userContext } from "./UserContext.jsx"
+import { callToast } from './Toast.jsx'
+
+import { verString, verEmail, verPassword } from '../util/Statics.js'
 
 import Slot from './Slot.jsx'
 import TitleSlot from './TitleSlot.jsx'
@@ -9,7 +12,7 @@ import CheckCard from './CheckCard.jsx'
 import PassSlot from './PassSlot.jsx'
 
 function SignForm({ isIn, isUp, close }) {
-  const { upUser, up } = userContext();
+  const { upUser, up, pos } = userContext();
 
   const [useOffline, setOffline] = useState(false);
   const [useIn, setIn] = useState(isIn ? isIn : false);
@@ -22,6 +25,62 @@ function SignForm({ isIn, isUp, close }) {
   const [confPass, setConfPass] = useState(null);
   const [secQues, setSecQues] = useState(null);
   const [secAns, setSecAns] = useState(null);
+
+  const closeUP = () => {
+    close();
+    setOffline(false);
+
+    setName(null);
+    setEmail(null);
+    setPassword(null);
+    setConfPass(null);
+    setSecQues(null);
+    setSecAns(null);
+
+    // <= visual glitch, problem within Slot, PassSlot, doesnt recieve live updates.
+  }
+
+  const verify = () => {
+    if ((useOffline || useUp) && !useIn) {
+      if (!verString(name)) {
+        callToast('Error', 'User name invalid, minimum length is 2, allowed small, capital letters, and digits', '', 'error', pos);
+
+        return false;
+      }
+    }
+    if (!useOffline && (useUp || useIn)) {
+      if (!verEmail(email)) {
+        callToast('Error', 'Email invalid, minimum length is 12, allowed small, capital letters, and digits', '', 'error', pos);
+
+        return false;
+      }
+      else if (!verPassword(password)) {
+        callToast('Error', 'Password invalid, minimum length is 4, allowed small, capital letters, digits and symbols', '', 'error', pos);
+
+        return false;
+      }
+    }
+    if (!useOffline && useUp) {
+      if (!verPassword(confPass) && password != confPass) {
+        callToast('Error', 'Confirmation password invalid, minimum length is 4, allowed small, capital letters, digits and symbols', '', 'error', pos);
+
+        return false;
+      }
+      else if (!verString(secQues)) {
+        callToast('Error', 'Secret question invalid, minimum length is 2, allowed small, capital letters, and digits', '', 'error', pos);
+
+        return false;
+      }
+      else if (!verString(secAns)) {
+        callToast('Error', 'Secret answer invalid, minimum length is 2, allowed small, capital letters, and digits', '', 'error', pos);
+
+        return false;
+
+      }
+    }
+
+    return true;
+  }
 
   useEffect(() => {
     setIn(isIn);
@@ -43,9 +102,10 @@ function SignForm({ isIn, isUp, close }) {
     if (useUp) {
       // sign up: offline and online
       if (useOffline) {
-        // sign up: offline
         upUser('_id', 0);
         upUser('name', name);
+
+        callToast('Success', 'Local user created!', '', 'success', pos);
       }
       else {
         // sign up: online
@@ -57,9 +117,12 @@ function SignForm({ isIn, isUp, close }) {
         upUser('answer', secAns);
 
         up();
+
+        callToast('Success', 'Form sended!', '', 'success', pos);
       }
     }
 
+    closeUP();
     setOffline(false);
   }, [send]);
 
@@ -76,13 +139,10 @@ function SignForm({ isIn, isUp, close }) {
     }
     <Flex w={'full'} h={'full'}
       position={'fixed'}
-      onClick={() => {
-        close();
-        setOffline(false);
-      }}
+      onClick={closeUP}
       right={0}
       top={0}
-      zIndex={10}/>
+      zIndex={10} />
     {
       // form itself
     }
@@ -117,10 +177,7 @@ function SignForm({ isIn, isUp, close }) {
 
           <TitleSlot pi_icon={useIn ? 'pi-sign-in' : 'pi-user-edit'} title={`SIGN ${useIn ? 'IN' : 'UP'}`} />
           <Button focusRing={'inside'}
-            onClick={() => {
-              close();
-              setOffline(false);
-            }}
+            onClick={closeUP}
             _light={{
               background: "white",
               borderColor: "#B1B7BA/20",
@@ -138,27 +195,66 @@ function SignForm({ isIn, isUp, close }) {
         </Flex>
         <Separator />
         {
-          useOffline && useUp ? (<Flex flexDirection={'column'}
-            gapY={5}>
-            <Slot placeholder={'name'} category={'Name'} edit={true} getValue={(value) => setName(value)} />
+          useIn ? null : (<Slot placeholder={'name'}
+            category={'Name'}
+            edit={true}
+            getValue={(value) => setName(value)}
+          />)
+        }
+        {
+          useOffline && useUp ? (
             <Text textAlign={'center'}
               fontSize={'sm'}
               color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
             >To create an offline user email or password are not rquired.
               It will be stored in your cookies for a week, if you clear cookies or switch
               user, your progress will be gone. To save the progress, you can sign up as an online user.
-            </Text>
-          </Flex>) :
-            (<Flex flexDirection={'column'}
-              gapY={3}
-            >
-              <Slot placeholder={'name'} category={'Name'} edit={true} getValue={(value) => setName(value)} />
-              <Slot placeholder={'email'} category={'Email'} edit={true} getValue={(value) => setEmail(value)} />
-              <PassSlot placeholder={'password'} category={'Password'} edit={true} getValue={(value) => setPassword(value)} />
-              <PassSlot placeholder={'confirm password'} category={'Confirm Password'} edit={true} getValue={(value) => setConfPass(value)} />
-              <Slot placeholder={'secret question'} category={'Secret Question'} edit={true} getValue={(value) => setSecQues(value)} />
-              <Slot placeholder={'answer to the question'} category={'Secret Answer'} edit={true} getValue={(value) => setSecAns(value)} />
-            </Flex>)
+            </Text>) : null}
+        {
+          !useOffline && (useUp || useIn) ? (<Flex flexDirection={'column'}
+            gapY={3}
+          >
+
+            <Slot placeholder={'email'}
+              category={'Email'}
+              edit={true}
+              getValue={(value) => setEmail(value)}
+              maxLength={32}
+            />
+            <PassSlot placeholder={'password'}
+              category={'Password'}
+              edit={true}
+              getValue={(value) => setPassword(value)}
+              maxLength={24}
+            />
+
+          </Flex>) : null
+        }
+        {
+          !useOffline && useUp ? (<Flex flexDirection={'column'}
+            gapY={3}
+          >
+
+            <PassSlot placeholder={'confirm password'}
+              category={'Confirm Password'}
+              edit={true}
+              getValue={(value) => setConfPass(value)}
+              maxLength={24}
+            />
+            <Slot placeholder={'secret question'}
+              category={'Secret Question'}
+              edit={true}
+              getValue={(value) => setSecQues(value)}
+              maxLength={32}
+            />
+            <Slot placeholder={'answer to the question'}
+              category={'Secret Answer'}
+              edit={true}
+              getValue={(value) => setSecAns(value)}
+              maxLength={32}
+            />
+
+          </Flex>) : null
         }
 
       </Flex>
@@ -172,8 +268,9 @@ function SignForm({ isIn, isUp, close }) {
 
         <Button focusRing={'inside'}
           onClick={() => {
-            setSend(!send);
-            close();
+            let flag = verify();
+
+            flag ? setSend(!send) : null;
           }}
           _light={{
             background: "white",

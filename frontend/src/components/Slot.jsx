@@ -10,11 +10,11 @@ import { useEffect, useState } from "react";
  />
 */
 
-function Slot({ placeholder, value, getValue, category, edit, color, dir, auto, disableDark }) {
+function Slot({ placeholder, value, getValue, category, edit, color, dir, auto, disableDark, maxLength }) {
     const [useValue, setValue] = useState(value ? value : '');
 
     useEffect(() => {
-        setValue(value)
+        setValue(value);
     }, [value]);
 
     return (<Flex w={'full'}
@@ -27,7 +27,7 @@ function Slot({ placeholder, value, getValue, category, edit, color, dir, auto, 
             disabled={edit ? false : true}
             fontWeight={{ _dark: 'bold' }}
             color={color ? color : ({ _light: '#1D282E', _dark: '#EEF6F9' })}
-            maxLength={16}
+            maxLength={maxLength ? maxLength : 16}
             borderWidth={edit === true ? 1 : 0}
             textAlign={edit ? 'center' : ''}
             fontSize={'xl'}
@@ -44,11 +44,11 @@ function Slot({ placeholder, value, getValue, category, edit, color, dir, auto, 
             backgroundColor={{ _light: 'white', _dark: '#1D282E', _disabled: 'transparent' }}
         />
         <Flex w={auto ? 'full' : '7rem'}
-        justifyContent={'end'}>
+            justifyContent={'end'}>
             <Text textAlign={'right'}
                 color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
                 background={disableDark === true ? '' : { _dark: '#1D282E/65' }}
-                rounded={disableDark === true ? '' : {_dark: 'sm'}}
+                rounded={disableDark === true ? '' : { _dark: 'sm' }}
             >{category}</Text>
         </Flex>
 

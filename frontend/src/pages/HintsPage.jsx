@@ -17,8 +17,6 @@ function HintsPage() {
 
   const [topic, setTopic] = useState(getTopicNames());
 
-  //{ base: 15, sm: 15, md: 15, lg: 20, xl: 20 }
-
   return (<Flex alignItems={'center'}
     flexDirection={"column"}
     w={'100vw'}
