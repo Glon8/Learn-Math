@@ -221,13 +221,12 @@ function ProfilePage() {
           //< MENU throws out a toast!!!! as status is local
         }
         {
-          !!stat ? (<FlexMenu pi_icon={'pi-book'}
+          !!user._id ? (<FlexMenu pi_icon={'pi-book'}
             title={'Share my grades'}
             inner_title={'Are you sure?'}
-            options={['NO', 'YES']}
-            disabled={stat ? true : false}
-            callToast={warningMes} />) :
+            options={['NO', 'YES']} />) :
             (<Button onClick={warningMes}
+              disabled={user._id === 0 ? false : true}
               width={'full'}
               flexDirection={'row'}
               gap={3}
@@ -247,6 +246,12 @@ function ProfilePage() {
               }}>
               <i className="pi pi-book" /><Text>Share my grades</Text>
             </Button>)
+        }
+        {
+          user._id === 0 ? (<FlexMenu pi_icon={'pi-cloud-upload'}
+            title={'Convert user to online'}
+            inner_title={'Are you sure?'}
+            options={['NO', 'YES']} />) : null
         }
         <CheckCard pi_icon={'pi-thumbtack'}
           title={'Edit Profile'}

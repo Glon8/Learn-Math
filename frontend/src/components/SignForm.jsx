@@ -103,7 +103,12 @@ function SignForm({ isIn, isUp, close }) {
 
         flag = false;
       }
-      else if (!verPassword(confPass) && password != confPass) {
+      else if (password != confPass) {
+        callToast('Error', 'Confirmation password must match the password!', '', 'error', pos);
+
+        flag = false;
+      }
+      else if (!verPassword(confPass)) {
         callToast('Error', 'Confirmation password invalid, allowed small, capital letters, digits and symbols\r\nExample: Dr552!@', '', 'error', pos);
 
         flag = false;
@@ -140,7 +145,7 @@ function SignForm({ isIn, isUp, close }) {
       }
     }
 
-    if (flag) return true;
+    return flag;
   }
 
   useEffect(() => {
@@ -156,7 +161,6 @@ function SignForm({ isIn, isUp, close }) {
   }, [isIn, isUp]);
 
   useEffect(() => {
-    // <= validation!!!!
     if (useIn) {
       // sign in: online only
     }

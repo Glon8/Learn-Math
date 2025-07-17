@@ -140,19 +140,16 @@ function ScorePage() {
         }
       </Stack>
       {
-        //< MENU throws toast!!!! as status is local
-      }
-      {
         !users || users.length <= 0 || !scores || scores.length <= 0 ? null :
           (<Flex flexDirection={'column'} gapY={3}>
 
             {
-              !!stat ? (<FlexMenu pi_icon={'pi-book'}
+              !!user._id  ? (<FlexMenu pi_icon={'pi-book'}
                 title={'Share my grades'}
                 inner_title={'Are you sure?'}
-                options={['NO', 'YES']}
-                callToast={warningMes} />) :
+                options={['NO', 'YES']} />) :
                 (<Button onClick={warningMes}
+                  disabled={user._id === 0? false : true}
                   width={'full'}
                   flexDirection={'row'}
                   gap={3}
