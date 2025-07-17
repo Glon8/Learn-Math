@@ -41,45 +41,106 @@ function SignForm({ isIn, isUp, close }) {
   }
 
   const verify = () => {
-    if ((useOffline || useUp) && !useIn) {
-      if (!verString(name)) {
-        callToast('Error', 'User name invalid, minimum length is 2, allowed small, capital letters, and digits', '', 'error', pos);
+    let flag = true;
 
-        return false;
+    if ((useOffline || useUp) && !useIn) {
+      if (!name) {
+        callToast('Error', 'User name cannot be empty!', '', 'error', pos);
+
+        flag = false;
+      }
+      else if (name.length < 2) {
+        callToast('Error', 'User name minimum length is 2!', '', 'error', pos);
+
+        flag = false;
+      }
+      else if (!verString(name)) {
+        callToast('Error', 'User name invalid, allowed small, capital letters, and digits\r\nExample: Dana999', '', 'error', pos);
+
+        flag = false;
       }
     }
-    if (!useOffline && (useUp || useIn)) {
-      if (!verEmail(email)) {
-        callToast('Error', 'Email invalid, minimum length is 12, allowed small, capital letters, and digits', '', 'error', pos);
+    if (flag && !useOffline && (useUp || useIn)) {
+      if (!email) {
+        callToast('Error', 'Email cannot be empty!', '', 'error', pos);
 
-        return false;
+        flag = false;
+      }
+      else if (email.length < 9) {
+        callToast('Error', 'Email minimum length is 9!', '', 'error', pos);
+
+        flag = false;
+      }
+      else if (!verEmail(email)) {
+        callToast('Error', 'Email invalid, allowed small, capital letters, and digits\r\nExample: amazing@gmail.com', '', 'error', pos);
+
+        flag = false;
+      }
+      else if (!password) {
+        callToast('Error', 'Password cannot be empty!', '', 'error', pos);
+
+        flag = false;
+      }
+      else if (password.length < 4) {
+        callToast('Error', 'Password minimum length is 4!', '', 'error', pos);
+
+        flag = false;
       }
       else if (!verPassword(password)) {
-        callToast('Error', 'Password invalid, minimum length is 4, allowed small, capital letters, digits and symbols', '', 'error', pos);
+        callToast('Error', 'Password invalid, allowed: small, capital letters, digits and symbols\r\nExample: Dr552!@', '', 'error', pos);
 
-        return false;
+        flag = false;
       }
     }
-    if (!useOffline && useUp) {
-      if (!verPassword(confPass) && password != confPass) {
-        callToast('Error', 'Confirmation password invalid, minimum length is 4, allowed small, capital letters, digits and symbols', '', 'error', pos);
+    if (flag && !useOffline && useUp) {
+      if (!confPass) {
+        callToast('Error', 'Confirmation password cannot be empty!', '', 'error', pos);
 
-        return false;
+        flag = false;
+      }
+      else if (confPass.length < 4) {
+        callToast('Error', 'Confirmation password minimum length is 4!', '', 'error', pos);
+
+        flag = false;
+      }
+      else if (!verPassword(confPass) && password != confPass) {
+        callToast('Error', 'Confirmation password invalid, allowed small, capital letters, digits and symbols\r\nExample: Dr552!@', '', 'error', pos);
+
+        flag = false;
+      }
+      if (!secQues) {
+        callToast('Error', 'Secret question cannot be empty!', '', 'error', pos);
+
+        flag = false;
+      }
+      else if (secQues.length < 2) {
+        callToast('Error', 'Secret question minimum length is 2!', '', 'error', pos);
+
+        flag = false;
       }
       else if (!verString(secQues)) {
-        callToast('Error', 'Secret question invalid, minimum length is 2, allowed small, capital letters, and digits', '', 'error', pos);
+        callToast('Error', 'Secret question invalid, allowed small, capital letters, and digits\r\nExample: My age', '', 'error', pos);
 
-        return false;
+        flag = false;
+      }
+      else if (!secAns) {
+        callToast('Error', 'Secret answer cannot be empty!', '', 'error', pos);
+
+        flag = false;
+      }
+      else if (secAns.length < 2) {
+        callToast('Error', 'Secret answer minimum length is 2!', '', 'error', pos);
+
+        flag = false;
       }
       else if (!verString(secAns)) {
-        callToast('Error', 'Secret answer invalid, minimum length is 2, allowed small, capital letters, and digits', '', 'error', pos);
+        callToast('Error', 'Secret answer invalid, allowed small, capital letters, and digits\r\nExample: 6', '', 'error', pos);
 
-        return false;
-
+        flag = false;
       }
     }
 
-    return true;
+    if (flag) return true;
   }
 
   useEffect(() => {

@@ -176,9 +176,6 @@ export const UserProvider = ({ children }) => {
   }
 
   useEffect(() => {
-    // < make a validation only as data changes, to remove useless
-    // reloads
-
     if ((useToken || (useUser._id === 0 && useUser.status === false)) && loaded) {
       console.log('data update: Updated')
       updateUser();
@@ -186,7 +183,7 @@ export const UserProvider = ({ children }) => {
 
     console.log("data update: It changed")
 
-    setLoaded(true);
+    if(!loaded) setLoaded(true);
   }, [useToken, useUser, useScore]);
 
   useEffect(() => {

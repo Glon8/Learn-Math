@@ -1,4 +1,4 @@
-import { Flex, Text, Separator, useBreakpointValue } from "@chakra-ui/react"
+import { Flex, Text, Separator, useBreakpointValue, Button } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useState } from "react";
 import { callToast } from '../components/Toast.jsx'
@@ -32,10 +32,12 @@ function ProfilePage() {
 
   const update = () => {
     if (user.name != name) {
-      if (name == null)
+      if (!name)
         callToast('Error', 'New user name cannot be empty!', '', 'error', pos);
+      else if (name.length < 2)
+        callToast('Error', 'New user name minimum length is 2!', '', 'error', pos);
       else if (!verString(name))
-        callToast('Error', 'User name invalid, minimum length is 2, allowed small, capital letters, and digits!', '', 'error', pos);
+        callToast('Error', 'User name invalid, allowed small, capital letters, and digits\r\nExample: Dana999', '', 'error', pos);
       else {
         upUser('name', name);
 
@@ -45,10 +47,12 @@ function ProfilePage() {
 
     if (!!user._id && stat) {
       if (user.email != email) {
-        if (email == null)
+        if (!email)
           callToast('Error', 'New email cannot be empty!', '', 'error', pos);
+        else if (email.length < 9)
+          callToast('Error', 'New email minimum length is 9!', '', 'error', pos);
         else if (!verEmail(email))
-          callToast('Error', 'Email invalid, minimum length is 12, allowed small, capital letters, and digits!', '', 'error', pos);
+          callToast('Error', 'Email invalid, allowed small, capital letters, and digits\r\nExample: amazing@gmail.com', '', 'error', pos);
         else {
           upUser('email', email);
 
@@ -56,25 +60,31 @@ function ProfilePage() {
         }
       }
 
-      if (password != null)
+      if (!!password)
         if (user.password != password)
           callToast('Error', 'Current password must match!', '', 'error', pos);
+        else if (password.length < 4)
+          callToast('Error', 'Current password minimum length is 4!', '', 'error', pos);
         else if (!verPassword(password))
-          callToast('Error', 'Password invalid, minimum length is 4, allowed small, capital letters, digits and symbols', '', 'error', pos);
+          callToast('Error', 'Password invalid, allowed: small, capital letters, digits and symbols\r\nExample: Dr552!@', '', 'error', pos);
         else {
-          if (newPass == null)
+          if (!newPass)
             callToast('Error', 'New password cannot be empty!', '', 'error', pos);
+          else if (newPass.length < 4)
+            callToast('Error', 'New password minimum length is 4!', '', 'error', pos);
           else if (password == newPass)
             callToast('Error', 'New password cannot match with old password!', '', 'error', pos);
           else if (!verPassword(newPass))
-            callToast('Error', 'New password invalid, minimum length is 4, allowed small, capital letters, digits and symbols', '', 'error', pos);
+            callToast('Error', 'New password invalid, allowed: small, capital letters, digits and symbols\r\nExample: Dr552!@', '', 'error', pos);
           else {
-            if (confPass == null)
+            if (!confPass)
               callToast('Error', 'Confirmation password cannot be empty!', '', 'error', pos);
+            else if (confPass.length < 4)
+              callToast('Error', 'New password minimum length is 4!', '', 'error', pos);
             else if (confPass != newPass)
               callToast('Error', 'Confirmation password must match new password!', '', 'error', pos);
             else if (!verPassword(confPass))
-              callToast('Error', 'Confirmation password invalid, minimum length is 4, allowed small, capital letters, digits and symbols', '', 'error', pos);
+              callToast('Error', 'Confirmation password invalid, allowed small, capital letters, digits and symbols\r\nExample: Dr552!@', '', 'error', pos);
             else {
               upUser(newPass);
 
@@ -84,10 +94,12 @@ function ProfilePage() {
         }
 
       if (user.secret != secQues) {
-        if (secQues != null)
+        if (!secQues)
           callToast('Error', 'New secret question cannot be empty!', '', 'error', pos);
+        else if (secQues.length < 2)
+          callToast('Error', 'New secret question minimum length is 2!', '', 'error', pos);
         else if (!verString(secQues))
-          callToast('Error', 'Secret question invalid, minimum length is 2, allowed small, capital letters, and digits.', '', 'error', pos);
+          callToast('Error', 'Secret question invalid, allowed small, capital letters, and digits\r\nExample: My age', '', 'error', pos);
         else {
           upUser('secret', secQues);
 
@@ -96,10 +108,12 @@ function ProfilePage() {
       }
 
       if (user.answer != secAns) {
-        if (secAns != null)
+        if (!secAns)
           callToast('Error', 'New secret answer cannot be empty!', '', 'error', pos);
+        else if (secAns.length < 2)
+          callToast('Error', 'New secret answer minimum length is 2!', '', 'error', pos);
         else if (!verString(secAns))
-          callToast('Error', 'Secret answer invalid, minimum length is 2, allowed small, capital letters, and digits.', '', 'error', pos);
+          callToast('Error', 'Secret answer invalid, allowed small, capital letters, and digits\r\nExample: 6', '', 'error', pos);
         else {
           upUser('answer', secAns);
 
@@ -108,6 +122,8 @@ function ProfilePage() {
       }
     }
   }
+
+  const warningMes = () => callToast('Info:', 'Unable to share your grades! Please make online account to do so! You can check your status in profile or top left corner menu!', '', '', pos);
 
   return (<Flex gap={5} w={'100%'}
     h={useBreakpointValue({ lg: 'auto', xl: '100vh' })}
@@ -204,11 +220,34 @@ function ProfilePage() {
         {
           //< MENU throws out a toast!!!! as status is local
         }
-        <FlexMenu pi_icon={'pi-book'}
-          title={'Share my grades'}
-          inner_title={'Are you sure?'}
-          options={['NO', 'YES']}
-          disabled={stat ? true : false} />
+        {
+          !!stat ? (<FlexMenu pi_icon={'pi-book'}
+            title={'Share my grades'}
+            inner_title={'Are you sure?'}
+            options={['NO', 'YES']}
+            disabled={stat ? true : false}
+            callToast={warningMes} />) :
+            (<Button onClick={warningMes}
+              width={'full'}
+              flexDirection={'row'}
+              gap={3}
+              color={'black'}
+              focusRing={'inside'}
+              _light={{
+                backgroundColor: 'white',
+                borderColor: '#B1B7BA/20',
+                focusRingColor: '#B1B7BA/20',
+                color: '#1D282E'
+              }}
+              _dark={{
+                background: "#1D282E",
+                borderColor: "#1D282E",
+                focusRingColor: '#B1B7BA',
+                color: '#EEF6F9'
+              }}>
+              <i className="pi pi-book" /><Text>Share my grades</Text>
+            </Button>)
+        }
         <CheckCard pi_icon={'pi-thumbtack'}
           title={'Edit Profile'}
           disabled={user._id != null ? false : true}
@@ -217,10 +256,6 @@ function ProfilePage() {
 
             if (use_profile_edit) update();
           }} />
-        <Text textAlign={'center'}
-          color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
-        > (POPUP as error for local user)<br /> To share your grades, you must be an online user.<br />
-          You can check the profile for your status <br /> or in right top corner menu.</Text>
 
       </Flex>
 
