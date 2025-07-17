@@ -1,3 +1,4 @@
+
 const empty_user = {
     _id: null,
     status: false,
@@ -72,8 +73,9 @@ export const verEmail = (email) => {
     if (email != null) {
         if (email.trim() == "")
             return false;
-        else if (email.length < 12) return false;
-        else return !!email.match(/^([a-zA-Z0-9._%+-]{2,})@([a-zA-Z0-9-]{3,8})\.([a-zA-Z]{2,4})(\.[a-zA-Z]{2,4})?$/);
+        else if (email.length < 9) return false;
+        else return !!email.match(/^[a-zA-Z0-9._%+-]{2,}@(gmail|outlook|hotmail|yahoo|icloud|aol|protonmail|zoho|mail|gmx|yandex|walla)\.(com|net|org|ru|co\.uk|co\.il|de|fr|eu|me)$/);
+        // /^[a-zA-Z0-9._%+-]{2,}@(gmail|outlook|hotmail|yahoo|icloud|aol|protonmail|zoho|mail|gmx|yandex|walla)\.(com|net|org|ru|co\.uk|co\.il|de|fr|eu|me)$/
     }
 }
 

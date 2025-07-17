@@ -11,6 +11,7 @@ import CheckCard from "../components/CheckCard.jsx";
 import FlexMenu from "../components/FlexMenu.jsx";
 import GradesMenuComparable from "../components/GradesMenuComparable.jsx";
 import TopScoresSlot from "../components/TopScoresSlot.jsx";
+import { callToast } from "../components/Toast.jsx";
 
 function ScorePage() {
   const { user, stat, score, pos } = userContext();
@@ -30,6 +31,8 @@ function ScorePage() {
   } : '');
 
   let temp = 0;
+
+  const warningMes = () => callToast('Info:', 'Unable to share your grades! Please make online account to do so! You can check your status in profile or top left corner menu!', '', '', pos);
 
   return (<Flex gap={5} w={'100%'}
     paddingLeft={pos === 'left' ? { base: '3rem', sm: '3rem', md: '3rem', lg: '5rem' } : ''}
@@ -143,18 +146,36 @@ function ScorePage() {
         !users || users.length <= 0 || !scores || scores.length <= 0 ? null :
           (<Flex flexDirection={'column'} gapY={3}>
 
-            <FlexMenu pi_icon={'pi-book'}
-              title={'Share my grades'}
-              inner_title={'Are you sure?'}
-              options={['NO', 'YES']}
-              disabled={stat === 0 ? true : false} />
+            {
+              !!stat ? (<FlexMenu pi_icon={'pi-book'}
+                title={'Share my grades'}
+                inner_title={'Are you sure?'}
+                options={['NO', 'YES']}
+                callToast={warningMes} />) :
+                (<Button onClick={warningMes}
+                  width={'full'}
+                  flexDirection={'row'}
+                  gap={3}
+                  color={'black'}
+                  focusRing={'inside'}
+                  _light={{
+                    backgroundColor: 'white',
+                    borderColor: '#B1B7BA/20',
+                    focusRingColor: '#B1B7BA/20',
+                    color: '#1D282E'
+                  }}
+                  _dark={{
+                    background: "#1D282E",
+                    borderColor: "#1D282E",
+                    focusRingColor: '#B1B7BA',
+                    color: '#EEF6F9'
+                  }}>
+                  <i className="pi pi-book" /><Text>Share my grades</Text>
+                </Button>)
+
+            }
 
             <CheckCard pi_icon={'pi-thumbtack'} title={'Compare with my grades'} ifChange={() => set_compare(!use_compare)} />
-
-            <Text textAlign={'center'}
-              color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
-            > (POPUP as error for local user)<br /> To share your grades, you must be an online user.<br />
-              You can check the profile for your status <br /> or in right top corner menu.</Text>
 
           </Flex>)
       }

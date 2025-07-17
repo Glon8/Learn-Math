@@ -3,13 +3,14 @@ import "primeicons/primeicons.css";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from 'react'
 import { userContext } from "../components/UserContext.jsx";
+import { callToast } from '../components/Toast.jsx'
 
 import TwoTitlesSlot from '../components/TwoTitlesSlot.jsx'
 
 function ExercisePage() {
     const navigate = useNavigate();
     const location = useLocation();
-    const { upScore, pos } = userContext();
+    const { user, upScore, pos } = userContext();
 
     const [useGrade, setGrade] = useState(0);
 
@@ -34,7 +35,11 @@ function ExercisePage() {
 
     const { exerciseId, exerciseWritten } = location.state || {};
     const toMain = () => { navigate('/'); }
-    const addGrade = () => { upScore(exerciseId, useGrade) }
+    const addGrade = () => {
+        upScore(exerciseId, useGrade);
+
+        if(user._id === null) callToast('Info:', 'Dear user, note, that unable to save your progress for the future, because you not logged in!', '', '', pos);
+    }
 
     const exerciseCheckList = () => {
         return exercisesList && exercisesList.length !== 0
