@@ -16,7 +16,7 @@ import PassSlot from "../components/PassSlot.jsx";
 
 function ProfilePage() {
   const { user, stat, share,
-    score, upUser, pos } = userContext();
+    score, upUser, pos, compare } = userContext();
 
   const [use_profile_edit, set_profile_edit] = useState(false);
 
@@ -61,7 +61,7 @@ function ProfilePage() {
       }
 
       if (!!password)
-        if (user.password != password)
+        if (!compare(password))
           callToast('Error', 'Current password must match!', '', 'error', pos);
         else if (password.length < 4)
           callToast('Error', 'Current password minimum length is 4!', '', 'error', pos);

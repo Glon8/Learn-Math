@@ -12,12 +12,11 @@ import CheckCard from './CheckCard.jsx'
 import PassSlot from './PassSlot.jsx'
 
 function SignForm({ isIn, isUp, close }) {
-  const { upUser, up, pos } = userContext();
+  const { upUser, signUp, pos, signIn } = userContext();
 
   const [useOffline, setOffline] = useState(false);
   const [useIn, setIn] = useState(isIn ? isIn : false);
   const [useUp, setUp] = useState(isUp ? isUp : false);
-  const [send, setSend] = useState(false);
 
   const [name, setName] = useState(null);
   const [email, setEmail] = useState(null);
@@ -148,6 +147,32 @@ function SignForm({ isIn, isUp, close }) {
     return flag;
   }
 
+  const signHandle = async () => {
+    if (useIn) { // sign in: online only
+      await upUser('email', email);
+      await upUser('password', password);
+
+      await signIn(email, password);
+
+      console.log('sign in');
+    }
+    else if (useUp) {
+      if (!useOffline) { // sign up: online
+        await signUp(useOffline, name, email, secQues, secAns);
+
+        console.log('sign up: online');
+      }
+      else if (useOffline) {  // sign up: offline and online
+        await signUp(useOffline, name);
+
+        console.log('sign up: offline');
+      }
+    }
+
+    closeUP();
+    setOffline(false);
+  };
+
   useEffect(() => {
     setIn(isIn);
     setUp(isUp);
@@ -159,37 +184,6 @@ function SignForm({ isIn, isUp, close }) {
     setSecQues(null);
     setSecAns(null);
   }, [isIn, isUp]);
-
-  useEffect(() => {
-    if (useIn) {
-      // sign in: online only
-    }
-    if (useUp) {
-      // sign up: offline and online
-      if (useOffline) {
-        upUser('_id', 0);
-        upUser('name', name);
-
-        callToast('Success', 'Local user created!', '', 'success', pos);
-      }
-      else {
-        // sign up: online
-        upUser('status', true);
-        upUser('name', name);
-        upUser('email', email);
-        upUser('password', password);
-        upUser('secret', secQues);
-        upUser('answer', secAns);
-
-        up();
-
-        callToast('Success', 'Form sended!', '', 'success', pos);
-      }
-    }
-
-    closeUP();
-    setOffline(false);
-  }, [send]);
 
   return (<Flex w={'100vw'} h={'100vh'}
     position={'fixed'}
@@ -335,7 +329,11 @@ function SignForm({ isIn, isUp, close }) {
           onClick={() => {
             let flag = verify();
 
-            flag ? setSend(!send) : null;
+            if (flag && useOffline && useUp) callToast('Success', 'Local user created!', '', 'success', pos);
+            else if (flag && !useOffline && useUp) callToast('Success', 'Form sended!', '', 'success', pos);
+
+            if (flag) signHandle();
+            //flag ? setSend(!send) : null;
           }}
           _light={{
             background: "white",

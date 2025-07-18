@@ -36,9 +36,12 @@ function ExercisePage() {
     const { exerciseId, exerciseWritten } = location.state || {};
     const toMain = () => { navigate('/'); }
     const addGrade = () => {
-        upScore(exerciseId, useGrade);
+        const grade = Math.floor(Math.random() * 100) + 1;
 
-        if(user._id === null) callToast('Info:', 'Dear user, note, that unable to save your progress for the future, because you not logged in!', '', '', pos);
+        upScore(exerciseId, grade);
+        //upScore(exerciseId, useGrade);
+
+        if (user._id === null) callToast('Info:', 'Dear user, note, that unable to save your progress for the future, because you are not logged in!', '', '', pos);
     }
 
     const exerciseCheckList = () => {
