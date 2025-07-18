@@ -1,53 +1,52 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import { getEmptyUser, getEmptyScore } from '../util/Statics.js'
 import { useNavigate } from 'react-router-dom'
+import CryptoJS from 'crypto-js'
+import bcrypt from 'bcryptjs'
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const navigate = useNavigate();
 
+  const [key, setKey] = useState(CryptoJS.lib.WordArray.random(32).toString());
   const [loaded, setLoaded] = useState(false);
   const [useToken, setToken] = useState(false);
   const [useUser, setUser] = useState(false);
   const [useScore, setScore] = useState(false);
 
-  //const encrypt = () => { }
+  const comparePassword = (thing) => {
+    return bcrypt.compare(thing, useUser.password);
+  }
 
-  //const decrypt = () => { }
+  const signUp = async (offline, name, email, password, secQues, secAns) => {
+    if (!offline) { // sign up: online
+      await upUser('status', true);
+      await upUser('name', name);
+      await upUser('email', email);
+      await upUser('password', password);
+      await upUser('secret', secQues);
+      await upUser('answer', secAns);
 
-  const signUp = () => {
-    if (useUser._id === null && useUser.status && !!useUser.name && !!useUser.email && !!useUser.password) {
-      // < Online sign up
+      console.log('sign up: online');
 
-      // making a request with existing user (from usUser or cookies)
-      // over writing token and user (useUser and cookies) with new id
+      console.log(useUser);
     }
-    else {
-      upUser('_id', null);
-      upUser('status', false);
-      upUser('name', null);
-      upUser('email', null);
-      upUser('password', null);
-      upUser('secret', null);
-      upUser('answer', null);
+    else {  // sign up: offline and online
+      await upUser('_id', 0);
+      await upUser('name', name);
+
+      console.log('sign up: offline');
     }
   }
 
-  const signIn = () => {
-    if (useUser._id === null && useUser.status && !!useUser.name && !!useUser.email && !!useUser.password) {
-      // will pass the user data to the server side
-      // server ll return the token with user data
-      // token will manually overwritten in to, token, empty-user, empty-score
-      // user data that comes from the server ll be passed directly to useUser, useScore, useToken  
-    }
-    else {
-      upUser('_id', null);
-      upUser('status', false);
-      upUser('name', null);
-      upUser('email', null);
-      upUser('password', null);
-    }
+  const signIn = (email, password) => {
+    console.log('sign in');
+    console.log('sign in email: ' + email);
+    console.log('sign in password: ' + password);
+
+    //  no need to save the email and password locally,
+    //  because server ll make an update as it recieve the credentials.
   }
 
   const signOut = () => {
@@ -74,8 +73,21 @@ export const UserProvider = ({ children }) => {
 
   const updateUser = () => {
     // update user in  the cookies
-    if (!useToken && useUser._id === 0) // <=== must use cryptojs to make a light encryption
-      setCookie(1, "learn_math_user", { token: useToken, user: useUser, score: useScore }); // <==== only if user is offline, or if online for token only!
+    if (!useToken && useUser._id === 0) {
+      const box = {
+        user: useUser,
+        score: useScore
+      }
+
+      // making object box as string, and encrypting using cryptojs.
+      const message = {
+        token: useToken,
+        package: CryptoJS.AES.encrypt(JSON.stringify(box), key).toString(),
+        key: key
+      }
+
+      setCookie(1, "learn_math_user", message); // <==== only if user is offline, or if online for token only!
+    }
     else {
       // update user in the db
       //console.log('must save in data base');
@@ -88,28 +100,19 @@ export const UserProvider = ({ children }) => {
     const extractedUser = getCookie("learn_math_user"); // cookies pull
 
     console.log('fetch data print:')
-    console.log(extractedUser)
+    console.log(extractedUser);
 
-    /*
-    //checks for  encryptio included:
+    if (extractedUser && (!!extractedUser.token || !!extractedUser.key)) {
+      if (!extractedUser.token && !!extractedUser.key) { // cookies check
+        let unpackedUser = CryptoJS.AES.decrypt(extractedUser.package, extractedUser.key);
 
-    if(extractedUser.key != null){
-       // decrypt cookie and return its contains
-    }
-    else if(extractedUser.token != null) {
-       // fetch user from the server
-    }
-    else retrn { // empty user return
-      token: null,
-      user: getEmptyUser(),
-      score: getEmptyScore()
-    }
-    */
+        unpackedUser = JSON.parse(unpackedUser.toString(CryptoJS.enc.Utf8));
 
-    if (extractedUser && (extractedUser.token || extractedUser.user._id !== null)) {
-      if (!extractedUser.token && extractedUser.user._id === 0)
-        return extractedUser; // cookies check
-      else if (extractedUser.token != null && extractedUser.user._id === null) {
+        unpackedUser['token'] = extractedUser.token;
+
+        return unpackedUser;
+      }
+      else if (!!extractedUser.token && !extractedUser.key) {
         // server pull request with token
         console.log('user online')
       }
@@ -121,12 +124,22 @@ export const UserProvider = ({ children }) => {
     }
   }
 
-  const upUser = (thing, newValue) => {
+  const upUser = async (thing, newValue) => {
     setUser(prev => ({ ...prev, [thing]: newValue }));
 
     if (thing === '_id') setScore(prev => ({ ...prev, [thing]: newValue }));
+    else if (thing === 'password') {
+      if (!!newValue) {
+        const salt = await bcrypt.genSalt(3);
 
-    console.log("up user: " + thing + ": " + newValue)
+        newValue = newValue.toString();
+
+        newValue = await bcrypt.hash(newValue, salt);
+      }
+      setUser(prev => ({ ...prev, [thing]: newValue }));
+    }
+
+    console.log("up user: " + thing + ": " + useUser[thing])
   }
 
   const upScore = (thing, newScore) => {
@@ -141,10 +154,7 @@ export const UserProvider = ({ children }) => {
 
   const getCookie = (cookieName) => {
     // getCookie returns varieble false as it returns empty!!!
-
-    const cDecoded = decodeURIComponent(document.cookie);
-
-    const cookieArr = cDecoded.split("; ");
+    const cookieArr = document.cookie.split("; ");
 
     // returns the value from requested cookie (cookieName required).)
     if (cookieArr != null) {
@@ -153,7 +163,8 @@ export const UserProvider = ({ children }) => {
       cookieArr.forEach(el => {
         const splitCookies = el.split('=');
 
-        if (splitCookies[0] == cookieName) cookie = JSON.parse(splitCookies[1]);
+        if (splitCookies[0] == cookieName)
+          cookie = JSON.parse(decodeURIComponent(splitCookies[1]));
       }
       );
 
@@ -172,7 +183,7 @@ export const UserProvider = ({ children }) => {
 
     const expires = date.toGMTString();
 
-    document.cookie = name + "=" + JSONObj + "; expires=" + expires + "; path=/";
+    document.cookie = name + "=" + encodeURIComponent(JSONObj) + "; expires=" + expires + "; path=/";
   }
 
   useEffect(() => {
@@ -181,9 +192,9 @@ export const UserProvider = ({ children }) => {
       updateUser();
     }
 
-    console.log("data update: It changed")
+    console.log("data update: It changed");
 
-    if(!loaded) setLoaded(true);
+    if (!loaded) setLoaded(true);
   }, [useToken, useUser, useScore]);
 
   useEffect(() => {
@@ -207,7 +218,8 @@ export const UserProvider = ({ children }) => {
       share: useUser.shared,
       score: useScore, upScore,
       mode: useUser.mode, out: signOut,
-      set: useUser.settings, up: signUp
+      set: useUser.settings, signUp,
+      compare: comparePassword, signIn
     }}>
     {children}
   </UserContext.Provider>)
