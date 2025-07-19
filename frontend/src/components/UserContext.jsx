@@ -64,10 +64,17 @@ export const UserProvider = ({ children }) => {
   /*
   crypto js structure package:
   cookie:
-  "learn_math_user" => {
+  "learn_math_user" = (URI)(JSON.stringify){
     token: {server token}
-    package: {encrypted user}
-    key: {encryption key}
+    package: {
+      (encrypted: cryptojs)
+      user: useUser
+      score: useScore
+    }
+    key: {
+      (cryptojs random key)
+      encryption key
+    }
     }
   */
 

@@ -7,6 +7,7 @@ import AINote from './AINote.jsx'
 import Girl from '../images/ChatGPTHighSchoolGirl.png'
 import SittingGirl from '../images/ChatGPTHighSchoolGirlSitting.png'
 import Boy from '../images/ChatGPTHighSchoolBoy.png'
+import ReadingBoy from '../images/ChatGPTHighSchoolBoyReading.png'
 
 function BackGroundImage() {
     
@@ -36,7 +37,7 @@ function BackGroundImage() {
             display={{ base: 'none', sm: 'none', md: 'none', lg: 'none', xl: 'flex' }}
             >
             <Image maxH={'70%'}
-                src={colorMode === 'light'? Girl : Girl}
+                src={colorMode === 'light'? Girl : ReadingBoy}
                 alt="welcome-image" />
         </Flex>
         <Flex h={'auto'}
