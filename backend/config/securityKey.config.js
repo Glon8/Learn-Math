@@ -1,0 +1,1 @@
+export const tokenKey = 'someKey'; // <== switch to much secure key!!!
