@@ -1,6 +1,5 @@
 import express from 'express'
-
-import { connect_mongo } from './config/mongo_connect.js'
+import { connect_mongo } from './config/mongo_connect.config.js'
 
 const app = express();
 const server_port = 5000;
