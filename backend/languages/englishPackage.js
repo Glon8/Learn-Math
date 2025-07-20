@@ -1,142 +1,58 @@
 const lanPackage = {
     navBar: {
-        main: 'Learn Math',
-        hints: 'Hints',
-        topScores: 'Top Scores',
-        profile: 'Profile',
-        schools: 'Schools'
+        main: '',
+        hints: '',
+        topScores: '',
+        profile: '',
+        schools: ''
     },
     navMenu: {
-        trigger: 'Menu',
-        userStatus: 'user:',
-        userStatusLocal: 'Local',
-        userStatusOnline: 'Online',
-        userStatusNegative: 'No user connected!',
-        signUp: 'Sign Up',
-        signIn: 'Sign In',
-        signOut: 'Sign Out',
-        mode: 'Mode',
+        trigger: '',
+        userStatus: '',
+        signUp: '',
+        signIn: '',
+        signOut: '',
+        mode: '',
         languages: {
-            trigger: 'Languages',
-            en: 'EN',
-            he: 'HE',
-            ru: 'RU'
+            english: '',
+            hebrew: '',
+            russian: ''
         },
-        settings: {
-            trigger: 'Lesson Settings',
-        },
+        settings: {},
         position: {
-            trigger: 'Menu Position',
-            top: 'Top',
-            bottom: 'Bottom',
-            right: 'Right',
-            left: 'Left'
+            top: '',
+            bottom: '',
+            right: '',
+            left: ''
         }
     },
-    topScores: {
-        topScoresTitle: 'TOP SCORES',
-        progressTitle: 'PROGRESS',
-        share: 'Share my grades',
-        remove: 'Remove me from top list',
-        compare: 'Compare with my grades'
-    },
+    topScores: {},
     schools: {
-        schoolsTopicTitle: 'SCHOOLS TOPICS',
-        innerTitle: 'Select topic that you would like to exercise at!',
-        elementarySchool: 'Elementary-School',
-        highSchool: 'High-School'
+        titleLeft: '',
+        titleInner: '',
     },
-    profile: {
-        profileTitle: 'PROFILE',
-        progressTitle: 'PROGRESS',
-        elementarySchool: 'Elementary-Schoo',
-        highSchool: 'High-School',
-        share: 'Share my grades',
-        remove: 'Remove me from top list',
-        convert: 'Convert user to online',
-        delete: 'Delete my user',
-        edit: 'Edit Profile'
-    },
+    profile: {},
     hints: {
-        hintsTitle: 'HINTS',
-        schoolsTopicTitle: 'SCHOOLS TOPICS',
-        elementarySchool: 'Elementary-School',
-        highSchool: 'High-School',
-        teach: 'Discuss With Teach!',
-        placeholder: 'Ask teach!',
-        limitation: 'Max 350 characters'
+        titleLeft: '',
+        titleRight: '',
+        elementarySchool: '',
+        highSchool: '',
+        teach: '',
+        placeholder: '',
+        limitation: ''
     },
-    exercise: {
-        explanation: 'Solve exercises to recieve a grade! (Max grade is 100)',
-        done: 'Done'
-    },
+    exercise: {},
     statics: {
-        confirmation: {
-            true: 'Yes, Im sure!',
-            false: 'No, await please!'
-        },
         user: {
-            name: 'Name',
-            email: 'Email',
-            password: 'Password',
-            status: 'Status',
-            statusTrue: 'Online',
-            statusFalse: 'Offline',
-            shared: 'Scores',
-            sharedTrue: 'Shared',
-            sharedFalse: 'NotShared',
-            secret: 'Question',
-            answer: 'Answer'
+            name: '',
+            email: '',
+            password: '',
+            status: '',
+            shared: '',
+            secret: '',
+            answer: ''
         },
         topics: {
-            sum_substract: 'sum & substract',
-            multiply_divide: 'multiply & divide',
-            mixed: 'mixed',
-            power_root: 'power & root',
-            fraction_fractionMixed: 'fractions',
-            forms_sizes: 'forms & sizes',
-            exam_basic: 'exam: basic',
-            equasions_basic: 'equations: basic',
-            equations_two_more: 'equasions: two & more',
-            verbal_problems: 'verbal problems',
-            geometry: 'geometry',
-            quadratic_equation: 'quadratic equation',
-            circles: 'circles',
-            exam_advanced: 'exam: advanced'
-        },
-        shortDesc: {
-            sum_substract: '',
-            multiply_divide: '',
-            mixed: '',
-            power_root: '',
-            fraction_fractionMixed: '',
-            forms_sizes: '',
-            exam_basic: '',
-            equasions_basic: '',
-            equations_two_more: '',
-            verbal_problems: '',
-            geometry: '',
-            quadratic_equation: '',
-            circles: '',
-            exam_advanced: ''
-        },
-        longDesc: {
-            sum_substract: '',
-            multiply_divide: '',
-            mixed: '',
-            power_root: '',
-            fraction_fractionMixed: '',
-            forms_sizes: '',
-            exam_basic: '',
-            equasions_basic: '',
-            equations_two_more: '',
-            verbal_problems: '',
-            geometry: '',
-            quadratic_equation: '',
-            circles: '',
-            exam_advanced: ''
-        },
-        exerciseForms: {
             sum_substract: '',
             multiply_divide: '',
             mixed: '',

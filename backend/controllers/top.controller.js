@@ -40,6 +40,6 @@ export const deleteFromTop = async (req, res) => {
     }
 }
 
-export const getTop = async (req, res) => {
+export const getTop = async (res) => {
 
 }
