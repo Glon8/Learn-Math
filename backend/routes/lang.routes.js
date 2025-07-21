@@ -1,9 +1,9 @@
 import express from 'express'
-import { getLang } from './controllers/languges.controller.js'
+import { getLang } from '../controllers/languges.controller.js'
 
 const langRouter = express.Router();
 
 // language calls
-app.get('/get-lang', getLang);
+langRouter.post('/get-lang', getLang);
 
 export default langRouter;

@@ -1,4 +1,4 @@
-const lanPackage = {
+const russianPackage = {
     navBar: {
         main: '',
         hints: '',
@@ -151,4 +151,4 @@ const lanPackage = {
     }
 }
 
-export default lanPackage;
+export default russianPackage;

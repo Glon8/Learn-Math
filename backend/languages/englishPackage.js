@@ -1,4 +1,4 @@
-const lanPackage = {
+const englishPackage = {
     navBar: {
         main: 'Learn Math',
         hints: 'Hints',
@@ -155,4 +155,4 @@ const lanPackage = {
     }
 }
 
-export default lanPackage;
+export default englishPackage;
