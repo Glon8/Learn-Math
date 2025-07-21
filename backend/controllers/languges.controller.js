@@ -1,6 +1,6 @@
-import { langPackage as en } from '../languages/englishPackage'
-import { langPackage as he } from '../languages/hebrewPackage'
-import { langPackage as ru } from '../languages/russianPackage'
+import englishPackage from "../languages/englishPackage.js";
+import hebrewPackage  from '../languages/hebrewPackage.js';
+import russianPackage  from '../languages/russianPackage.js';
 
 export const getLang = (req, res) => {
     const requestedLang = req.body.language;
@@ -8,13 +8,13 @@ export const getLang = (req, res) => {
     try {
         switch (requestedLang) {
             case 'en':
-                res.status(200).json({ success: true, message: 'English language loaded!', data: en });
+                res.status(200).json({ success: true, message: 'English language loaded!', data: englishPackage });
                 break;
             case 'he':
-                res.status(200).json({ success: true, message: 'Hebrew language loaded!', data: he });
+                res.status(200).json({ success: true, message: 'Hebrew language loaded!', data: hebrewPackage });
                 break;
             case 'ru':
-                res.status(200).json({ success: true, message: 'Russian language loaded!', data: ru });
+                res.status(200).json({ success: true, message: 'Russian language loaded!', data: russianPackage });
                 break;
         }
     }

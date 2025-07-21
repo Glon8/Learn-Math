@@ -30,7 +30,7 @@ const userSchema = mongoose.Schema({
         require: true
     },
     settings: {
-        type: String,
+        type: [String],
         require: true
     },
     mode: {
