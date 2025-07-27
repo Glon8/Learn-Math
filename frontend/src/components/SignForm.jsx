@@ -17,6 +17,7 @@ function SignForm({ isIn, isUp, close }) {
   const [useOffline, setOffline] = useState(false);
   const [useIn, setIn] = useState(isIn ? isIn : false);
   const [useUp, setUp] = useState(isUp ? isUp : false);
+  const [useReset, setReset] = useState(false);
 
   const [name, setName] = useState(null);
   const [email, setEmail] = useState(null);
@@ -28,6 +29,7 @@ function SignForm({ isIn, isUp, close }) {
   const closeUP = () => {
     close();
     setOffline(false);
+    setReset(false);
 
     setName(null);
     setEmail(null);
@@ -158,7 +160,7 @@ function SignForm({ isIn, isUp, close }) {
     }
     else if (useUp) {
       if (!useOffline) { // sign up: online
-        await signUp(useOffline, name, email, secQues, secAns);
+        signUp(useOffline, name, email, password, secQues, secAns);
 
         console.log('sign up: online');
       }
@@ -270,7 +272,7 @@ function SignForm({ isIn, isUp, close }) {
               user, your progress will be gone. To save the progress, you can sign up as an online user.
             </Text>) : null}
         {
-          !useOffline && (useUp || useIn) ? (<Flex flexDirection={'column'}
+          !useOffline && (useUp || useIn && !useReset) ? (<Flex flexDirection={'column'}
             gapY={3}
           >
 
@@ -290,19 +292,22 @@ function SignForm({ isIn, isUp, close }) {
           </Flex>) : null
         }
         {
-          !useOffline && useUp ? (<Flex flexDirection={'column'}
-            gapY={3}
-          >
-
+          !useOffline && useUp ? (
             <PassSlot placeholder={'confirm password'}
               category={'Confirm Password'}
               edit={true}
               getValue={(value) => setConfPass(value)}
               maxLength={24}
-            />
+            />) : null
+        }
+        {
+          !useOffline && (useUp || useIn && useReset) ? (<Flex flexDirection={'column'}
+            gapY={3}
+          >
             <Slot placeholder={'secret question'}
               category={'Secret Question'}
-              edit={true}
+              edit={useReset ? false : true}
+              value={useReset ? 'Some secret question' : ''}
               getValue={(value) => setSecQues(value)}
               maxLength={32}
             />
@@ -330,7 +335,6 @@ function SignForm({ isIn, isUp, close }) {
             let flag = verify();
 
             if (flag && useOffline && useUp) callToast('Success', 'Local user created!', '', 'success', pos);
-            else if (flag && !useOffline && useUp) callToast('Success', 'Form sended!', '', 'success', pos);
 
             if (flag) signHandle();
             //flag ? setSend(!send) : null;
@@ -355,22 +359,47 @@ function SignForm({ isIn, isUp, close }) {
           />) : null
         }
         {
-          useIn ? (<Text fontSize={'sm'}
-            color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
-          >
-            Have no accout? <Link onClick={() => {
-              setIn(false);
-              setUp(true);
+          useIn ? (!useReset ? (<Flex flexDir={'column'}>
+
+            <Text fontSize={'sm'}
+              color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
+            >
+              Have no accout? <Link onClick={() => {
+                setIn(false);
+                setUp(true);
+                setReset(false);
+                setOffline(false);
+                console.log('I need an account')
+              }}>SIGN UP!</Link>
+            </Text>
+            <Text fontSize={'sm'}
+              color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
+            >Forgot password? <Link onClick={() => {
+              setIn(true);
+              setUp(false);
+              setReset(true);
               setOffline(false);
-              console.log('I need an account')
-            }}>SIGN UP!</Link>
-          </Text>) :
+              console.log('I need reset password')
+            }}>RESET!</Link>
+            </Text>
+
+          </Flex>) : (<Text fontSize={'sm'}
+            color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
+          >I wish to return to log-in! <Link onClick={() => {
+            setIn(true);
+            setUp(false);
+            setReset(false);
+            setOffline(false);
+            console.log('I need get back to login')
+          }}>LOG IN</Link>
+          </Text>)) :
             (<Text fontSize={'sm'}
               color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
             >
               Have an accout already? <Link onClick={() => {
                 setIn(true);
                 setUp(false);
+                setReset(false);
                 setOffline(false);
                 console.log('I have an account')
               }}>SIGN IN!</Link>

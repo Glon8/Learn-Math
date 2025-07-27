@@ -1,5 +1,5 @@
 
-const empty_user = {
+export const emptyUser = {
     _id: null,
     status: false,
     shared: false,
@@ -14,7 +14,7 @@ const empty_user = {
     navPosition: 'top'
 }
 
-const empty_score = {
+export const emptyScore = {
     _id: null,
     sum_substract: null,
     multiply_divide: null,
@@ -32,7 +32,12 @@ const empty_score = {
     exam_advanced: null
 }
 
-const topic_names = {
+export const emptyLogs = {
+    user: null,
+    model: null
+}
+
+export const topicNames = {
     sum_substract: 'sum & substract',
     multiply_divide: 'multiply & divide',
     mixed: 'mixed',
@@ -48,18 +53,6 @@ const topic_names = {
     circles: 'circles',
     exam_advanced: 'exam: advanced'
 };
-
-export const getEmptyUser = () => {
-    return empty_user;
-}
-
-export const getEmptyScore = () => {
-    return empty_score;
-}
-
-export const getTopicNames = () => {
-    return topic_names;
-}
 
 export const verString = (string) => {
     if (string != null) {

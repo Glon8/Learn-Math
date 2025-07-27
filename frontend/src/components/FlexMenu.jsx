@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 // <Flexmenu disabled={false} close={true} pi_icon={''} title={'do something'} inner_title={'DO SOMETHING!'} options={['will do', 'negative']} />
 
-function FlexMenu({ pi_icon, title, inner_title, options, close, autoClose}) {
+function FlexMenu({ pi_icon, title, inner_title, options, close, autoClose }) {
     const [useOpen, setOpen] = useState(close ? close : false);
 
     useEffect(() => {
@@ -61,11 +61,28 @@ function FlexMenu({ pi_icon, title, inner_title, options, close, autoClose}) {
                             (<Separator />) : ''
                     }
                     {
-                        options.map((value, index) => {
-                            return (<Menu.Item key={index}
-                                value={`${value}`}
-                                color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
-                            >{value}</Menu.Item>)
+                        options.map((option, index) => {
+                            return (<Menu.Item key={index}>
+                                <Button value={`${option.value}`}
+                                    w={'full'}
+                                    _light={{
+                                        backgroundColor: 'white',
+                                        borderColor: '#B1B7BA/20',
+                                        focusRingColor: '#B1B7BA/20',
+                                        color: '#1D282E'
+                                    }}
+                                    _dark={{
+                                        background: "#1D282E",
+                                        borderColor: "#1D282E",
+                                        focusRingColor: '#B1B7BA',
+                                        color: '#EEF6F9'
+                                    }}
+                                    onClick={() => {
+                                        setOpen(false);
+                                        option.click? option.click() : null;
+                                    }}
+                                >{option.value}</Button>
+                            </Menu.Item>)
                         })
                     }
                 </Menu.Content>

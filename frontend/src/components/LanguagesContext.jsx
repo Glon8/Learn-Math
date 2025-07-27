@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { getTopicNames } from '../util/Statics.js';
+import { topicNames } from '../util/Statics.js';
 import { userContext } from './UserContext.jsx';
 
 const LanguageContext = createContext();

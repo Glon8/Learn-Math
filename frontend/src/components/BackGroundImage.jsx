@@ -10,7 +10,7 @@ import Boy from '../images/ChatGPTHighSchoolBoy.png'
 import ReadingBoy from '../images/ChatGPTHighSchoolBoyReading.png'
 
 function BackGroundImage() {
-    
+
     const { colorMode, toggleColorMode } = useColorMode();
 
     const { pos } = userContext();
@@ -35,22 +35,22 @@ function BackGroundImage() {
             left={-1}
             bottom={pos === 'bottom' ? '5rem' : 0}
             display={{ base: 'none', sm: 'none', md: 'none', lg: 'none', xl: 'flex' }}
-            >
+        >
             <Image maxH={'70%'}
-                src={colorMode === 'light'? Girl : ReadingBoy}
+                src={colorMode === 'light' ? Girl : ReadingBoy}
                 alt="welcome-image" />
         </Flex>
         <Flex h={'auto'}
-            maxW={'25rem'}
+            maxW={{ _light: '25rem', _dark: '18rem' }}
             position={'fixed'}
             bottom={pos === 'bottom' ? '5rem' : 0}
             right={-1}
             display={{ base: 'none', sm: 'none', md: 'none', lg: 'none', xl: 'flex' }}>
             <Image maxH={'70%'}
-                src={colorMode === 'light'? Boy : SittingGirl}
+                src={colorMode === 'light' ? Boy : SittingGirl}
                 alt="welcome-image" />
         </Flex>
-        <Flex display={{base: 'none',sm: 'none',md:'none',lg: 'none',xl: 'flex'}}>
+        <Flex display={{ base: 'none', sm: 'none', md: 'none', lg: 'none', xl: 'flex' }}>
             <AINote />
         </Flex>
 

@@ -1,4 +1,4 @@
-import { Text, Flex, Menu, Portal, Separator, Button } from "@chakra-ui/react"
+import { Text, Flex, Menu, Portal, Separator, Button, useBreakpointValue } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useEffect, useState } from "react";
 
@@ -7,19 +7,10 @@ import Slot from "./Slot";
 import CompareSlot from "./CompareSlot";
 import TwoTitlesSlot from "./TwoTitlesSlot";
 
-/*
-  <TopScoresSlot i={i}
-   user={user}
-   user_scores_list={user_scores_list}
-   topic_names={topic_names}
-   use_compare={use_compare}
-   my_scores={my_scores}
-   temp={temp}
-   />
-*/
+function TopScoresSlot({ i, user, user_scores_list, topic_names, use_compare, my_user, my_scores, autoClose }) {
+  const [useOpen, setOpen] = useState(false);
 
-function TopScoresSlot({ i, user, user_scores_list, topic_names, use_compare, my_user, my_scores, temp, close, autoClose }) {
-  const [useOpen, setOpen] = useState(close ? close : false);
+  const close = useBreakpointValue({ lg: false, xl: false });
 
   useEffect(() => {
     setOpen(close);
@@ -61,20 +52,10 @@ function TopScoresSlot({ i, user, user_scores_list, topic_names, use_compare, my
           </Flex>
           <Text>
             {
-              !user_scores_list && user_scores_list.length <= 0 ? '0' : temp = 0
-            }
-            {
-              user_scores_list.map((scores) => {
-                if (user._id === scores._id) {
-                  Object.entries(topic_names).map((topic) => {
-                    const score = scores[topic[0]];
-
-                    temp = temp + score;
-                  })
-
-                  temp = temp / 13;
-
-                  return (`${temp.toFixed(2)}`)
+              user_scores_list.map((score) => {
+                if (user._id === score.userId) {
+                  if (!score['averageScore'] || score['averageScore'] === 0) return 0;
+                  else return (`${score['averageScore'].toFixed(2)}`);
                 }
               })
             }
@@ -124,53 +105,56 @@ function TopScoresSlot({ i, user, user_scores_list, topic_names, use_compare, my
             !user_scores_list || user_scores_list.length <= 0 ?
               (<Text>Whoops! Something went wrong, no grades awailable.</Text>) :
               // split users grades list in to seperate lists per user
-              user_scores_list.map((scores, i2) => {
+              (user_scores_list.map((scores, i2) => {
                 // split user grades list into seperate topics
-                if (!use_compare && user._id === scores._id) { // < without compare
-                  // checking if user id match list id
+                if (!use_compare && user._id.toString() === scores.userId.toString()) { // < without compare
+
                   return Object.entries(topic_names).map((topic) => {
                     const score = scores[topic[0]];
 
-                    if (topic[0] === 'equasions_basic') {
-                      return <Separator key={i2 + topic[1]}>
+                    if (topic[0] === 'equasions_basic')
+                      return (<Separator key={i2 + topic[1]}>
                         <Slot value={score ? score : ''}
                           category={topic[1]}
                           auto={true}
                           placeholder={'0'}
                           disableDark={true} />
-                      </Separator>
-                    } else {
-                      return <Slot key={i2 + topic[1]}
+                      </Separator>)
+                    else
+                      return (<Slot key={i2 + topic[1]}
                         value={score ? score : ''}
                         category={topic[1]}
                         auto={true}
                         placeholder={'0'}
-                        disableDark={true} />
-                    }
+                        disableDark={true} />)
                   })
+
                 }
-                else { // < with compare
+                else if (!!use_compare && user._id.toString() === scores.userId.toString()) { // < with compare
+
                   return Object.entries(topic_names).map((topic) => {
                     const score = scores[topic[0]];
                     const user_score = my_scores[topic[0]];
 
-                    if (topic[0] === 'equasions_basic') {
-                      return <Separator key={i2 + topic[1]}>
+                    if (topic[0] === 'equasions_basic')
+                      return (<Separator key={i2 + topic[1]}>
                         <CompareSlot value_a={score ? score : 0}
                           value_b={user_score ? user_score : 0}
                           category={topic[1]}
                           disableDark={true} />
-                      </Separator>
-                    } else {
-                      return <CompareSlot key={i2 + topic[1]}
+                      </Separator>)
+
+                    else
+                      return (<CompareSlot key={i2 + topic[1]}
                         value_a={score ? score : 0}
                         value_b={user_score ? user_score : 0}
                         category={topic[1]}
-                        disableDark={true} />
-                    }
+                        disableDark={true} />)
                   })
+
                 }
               })
+              )
           }
 
         </Menu.Content>
