@@ -1,3 +1,4 @@
+import bcrypt from 'bcrypt'
 const ServerAddon = 'Server verification fail:\r\n';
 
 const verString = (string) => {
@@ -18,13 +19,8 @@ const verEmail = (email) => {
     }
 }
 
-const verPassword = (password) => {
-    if (password != null) {
-        if (password.trim() == "")
-            return false;
-        else if (password.length < 4) return false;
-        else return !!password.match(/^[a-zA-Z0-9!@#$%^&*]{4,32}$/);
-    }
+export const verPassword = (thing, password) => {
+    return bcrypt.compare(thing, password);
 }
 
 export const verifyName = (name) => {
@@ -75,7 +71,7 @@ export const verifyEmail = (email) => {
     return box;
 };
 
-export const verifyPassword = (password) => {
+export const verifyPassword = (thing, password) => {
     const box = {
         success: true,
         message: 'Server password verify success!',
@@ -90,9 +86,9 @@ export const verifyPassword = (password) => {
         box.success = false;
         box.message = ServerAddon + 'Password minimum length is 4!';
         box.stat = 422;
-    } else if (!verPassword(password)) {
+    } else if (!verPassword(thing, password)) {
         box.success = false;
-        box.message = ServerAddon + 'Password invalid, allowed: small, capital letters, digits and symbols\r\nExample: Dr552!@';
+        box.message = ServerAddon + 'Passwords dont match!';
         box.stat = 422;
     }
 

@@ -5,9 +5,10 @@ import userRouter from './routes/user.routes.js'
 import topRouter from './routes/top.routes.js'
 import langRouter from './routes/lang.routes.js'
 import exercisesRouter from './routes/exercises.routes.js'
+import aiRouter from './routes/ai.routes.js'
 
 const app = express();
-const server_port = 5000;
+const port = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
@@ -20,9 +21,14 @@ app.use('/api/top', topRouter);
 app.use('/api/lang', langRouter);
 // exercise calls
 app.use('/api/exercise', exercisesRouter);
+// ai call
+app.use('/api/ai', aiRouter);
 
-app.listen(server_port, () => {
+app.listen(port, () => {
     connect_mongo();
 
-    console.log("Server started at http://localhost:5000");
+    if (port === 5000)
+        console.log(`Server started at http://localhost:${port}`);
+    else
+        console.log(`Server started at port: ${port}`);
 });

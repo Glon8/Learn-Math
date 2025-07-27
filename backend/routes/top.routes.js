@@ -6,6 +6,6 @@ const topRouter = express.Router();
 // top calls
 topRouter.post('/sign-up', signToTop);
 topRouter.post('/remove', deleteFromTop);
-topRouter.post('/get', getTop);
+topRouter.get('/get', getTop);
 
 export default topRouter;
