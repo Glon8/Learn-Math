@@ -15,7 +15,7 @@ export const verify = async (token) => {
         if (!userId.id) return false;
 
         const user = await User.findOne({ _id: userId.id });
-
+        
         if (!user) return false;
         else return user;
     }
