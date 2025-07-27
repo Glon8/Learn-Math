@@ -1,4 +1,4 @@
-import { Flex, Separator } from "@chakra-ui/react"
+import { Flex, Separator, Text } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 
 import TitleSlot from "../components/TitleSlot";

@@ -1,20 +1,36 @@
 import { Field, Textarea } from "@chakra-ui/react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { userContext } from "./UserContext";
 
-function TextArea({ getValue }) {
-    const [useValue, setvalue] = useState('');
+function TextArea({ transPack }) {
+    const { logs, send } = userContext();
+
+    const [useValue, setValue] = useState('');
+    const [useHolder, setHolder] = useState(!!transPack?.holder ? transPack.holder.pre : 'Ask teach!');
+    const [useDisable, setDisable] = useState('');
+    useEffect(() => {
+        setDisable(false);
+
+        setHolder(!!transPack?.holder ? transPack.holder.pre : 'Ask teach!');
+    }, [logs?.user]);
 
     return (<Field.Root>
-        <Textarea value={useValue}
+        <Textarea disabled={useDisable ? true : false}
+            value={useValue}
             bottom={0}
-            onChange={(el) => {
-                const value = el.target.value;
+            onChange={(el) => setValue(el.target.value)}
+            onKeyDown={(el) => {
+                if (el.key === 'Enter' && !el.shiftKey) {
+                    el.preventDefault();
 
-                setvalue(value);
-                getValue(value);
+                    send(useValue);
+                    setDisable(true);
+                    setValue('');
+                    setHolder(!!transPack?.holder ? transPack.holder.post : 'Await for teacher to respond, please...');
+                }
             }}
             minH={'5rem'}
-            placeholder="Ask teach!"
+            placeholder={useHolder}
             autoresize
             maxH={'10rem'}
             maxLength={350}
@@ -30,7 +46,7 @@ function TextArea({ getValue }) {
         />
         <Field.HelperText
             color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
-        >Max 350 characters</Field.HelperText>
+        >{!!transPack?.limit ? transPack.limit : ('Max 350 characters')}</Field.HelperText>
     </Field.Root>)
 }
 

@@ -1,77 +1,47 @@
+import axios from 'axios';
 import { createContext, useContext, useState, useEffect } from 'react'
+import { callToast } from './Toast';
+import { userContext } from './UserContext';
 
 const TopScoresContext = createContext();
 
 export const TopScoresProvider = ({ children }) => {
+    const { pos } = userContext();
+
     const [useUsers, setUsers] = useState(false);
     const [useScores, setScores] = useState(false);
 
-    // to consider to connect getTopUsers and getTopScores in one function, which fetches:
-    // const Top = {users: [], scores: []}
+    const fetchTop = async () => {
+        try {
+            const res = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/top/get`);
 
-    const fetchTop = () => {
-        if (false) {
-            // server
+            if (res?.data?.success) {
+                const data = res.data.data;
+
+                setUsers(data.users.reverse());
+                setScores(data.scores);
+            }
+            else {
+                console.log('Error in loading top: ' + res?.data?.message);
+                callToast('Error:', res?.data?.message, '', 'error', pos);
+            }
         }
-        else return ({
-            users: [
-                {
-                    _id: 1111,
-                    name: 'Jack'
-                }
-            ],
-            scores: [
-                {
-                    _id: 1111,
-                    sum_substract: 67,
-                    multiply_divide: null,
-                    mixed: null,
-                    power_root: null,
-                    fraction_fractionMixed: null,
-                    forms_sizes: null,
-                    exam_basic: null,
-                    equasions_basic: null,
-                    equations_two_more: null,
-                    verbal_problems: null,
-                    geometry: null,
-                    quadratic_equation: null,
-                    circles: null,
-                    exam_advanced: null
-                }
-            ]
-        })
-    }
-
-    const upTop = (token) => {
-        // case: adding user in to top by his token, through server get request.
-        // case 2: update useTop.
-
-        // rule: user must be online.
-    }
-
-    const removeTop = (token) => {
-        // case: adding user in to top by his token, through server get request.
-        // case 2: update useTop.
-
-        // rule: user must be online.
+        catch (error) {
+            console.log('Error in loading top: ' + error.message);
+            callToast('Error:', 'Server Failed to load the top list!\r\nPlease try again later!', '', 'error', pos);
+        }
     }
 
     useEffect(() => {
         const fetch = async () => {
-            const topScores = await fetchTop();
-
-            setUsers(topScores.users);
-            setScores(topScores.scores);
+            await fetchTop();
         }
 
         fetch();
     }, []);
 
     return (<TopScoresContext.Provider
-        value={{
-            users: useUsers, scores: useScores,
-            upTop, removeTop
-        }}
+        value={{ users: useUsers, scores: useScores }}
     >
         {children}
     </TopScoresContext.Provider>)

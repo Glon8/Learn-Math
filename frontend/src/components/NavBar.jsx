@@ -50,10 +50,10 @@ function NavBar() {
         borderBottomWidth={pos === 'top' ? 2 : 0}
         borderColor={'blackAlpha.500'}
         position={'fixed'}
-        width={pos === 'top' || pos === 'bottom' ? '100%' : { base: 15, sm: 15, md: 15, lg: 20, xl: 20 }}
-        height={pos === 'top' || pos === 'bottom' ? { base: 15, sm: 15, md: 15, lg: 20, xl: 20 } : '100%'}
+        width={pos === 'left' || pos === 'right' ? { base: 15, sm: 15, md: 15, lg: 20, xl: 20 } : '100%'}
+        height={pos === 'left' || pos === 'right' ? '100%' : { base: 15, sm: 15, md: 15, lg: 20, xl: 20 }}
+        flexDir={pos === 'left' || pos === 'right' ? 'column-reverse' : 'row'}
         padding={3}
-        flexDir={pos === 'top' || pos === 'bottom' ? 'row' : 'column-reverse'}
         right={pos === 'right' ? 0 : 'auto'}
         left={pos === 'left' ? 0 : "auto"}
         top={pos === 'top' ? 0 : 'auto'}
@@ -82,7 +82,7 @@ function NavBar() {
                 onClick={to_main} />
 
         </Flex>
-        <Flex flexDirection={pos === 'top' || pos === 'bottom' ? 'row' : 'column-reverse'}
+        <Flex flexDirection={pos === 'left' || pos === 'right' ? 'column-reverse' : 'row'}
             alignItems={'center'}
             gap={navShort ? 0.5 : 3}>
             {

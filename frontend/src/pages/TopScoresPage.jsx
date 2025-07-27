@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import { userContext } from "../components/UserContext.jsx";
 import { topScoresContext } from "../components/TopScoresContext.jsx";
-import { getTopicNames } from "../util/Statics.js";
+import { topicNames } from "../util/Statics.js";
 
 import TitleSlot from '../components/TitleSlot.jsx'
 import CheckCard from "../components/CheckCard.jsx";
@@ -14,23 +14,16 @@ import TopScoresSlot from "../components/TopScoresSlot.jsx";
 import { callToast } from "../components/Toast.jsx";
 
 function ScorePage() {
-  const { user, stat, score, pos } = userContext();
+  const { user, score, pos,
+    share, upTop, outTop,
+    upUser } = userContext();
   const { users, scores } = topScoresContext();
 
-  const [topic, setTopic] = useState(getTopicNames);
+  const [topic, setTopic] = useState(topicNames);
   const [use_compare, set_compare] = useState(false);
   const [useToCompare, setToCompare] = useState(0);
 
-  const to_close = useBreakpointValue({ lg: false, xl: false });
   const to_compare = useBreakpointValue({ sm: 0, md: 0, lg: (use_compare ? 2 : 0), xl: (use_compare ? 1 : 0) });
-  const to_compare_grades = useBreakpointValue(scores.length != 0 ? {
-    sm: scores[0],
-    md: scores[0],
-    lg: scores[useToCompare],
-    xl: scores[useToCompare]
-  } : '');
-
-  let temp = 0;
 
   const warningMes = () => callToast('Info:', 'Unable to share your grades! Please make online account to do so! You can check your status in profile or top left corner menu!', '', '', pos);
 
@@ -78,14 +71,13 @@ function ScorePage() {
                   w={'full'}>
 
                   <TopScoresSlot i={i}
-                    close={to_close}
                     user={useri}
-                    user_scores_list={scores}
+                    user_scores_list={scores ? scores : []}
                     topic_names={topic}
                     use_compare={use_compare}
                     my_user={user}
                     my_scores={score}
-                    temp={temp} />
+                  />
 
                 </Flex>
                 <Flex display={{ base: 'none', sm: 'none', md: 'none', lg: 'flex', xl: 'flex' }}>
@@ -112,20 +104,10 @@ function ScorePage() {
                       </Flex>
                       <Text>
                         {
-                          !scores && scores.length <= 0 ? '0' : temp = 0
-                        }
-                        {
-                          scores.map((scores) => {
-                            if (useri._id === scores._id) {
-                              Object.entries(topic).map((topic) => {
-                                const score = scores[topic[0]];
-
-                                temp = temp + score;
-                              })
-
-                              temp = temp / 13;
-
-                              return (`${temp.toFixed(2)}`)
+                          scores.map((score) => {
+                            if (useri._id === score.userId) {
+                              if (!score['averageScore'] || score['averageScore'] === 0) return 0;
+                              else return (`${score['averageScore'].toFixed(2)}`);
                             }
                           })
                         }
@@ -143,13 +125,20 @@ function ScorePage() {
         !users || users.length <= 0 || !scores || scores.length <= 0 ? null :
           (<Flex flexDirection={'column'} gapY={3}>
 
+            <CheckCard pi_icon={'pi-thumbtack'} title={'Compare with my grades'} ifChange={() => set_compare(!use_compare)} />
             {
-              !!user._id  ? (<FlexMenu pi_icon={'pi-book'}
-                title={'Share my grades'}
-                inner_title={'Are you sure?'}
-                options={['NO', 'YES']} />) :
+              !!user._id ? (
+                share === 'false' || share === false ? (<FlexMenu pi_icon={'pi-book'}
+                  title={'Share my grades to the top'}
+                  inner_title={'Are you sure?'}
+                  options={[{ value: 'NO' }, { value: 'YES', click: () => { upTop(); upUser('shared', true); } }]} />) :
+                  (<FlexMenu pi_icon={'pi-book'}
+                    title={'Withdraw my scores from the top'}
+                    inner_title={'Are you sure?'}
+                    options={[{ value: 'NO' }, { value: 'YES', click: () => { outTop(); upUser('shared', false); } }]} />)
+              ) :
                 (<Button onClick={warningMes}
-                  disabled={user._id === 0? false : true}
+                  disabled={user._id === 0 ? false : true}
                   width={'full'}
                   flexDirection={'row'}
                   gap={3}
@@ -167,40 +156,14 @@ function ScorePage() {
                     focusRingColor: '#B1B7BA',
                     color: '#EEF6F9'
                   }}>
-                  <i className="pi pi-book" /><Text>Share my grades</Text>
+                  <i className="pi pi-book" /><Text>Share my grades to the top</Text>
                 </Button>)
 
             }
 
-            <CheckCard pi_icon={'pi-thumbtack'} title={'Compare with my grades'} ifChange={() => set_compare(!use_compare)} />
-
           </Flex>)
       }
     </Stack>
-    {
-      !users || users.length <= 0 || !scores || scores.length <= 0 ? null :
-        (<GradesMenuComparable display={{ base: 'none', sm: 'none', md: 'none', lg: 'flex', xl: 'flex' }}
-          title_type={1}
-          pi_icon={'pi-trophy'}
-          title={'PROGRESS'}
-          title_info={{
-            title_a: {
-              pi_icon: 'pi-trophy',
-              title: 'PROGRESS'
-            },
-            title_b: {
-              pi_icon: '',
-              title: user.name ? user.name : 'No User'
-            }
-          }
-          }
-          topic_names={topic}
-          my_scores={score}
-          comparable={to_compare}
-          compare_to_grades={to_compare_grades}
-          compare_to={users[useToCompare].name}
-        />)
-    }
     {
       !users || users.length <= 0 || !scores || scores.length <= 0 ? null :
         (<GradesMenuComparable display={{ base: 'none', sm: 'none', md: 'none', lg: 'none', xl: 'flex' }}
@@ -214,14 +177,39 @@ function ScorePage() {
             },
             title_b: {
               pi_icon: '',
-              title: users[useToCompare].name
+              title: !!(user.name) ? user.name : 'No User'
+            }
+          }
+          }
+          topic_names={topic}
+          my_scores={score}
+          comparable={use_compare ? 1 : 0}
+          compare_to_grades={scores[useToCompare]}
+          compare_to={!!(users[useToCompare].name) ? users[useToCompare].name : 'No User'}
+        />)
+    }
+    {
+      !users || users.length <= 0 || !scores || scores.length <= 0 ? null :
+        (<GradesMenuComparable display={{ base: 'none', sm: 'none', md: 'none', lg: 'flex', xl: 'flex' }}
+          title_type={1}
+          pi_icon={'pi-trophy'}
+          title={'PROGRESS'}
+          title_info={{
+            title_a: {
+              pi_icon: 'pi-trophy',
+              title: 'PROGRESS'
+            },
+            title_b: {
+              pi_icon: '',
+              title: !!(users[useToCompare].name) ? users[useToCompare].name : 'No User'
             }
           }
           }
           topic_names={topic}
           my_scores={scores[useToCompare]}
-          comparable={use_compare ? 1 : 0}
+          comparable={to_compare}
           compare_to_grades={score}
+          compare_to={!!(user.name) ? user.name : 'No User'}
         />)
     }
 

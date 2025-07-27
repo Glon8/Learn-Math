@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 import { userContext } from "../components/UserContext.jsx";
-import { getTopicNames } from "../util/Statics.js";
+import { topicNames } from "../util/Statics.js";
 
 import TitleSlot from '../components/TitleSlot.jsx'
 import TopicBut from '../components/TopicBut.jsx'
@@ -15,7 +15,7 @@ function SchoolsPage() {
 
   const navShort = useBreakpointValue({ base: true, sm: true, md: false, lg: false, xl: false });
   const [useSchool, setSchool] = useState(true);
-  const [topic, setTopic] = useState(getTopicNames());
+  const [topic, setTopic] = useState(topicNames);
 
   const toExercise = (topic) => {
     navigate('/exercise', { state: { exerciseId: topic[0], exerciseWritten: topic[1] } })

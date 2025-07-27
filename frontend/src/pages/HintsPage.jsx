@@ -1,9 +1,12 @@
 import { Flex, Text, Separator, Stack } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useState } from "react";
+import ReactMarkDown from 'react-markdown'
+import { InlineMath } from 'react-katex'
+import 'katex/dist/katex.min.css'
 
 import { userContext } from "../components/UserContext";
-import { getTopicNames } from "../util/Statics.js";
+import { topicNames } from "../util/Statics.js";
 
 import TwoTitlesSlot from "../components/TwoTitlesSlot";
 import TopicBut from "../components/TopicBut";
@@ -11,15 +14,28 @@ import Spin from "../components/Spin";
 import TextArea from "../components/TextArea";
 
 function HintsPage() {
-  const { pos } = userContext();
+  const { pos, logs } = userContext();
   const [useSchool, setSchool] = useState(true);
   const [useTop, setTop] = useState('sum_substract');
 
-  const [topic, setTopic] = useState(getTopicNames());
+  const [topic, setTopic] = useState(topicNames);
+
+  const mixedText = (message) => {
+    const part = message.split(/(\$[^$]*\$)/g);
+
+    return part.map((part, i) => {
+      if (part.startsWith('$') && part.endsWith('$')) {
+        const math = part.slice(1, -1);
+
+        return <InlineMath key={i} math={math} />
+      }
+      return <ReactMarkDown key={i}>{part}</ReactMarkDown>
+    });
+  }
 
   return (<Flex alignItems={'center'}
     flexDirection={"column"}
-    w={'100vw'}
+    w={'100%'}
     paddingLeft={pos === 'left' ? { base: '3rem', sm: '3rem', md: '3rem', lg: '5rem' } : ''}
     paddingRight={pos === 'right' ? { base: '3rem', sm: '3rem', md: '3rem', lg: '5rem' } : ''}
     paddingTop={pos === 'top' ? { base: '2.5rem', sm: '2.5rem', md: '2.5rem', lg: '10%' } : { md: '5%' }}
@@ -30,6 +46,8 @@ function HintsPage() {
       paddingX={5}
       paddingY={7}
       rounded={'xl'}
+
+      h={'fit'}
       gap={3}
       maxW={'65rem'}
       _light={{
@@ -54,8 +72,12 @@ function HintsPage() {
         },
 
       }} />
-       <Separator colorPalette="green" />
+      <Separator colorPalette="green" />
       <Flex hideFrom={'lg'}>
+        {
+          // BUG: (minor) by resizing the screen to mobile, it should reset value
+          //  of the useTop or set cur value to the Spin.
+        }
         <Spin classList={topic}
           additional={{ teach: 'Discuss With Teach!' }}
           getValue={(value) => setTop(value)} />
@@ -76,10 +98,12 @@ function HintsPage() {
         />
       </Flex>
       <Flex gap={3}
-        flexDirection={useSchool ? 'row-reverse' : 'row'}>
+        flexDirection={useSchool ? 'row-reverse' : 'row'}
+        position={'relative'}>
 
         <Flex position={'relative'}
           w={'full'}
+          h={'auto'}
           border
           borderWidth={1}
           justifyItems={'center'}
@@ -97,11 +121,36 @@ function HintsPage() {
             background: '#464547'
           }}>
 
-          <Text>Topics explanation here! This tab is scrollabble! Current topic is {topic[useTop]}</Text>
+          <Flex flexDir='column' h={'full'} minH={'60%'}>
+            {
+              useTop == 'teach' ? (!!logs?.user ? (
+                <Flex color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
+                  flexDirection={'column'}
+                  gapY={3}>
+
+                  <Flex flexDirection={'column'}
+                    gapX={2}>
+
+                    <Text fontWeight={'medium'}>User:</Text>
+                    <ReactMarkDown>{logs.user}</ReactMarkDown>
+
+                  </Flex>
+                  <Flex flexDirection={'column'}
+                    gapX={2}>
+
+                    <Text fontWeight={'medium'}>Teacher:</Text>
+                    <Flex flexDir={'column'}>{mixedText(logs.model)}</Flex>
+
+                  </Flex>
+
+                </Flex>) :
+                (<Text color={{ _light: '#1D282E', _dark: '#EEF6F9' }}>Its a chat with virtual teach! Ask it freely about math topics and exercises struggle!</Text>)
+              ) :
+                (<Text color={{ _light: '#1D282E', _dark: '#EEF6F9' }}>Topics explanation here! This tab is scrollabble! Current topic is {topic[useTop]}</Text>)
+            }
+          </Flex>
           {
-            useTop == 'teach' ? (<TextArea getValue={(value) => {
-              console.log(value)
-            }} />) : null
+            useTop == 'teach' ? (<TextArea />) : null
           }
         </Flex>
         <Flex flexDirection={"column"} gapY={3} hideBelow={'lg'}>

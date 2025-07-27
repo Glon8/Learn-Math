@@ -4,7 +4,7 @@ import { useState } from "react";
 import { callToast } from '../components/Toast.jsx'
 
 import { verString, verEmail, verPassword } from '../util/Statics.js'
-import { getTopicNames } from "../util/Statics.js";
+import { topicNames } from "../util/Statics.js";
 import { userContext } from '../components/UserContext.jsx'
 
 import TitleSlot from "../components/TitleSlot";
@@ -16,7 +16,8 @@ import PassSlot from "../components/PassSlot.jsx";
 
 function ProfilePage() {
   const { user, stat, share,
-    score, upUser, pos, compare } = userContext();
+    score, upUser, pos, compare,
+    del, upTop, outTop } = userContext();
 
   const [use_profile_edit, set_profile_edit] = useState(false);
 
@@ -28,7 +29,7 @@ function ProfilePage() {
   const [secQues, setSecQues] = useState(user.secret);
   const [secAns, setSecAns] = useState(user.answer);
 
-  const [topic, setTopic] = useState(getTopicNames());
+  const [topic, setTopic] = useState(topicNames);
 
   const update = () => {
     if (user.name != name) {
@@ -178,11 +179,10 @@ function ProfilePage() {
           /> : ''
       }
       {
-        stat && user._id != null && user._id != 0 ?
-          <PassSlot value={user.password ? user.password : null}
-            placeholder={'-----'}
-            category={use_profile_edit && stat ? 'New Password' : 'Password'}
-            edit={use_profile_edit && stat ? true : false}
+        use_profile_edit && stat && user._id != null && user._id != 0 ?
+          <PassSlot placeholder={'-----'}
+            category={'New Password'}
+            edit={true}
             getValue={(thing) => setNewPass(thing)}
           /> : ''
       }
@@ -213,18 +213,31 @@ function ProfilePage() {
           /> : ''
       }
       <Slot value={!stat ? 'Local' : 'Online'} category={'Status'} />
-      <Slot value={share ? 'Shared' : 'Not Shared'} category={'Scores'} />
+      <Slot value={share === 'true' || share === true ? 'Shared' : 'Not Shared'} category={'Scores'} />
       <Separator />
       <Flex gapY={3} flexDirection={"column"} textAlign={'center'}>
-
         {
           //< MENU throws out a toast!!!! as status is local
         }
+        <CheckCard pi_icon={'pi-thumbtack'}
+          title={'Edit Profile'}
+          disabled={user._id != null ? false : true}
+          ifChange={() => {
+            set_profile_edit(!use_profile_edit);
+
+            if (use_profile_edit) update();
+          }} />
         {
-          !!user._id ? (<FlexMenu pi_icon={'pi-book'}
-            title={'Share my grades'}
-            inner_title={'Are you sure?'}
-            options={['NO', 'YES']} />) :
+          !!user._id ? (
+            share === 'false' || share === false ? (<FlexMenu pi_icon={'pi-book'}
+              title={'Share my grades to the top'}
+              inner_title={'Are you sure?'}
+              options={[{ value: 'NO' }, { value: 'YES', click: () => { upTop(); upUser('shared', true); } }]} />) :
+              (<FlexMenu pi_icon={'pi-book'}
+                title={'Withdraw my scores from the top'}
+                inner_title={'Are you sure?'}
+                options={[{ value: 'NO' }, { value: 'YES', click: () => { outTop(); upUser('shared', false); } }]} />)
+          ) :
             (<Button onClick={warningMes}
               disabled={user._id === 0 ? false : true}
               width={'full'}
@@ -244,23 +257,20 @@ function ProfilePage() {
                 focusRingColor: '#B1B7BA',
                 color: '#EEF6F9'
               }}>
-              <i className="pi pi-book" /><Text>Share my grades</Text>
+              <i className="pi pi-book" /><Text>Share my grades to the top</Text>
             </Button>)
         }
         {
           user._id === 0 ? (<FlexMenu pi_icon={'pi-cloud-upload'}
             title={'Convert user to online'}
             inner_title={'Are you sure?'}
-            options={['NO', 'YES']} />) : null
+            options={[{ value: 'NO' }, { value: 'YES', click: () => { console.log('convert') } }]} />) : (
+            !!user._id ? (<FlexMenu pi_icon={'pi-cloud-download'}
+              title={'Delete user'}
+              inner_title={'Are you sure?'}
+              options={[{ value: 'NO' }, { value: 'YES', click: () => del() }]} />) : null
+          )
         }
-        <CheckCard pi_icon={'pi-thumbtack'}
-          title={'Edit Profile'}
-          disabled={user._id != null ? false : true}
-          ifChange={() => {
-            set_profile_edit(!use_profile_edit);
-
-            if (use_profile_edit) update();
-          }} />
 
       </Flex>
 
