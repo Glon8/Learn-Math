@@ -1,10 +1,10 @@
 import { Flex, Text } from "@chakra-ui/react";
 
-import { userContext } from "../components/UserContext";
+import { userContext } from "../context/UserContext";
 
 function AINote() {
     const { pos } = userContext();
-    
+
     return (<Flex position={'fixed'}
         left={pos === 'top' ||
             pos === 'bottom' ||

@@ -3,7 +3,7 @@ import "primeicons/primeicons.css";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
-import { userContext } from "../components/UserContext.jsx";
+import { userContext } from "../context/UserContext.jsx";
 import { topicNames } from "../util/Statics.js";
 
 import TitleSlot from '../components/TitleSlot.jsx'

@@ -2,7 +2,7 @@ import { Flex, Stack, Text, Separator, Button } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from 'react'
-import { userContext } from "../components/UserContext.jsx";
+import { userContext } from "../context/UserContext.jsx";
 import { callToast } from '../components/Toast.jsx'
 
 import TwoTitlesSlot from '../components/TwoTitlesSlot.jsx'
