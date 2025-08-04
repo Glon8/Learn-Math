@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { useColorMode } from "./ui/color-mode.jsx";
 import { callToast } from "./Toast.jsx";
 
-import { userContext } from './UserContext.jsx'
-import { signContext } from "./SignContext.jsx";
+import { userContext } from '../context/UserContext.jsx'
+import { signContext } from "../context/SignContext.jsx";
 
 import SelectionCheckMenu from "./SelectionCheckMenu";
 import SelectionCheckSwitchMenu from "./SelectionCheckSwitchMenu";

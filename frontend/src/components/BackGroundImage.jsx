@@ -1,7 +1,7 @@
 import { Flex, Image } from "@chakra-ui/react";
 import { useColorMode } from "./ui/color-mode.jsx";
 
-import { userContext } from "../components/UserContext";
+import { userContext } from "../context/UserContext";
 
 import AINote from './AINote.jsx'
 import Girl from '../images/ChatGPTHighSchoolGirl.png'

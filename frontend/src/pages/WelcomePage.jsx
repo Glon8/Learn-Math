@@ -1,6 +1,6 @@
 import { Flex, Image } from "@chakra-ui/react";
 import { useNavigate } from 'react-router-dom';
-import { userContext } from "../components/UserContext";
+import { userContext } from "../context/UserContext";
 
 import AINote from '../components/AINote.jsx'
 import WelcomeImage from '../images/ChatGPTLearnMathEnterenceLogo.png';

@@ -1,4 +1,3 @@
-
 export const emptyUser = {
     _id: null,
     status: false,

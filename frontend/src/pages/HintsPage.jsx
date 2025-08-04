@@ -5,7 +5,7 @@ import ReactMarkDown from 'react-markdown'
 import { InlineMath } from 'react-katex'
 import 'katex/dist/katex.min.css'
 
-import { userContext } from "../components/UserContext";
+import { userContext } from "../context/UserContext";
 import { topicNames } from "../util/Statics.js";
 
 import TwoTitlesSlot from "../components/TwoTitlesSlot";

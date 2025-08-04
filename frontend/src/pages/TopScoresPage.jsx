@@ -2,8 +2,8 @@ import { Stack, Text, Flex, Separator, Button, useBreakpointValue } from "@chakr
 import "primeicons/primeicons.css";
 import { useState } from "react";
 
-import { userContext } from "../components/UserContext.jsx";
-import { topScoresContext } from "../components/TopScoresContext.jsx";
+import { userContext } from "../context/UserContext.jsx";
+import { topScoresContext } from "../context/TopScoresContext.jsx";
 import { topicNames } from "../util/Statics.js";
 
 import TitleSlot from '../components/TitleSlot.jsx'

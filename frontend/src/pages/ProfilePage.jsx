@@ -5,7 +5,7 @@ import { callToast } from '../components/Toast.jsx'
 
 import { verString, verEmail, verPassword } from '../util/Statics.js'
 import { topicNames } from "../util/Statics.js";
-import { userContext } from '../components/UserContext.jsx'
+import { userContext } from '../context/UserContext.jsx'
 
 import TitleSlot from "../components/TitleSlot";
 import Slot from "../components/Slot";

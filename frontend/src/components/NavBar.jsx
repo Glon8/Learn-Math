@@ -2,7 +2,7 @@ import { Flex, useBreakpointValue } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useNavigate } from 'react-router-dom'
 
-import { userContext } from "./UserContext.jsx";
+import { userContext } from "../context/UserContext.jsx";
 
 import NavMenu from './NavMenu.jsx';
 import NavBut from "./NavBut.jsx";

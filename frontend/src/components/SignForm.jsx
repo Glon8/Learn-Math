@@ -1,7 +1,7 @@
 "use client"
 import { Button, Flex, Separator, Text, Link } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
-import { userContext } from "./UserContext.jsx"
+import { userContext } from "../context/UserContext.jsx"
 import { callToast } from './Toast.jsx'
 
 import { verString, verEmail, verPassword } from '../util/Statics.js'
