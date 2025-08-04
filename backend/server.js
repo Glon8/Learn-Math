@@ -6,6 +6,8 @@ import topRouter from './routes/top.routes.js'
 import langRouter from './routes/lang.routes.js'
 import exercisesRouter from './routes/exercises.routes.js'
 import aiRouter from './routes/ai.routes.js'
+import utilRouter from './routes/util.routes.js'
+import { ping } from './controllers/util.controller.js'
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -21,8 +23,10 @@ app.use('/api/top', topRouter);
 app.use('/api/lang', langRouter);
 // exercise calls
 app.use('/api/exercise', exercisesRouter);
-// ai call
+// ai calls
 app.use('/api/ai', aiRouter);
+// utilities calls
+app.use('/api/util', utilRouter);
 
 app.listen(port, () => {
     connect_mongo();
