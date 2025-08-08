@@ -2,29 +2,17 @@ import axios from 'axios';
 import { createContext, useContext, useState, useEffect } from 'react'
 import { callToast } from '../components/Toast';
 import { userContext } from './UserContext';
-import { pingContext } from './PingContext';
 
 const TopScoresContext = createContext();
 
 export const TopScoresProvider = ({ children }) => {
-    const { pos, pop } = userContext();
-    const { ping, wait, response } = pingContext();
+    const { pos, pingSchedule } = userContext();
 
     const [useUsers, setUsers] = useState(false);
     const [useScores, setScores] = useState(false);
 
     const fetchTop = async () => {
-        await wait(0.2);
-
-        if (!response.current) {
-            await ping();
-
-            await wait(0.1);
-
-            pop();
-
-            await wait(30);
-        }
+        await pingSchedule();
 
         try {
             const res = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/top/get`);
@@ -48,8 +36,6 @@ export const TopScoresProvider = ({ children }) => {
 
     useEffect(() => {
         const fetch = async () => {
-            await wait(0.2);
-
             await fetchTop();
         }
 
