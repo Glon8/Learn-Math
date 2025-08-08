@@ -468,6 +468,7 @@ export const UserProvider = ({ children }) => {
   }, [useToken, useUser, useScore, useLogs]);
 
   useEffect(() => {
+    console.log(import.meta.env.VITE_BACKEND_API)
     const fetchData = async () => {
       await ping();
 

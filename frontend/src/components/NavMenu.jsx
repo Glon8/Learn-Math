@@ -154,13 +154,15 @@ function NavMenu({ close, autoClose, navShort, pi_icon }) {
                                             (language?.navMenu?.userStatusNegative ? language?.navMenu?.userStatusNegative : 'No user connected!')
                                     }
                                 </Menu.ItemGroupLabel>
-                                <Menu.ItemGroupLabel
-                                    color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
-                                >
-                                    {
-                                        user._id != null ? (user.name) : null
-                                    }
-                                </Menu.ItemGroupLabel>
+                                {
+                                    user._id != null ?
+                                        (<Menu.ItemGroupLabel
+                                            color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
+                                        >
+                                            {user.name}
+                                        </Menu.ItemGroupLabel>)
+                                        : null
+                                }
                                 <Menu.Separator />
                                 <Menu.Item display={user._id != null ? '' : 'none'}>
                                     <Button focusRing={'inside'}
