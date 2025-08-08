@@ -15,7 +15,8 @@ app.use(cors({
     origin: [
         `http://localhost:3000`,
         'https://learn-math-now.netlify.app',
-    ]
+    ],
+    credentials: true
 }));
 app.use(express.json());
 
