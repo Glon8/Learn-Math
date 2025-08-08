@@ -1,9 +1,12 @@
 import { Flex, Stack, Text, Separator, useBreakpointValue } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { InlineMath, BlockMath } from 'react-katex'
+import 'katex/dist/katex.min.css'
 
 import { userContext } from "../context/UserContext.jsx";
+import { languageContext } from '../context/LanguagesContext.jsx';
 import { topicNames } from "../util/Statics.js";
 
 import TitleSlot from '../components/TitleSlot.jsx'
@@ -12,14 +15,32 @@ import TopicBut from '../components/TopicBut.jsx'
 function SchoolsPage() {
   const navigate = useNavigate();
   const { pos } = userContext();
+  const { language } = languageContext();
 
   const navShort = useBreakpointValue({ base: true, sm: true, md: false, lg: false, xl: false });
   const [useSchool, setSchool] = useState(true);
-  const [topic, setTopic] = useState(topicNames);
+  const [topic, setTopic] = useState(language?.statics?.topics ? language?.statics?.topics : topicNames);
 
   const toExercise = (topic) => {
     navigate('/exercise', { state: { exerciseId: topic[0], exerciseWritten: topic[1] } })
   };
+
+  const mixedText = (message) => {
+    const part = message.split(/(\$[^$]*\$)/g);
+
+    return part.map((part, i) => {
+      if (part.startsWith('$') && part.endsWith('$')) {
+        const math = part.slice(1, -1);
+
+        return <InlineMath key={i} math={math} />
+      }
+      return <ReactMarkDown key={i}>{part}</ReactMarkDown>
+    });
+  }
+
+  useEffect(() => {
+    setTopic(language?.statics?.topics ? language?.statics?.topics : topicNames);
+  }, [language]);
 
   return (<Flex w={'100vw'}
     alignItems={'center'}
@@ -48,14 +69,14 @@ function SchoolsPage() {
         borderColor: '#1D282E',
       }}>
 
-      <TitleSlot pi_icon={'pi-list-check'} title={'SCHOOLS TOPICS'} />
+      <TitleSlot pi_icon={'pi-list-check'} title={language?.schools?.schoolsTopicTitle ? language?.schools?.schoolsTopicTitle : 'SCHOOLS TOPICS'} />
       <Separator />
       <Flex justify={'space-between'}
         gapX={3}
         hideBelow={'md'}>
 
         <TopicBut pi_icon={'pi-list-check'}
-          title={'Elementary-School'}
+          title={language?.schools?.elementarySchool ? language?.schools?.elementarySchool : 'Elementary-School'}
           onClick={() => { setSchool(true) }}
           showSub={true}
         />
@@ -73,10 +94,10 @@ function SchoolsPage() {
           }}
           color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
           fontWeight={'medium'}
-        >Select topic that you would like to exercise at!</Text>
+        >{language?.schools?.innerTitle ? language?.schools?.innerTitle : 'Select topic that you would like to exercise at!'}</Text>
         <TopicBut
           pi_icon={'pi-list-check'}
-          title={'High-School'}
+          title={language?.schools?.highSchool ? language?.schools?.highSchool : 'High-School'}
           onClick={() => { setSchool(false) }}
           showSub={true}
           dir={'row-reverse'}
@@ -94,7 +115,11 @@ function SchoolsPage() {
               title={topic[1]}
               onClick={() => { toExercise(topic) }}
               showSub={false}
-              subTitle={'Some subtitle'}
+              subTitle={language?.statics?.shortDesc?.[topic[0]] ?
+                (language?.statics?.shortDesc?.[topic[0]]) :
+                (language?.statics?.error?.shortDescMissing ?
+                  (language?.statics?.error?.shortDescMissing) :
+                  'Missing subtitle')}
               dir={'column'}
             />)
           }
@@ -105,7 +130,11 @@ function SchoolsPage() {
                 title={topic[1]}
                 onClick={() => { toExercise(topic) }}
                 showSub={false}
-                subTitle={'Some subtitle'}
+                subTitle={language?.statics?.shortDesc?.[topic[0]] ?
+                  (language?.statics?.shortDesc?.[topic[0]]) :
+                  (language?.statics?.error?.shortDescMissing ?
+                    (language?.statics?.error?.shortDescMissing) :
+                    'Missing subtitle')}
               />)
             }
             else if (!useSchool && index >= 7) {
@@ -114,7 +143,11 @@ function SchoolsPage() {
                 title={topic[1]}
                 onClick={() => { toExercise(topic) }}
                 showSub={false}
-                subTitle={'Some subtitle'}
+                subTitle={language?.statics?.shortDesc?.[topic[0]] ?
+                  (language?.statics?.shortDesc?.[topic[0]]) :
+                  (language?.statics?.error?.shortDescMissing ?
+                    (language?.statics?.error?.shortDescMissing) :
+                    'Missing subtitle')}
                 dir={'row-reverse'}
               />)
             }

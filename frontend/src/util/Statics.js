@@ -9,7 +9,7 @@ export const emptyUser = {
     answer: null,
     settings: [],
     mode: 'light',
-    language: 'english',
+    language: 'en',
     navPosition: 'top'
 }
 

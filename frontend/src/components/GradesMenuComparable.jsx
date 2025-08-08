@@ -1,6 +1,8 @@
 import { Flex, Separator, Text } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 
+import { languageContext } from "../context/LanguagesContext";
+
 import TitleSlot from "../components/TitleSlot";
 import TwoTitlesSlot from "../components/TwoTitlesSlot";
 import CompareSlot from "./CompareSlot";
@@ -38,6 +40,8 @@ function GradesMenuComparable({ display,
     comparable,
     compare_to_grades,
     compare_to }) {
+
+    const { language } = languageContext();
 
     return (<Flex display={display ? display : 'none'}
         height={'fit'}
@@ -141,7 +145,7 @@ function GradesMenuComparable({ display,
                             />)
                         }
                     }
-                })) : (<Text color={{ _light: '#1D282E', _dark: '#EEF6F9' }}>Something missing... maybe a list.</Text>)
+                })) : (<Text color={{ _light: '#1D282E', _dark: '#EEF6F9' }}>{language?.statics?.error?.listMissing ? language?.statics?.error?.listMissing : 'Something missing... maybe a list.'}</Text>)
         }
     </Flex>)
 }

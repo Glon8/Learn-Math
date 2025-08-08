@@ -3,6 +3,7 @@ import "primeicons/primeicons.css";
 import { useNavigate } from 'react-router-dom'
 
 import { userContext } from "../context/UserContext.jsx";
+import { languageContext } from "../context/LanguagesContext.jsx";
 
 import NavMenu from './NavMenu.jsx';
 import NavBut from "./NavBut.jsx";
@@ -11,6 +12,7 @@ function NavBar() {
     const navigate = useNavigate();
 
     const { pos } = userContext();
+    const { language } = languageContext();
 
     const navShort = useBreakpointValue({ base: true, sm: true, md: true, lg: false, xl: false });
 
@@ -22,22 +24,22 @@ function NavBar() {
 
     const navButList = [
         {
-            title: 'Hints',
+            title: language?.navBar?.hints? language.navBar.hints : 'Hints',
             pi_icon: 'pi-question',
             onClick: to_hints,
         },
         {
-            title: 'Top Scores',
+            title: language?.navBar?.topScores? language.navBar.topScores : 'Top Scores',
             pi_icon: 'pi-crown',
             onClick: to_top_scores,
         },
         {
-            title: 'Profile',
+            title: language?.navBar?.profile? language.navBar.profile : 'Profile',
             pi_icon: 'pi-id-card',
             onClick: to_profile,
         },
         {
-            title: 'Schools',
+            title: language?.navBar?.schools? language.navBar.schools : 'Schools',
             pi_icon: 'pi-list-check',
             onClick: to_schools,
         },
@@ -75,7 +77,7 @@ function NavBar() {
             alignItems={'center'}
             gap={3}>
 
-            <NavBut title={'Learn Math'}
+            <NavBut title={language?.navBar?.main? language.navBar.main : 'Learn Math' }
                 pi_icon={'pi-sparkles'}
                 navShort={navShort}
                 navSide={pos}
@@ -104,8 +106,7 @@ function NavBar() {
                 w={navShort ? 'auto' :
                     (pos === 'right' || pos === 'left' ? '9rem' : 'auto')}
                 maxW={'20rem'}>
-                <NavMenu title={'Menu'}
-                    pi_icon={'pi-align-justify'}
+                <NavMenu  pi_icon={'pi-align-justify'}
                     navShort={navShort}
                 />
             </Flex>

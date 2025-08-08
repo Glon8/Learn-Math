@@ -3,17 +3,21 @@ import "primeicons/primeicons.css";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from 'react'
 import { userContext } from "../context/UserContext.jsx";
+import { languageContext } from "../context/LanguagesContext.jsx";
+
 import { callToast } from '../components/Toast.jsx'
 
 import TwoTitlesSlot from '../components/TwoTitlesSlot.jsx'
 
 function ExercisePage() {
-    const navigate = useNavigate();
     const location = useLocation();
+    const { exerciseId, exerciseWritten } = location.state || {};
+
+    const navigate = useNavigate();
     const { user, upScore, pos } = userContext();
+    const { language } = languageContext();
 
     const [useGrade, setGrade] = useState(0);
-
     const exercisesList = [
         {
             form: '1 + 2 = ',
@@ -33,7 +37,6 @@ function ExercisePage() {
         }
     ];
 
-    const { exerciseId, exerciseWritten } = location.state || {};
     const toMain = () => { navigate('/'); }
     const addGrade = () => {
         const grade = Math.floor(Math.random() * 100) + 1;
@@ -76,11 +79,11 @@ function ExercisePage() {
                 borderColor: '#1D282E',
                 color: '#EEF6F9'
             }}>
-
             <TwoTitlesSlot title_info={exerciseCheckList() ? {
                 title_a: {
                     pi_icon: 'pi-hashtag',
-                    title: `Exercise ${exerciseWritten}`
+                    title: `${language?.exercise?.title ? language?.exercise?.title : 'Exercise'} 
+    ${language?.statics?.topics?.[exerciseId] ? language?.statics?.topics[exerciseId] : exerciseWritten}`
                 },
                 title_b: {
                     pi_icon: 'pi-verified',
@@ -89,7 +92,8 @@ function ExercisePage() {
             } : {
                 title_a: {
                     pi_icon: 'pi-hashtag',
-                    title: `Exercise ${exerciseWritten}`
+                    title: `${language?.exercise?.title ? language?.exercise?.title : 'Exercise'} 
+    ${language?.statics?.topics?.[exerciseId] ? language?.statics?.topics[exerciseId] : exerciseWritten}`
                 }
             }} />
             {
@@ -97,7 +101,9 @@ function ExercisePage() {
                     (<Separator paddingTop={3}>
                         <Text textAlign={'center'}
                             fontWeight={'medium'}
-                        >Solve exercises to recieve a grade! (Max grade is 100)</Text>
+                        >{language?.exercise?.explanation ?
+                            language?.exercise?.explanation :
+                            'Solve exercises to recieve a grade! (Max grade is 100)'}</Text>
                     </Separator>) : null
             }
             <Separator />
@@ -110,7 +116,14 @@ function ExercisePage() {
                         <Text>{exercise.answer}</Text>
                     </Flex>)
                 }) :
-                    (<Text><i className="pi pi-wrench" /> Oooopps... its seems like something wrong, try to reconnect to internet or refresh the page.</Text>)
+                    (<Text>
+                        <i className="pi pi-wrench" />
+                        {
+                            language?.statics?.error?.exerciseMissing ?
+                                language?.statics?.error?.exerciseMissing :
+                                'Oooopps... its seems like something wrong, try to reconnect to internet or refresh the page.'
+                        }
+                    </Text>)
             }
 
             <Button focusRing={'inside'}
@@ -126,7 +139,9 @@ function ExercisePage() {
                     borderColor: "#1D282E",
                     focusRingColor: '#B1B7BA',
                     color: '#EEF6F9'
-                }}>Done</Button>
+                }}>{language?.exercise?.done ?
+                    language?.exercise?.done :
+                    'Done'}</Button>
 
         </Stack>
 

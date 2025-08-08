@@ -1,4 +1,4 @@
-import { Button, Flex, Text, Menu, Portal} from "@chakra-ui/react"
+import { Button, Flex, Text, Menu, Portal } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useEffect, useState } from "react";
 import { useColorMode } from "./ui/color-mode.jsx";
@@ -6,14 +6,16 @@ import { callToast } from "./Toast.jsx";
 
 import { userContext } from '../context/UserContext.jsx'
 import { signContext } from "../context/SignContext.jsx";
+import { languageContext } from "../context/LanguagesContext.jsx";
 
 import SelectionCheckMenu from "./SelectionCheckMenu";
 import SelectionCheckSwitchMenu from "./SelectionCheckSwitchMenu";
 import Tool from "./Tooltip.jsx";
 
-function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
+function NavMenu({ close, autoClose, navShort, pi_icon }) {
     const { pos, mode, upUser, user, out, lang, set } = userContext();
     const { isIn, isUp } = signContext();
+    const { language } = languageContext();
 
     const { colorMode, toggleColorMode } = useColorMode();
 
@@ -21,19 +23,19 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
 
     //========================< language settings
     const languages = [{
-        value: 'english',
-        title: 'EN',
-        onClick: () => upUser('language', 'english')
+        value: 'en',
+        title: language?.navMenu?.languages?.en ? language?.navMenu?.languages?.en : 'EN',
+        onClick: () => upUser('language', 'en')
     }, {
-        value: 'hebrew',
-        title: 'HE',
-        onClick: () => upUser('language', 'hebrew')
+        value: 'he',
+        title: language?.navMenu?.languages?.he ? language?.navMenu?.languages?.he : 'HE',
+        onClick: () => upUser('language', 'he')
     }, {
-        value: 'russian',
-        title: 'RU',
-        onClick: () => upUser('language', 'russian')
+        value: 'ru',
+        title: language?.navMenu?.languages?.ru ? language?.navMenu?.languages?.ru : 'RU',
+        onClick: () => upUser('language', 'ru')
     }];
-    const default_languages = lang ? lang : 'english';
+    const default_languages = lang ? lang : 'en';
 
     //========================< lesson settings
     const lesson_settings = [{
@@ -73,19 +75,19 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
 
     const menu_pos = [{
         value: 'top',
-        title: 'Top',
+        title: language?.navMenu?.position?.top ? language?.navMenu?.position?.top : 'Top',
         onClick: () => toTop()
     }, {
         value: 'left',
-        title: 'Left',
+        title: language?.navMenu?.position?.left ? language?.navMenu?.position?.left : 'Left',
         onClick: () => toLeft()
     }, {
         value: 'bottom',
-        title: 'Bottom',
+        title: language?.navMenu?.position?.bottom ? language?.navMenu?.position?.bottom : 'Bottom',
         onClick: () => toBottom()
     }, {
         value: 'right',
-        title: 'Right',
+        title: language?.navMenu?.position?.right ? language?.navMenu?.position?.right : 'Right',
         onClick: () => toRight()
     }];
 
@@ -100,7 +102,7 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
 
     return (<Tool navSide={pos}
         navShort={navShort}
-        title={title}
+        title={language?.navMenu?.trigger ? language?.navMenu?.trigger : 'Menu'}
         value={
             <Menu.Root open={useOpen}
                 onInteractOutside={autoClose ? null : () => setOpen(false)}
@@ -122,7 +124,7 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
                     >
                         <i className={`pi ${pi_icon}`} />
                         {
-                            navShort ? null : <Text>{title}</Text>
+                            navShort ? null : <Text>{language?.navMenu?.trigger ? language?.navMenu?.trigger : 'Menu'}</Text>
                         }
                     </Button>
 
@@ -138,12 +140,28 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
 
                             <Menu.ItemGroup>
                                 <Menu.ItemGroupLabel
-                                    color={{ _light: '#1D282E', _dark: '#EEF6F9' }}>
+                                    color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
+                                >
                                     {
-                                        user._id != null ? (`${!user.status ? 'Local' : 'Online'} user: ${user.name}`) :
-                                            ('No user connected!')
+                                        user._id != null ? (lang != 'he' ?
+                                            (`${!user.status ?
+                                                (language?.navMenu?.userStatusLocal ? language?.navMenu?.userStatusLocal : 'Local') :
+                                                (language?.navMenu?.userStatusOnline ? language?.navMenu?.userStatusOnline : 'Online')}
+                                                 ${language?.navMenu?.userStatus ? language?.navMenu?.userStatus : 'user'}:`) :
+                                            (`:${language?.navMenu?.userStatus ? language?.navMenu?.userStatus : 'user'} 
+                                                 ${!user.status ? (language?.navMenu?.userStatusLocal ? language?.navMenu?.userStatusLocal : 'Local') :
+                                                    (language?.navMenu?.userStatusOnline ? language?.navMenu?.userStatusOnline : 'Online')} `)) :
+                                            (language?.navMenu?.userStatusNegative ? language?.navMenu?.userStatusNegative : 'No user connected!')
                                     }
                                 </Menu.ItemGroupLabel>
+                                <Menu.ItemGroupLabel
+                                    color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
+                                >
+                                    {
+                                        user._id != null ? (user.name) : null
+                                    }
+                                </Menu.ItemGroupLabel>
+                                <Menu.Separator />
                                 <Menu.Item display={user._id != null ? '' : 'none'}>
                                     <Button focusRing={'inside'}
                                         onClick={() => {
@@ -172,7 +190,7 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
                                             gap={3}>
 
                                             <i className={`pi pi-sign-out`} />
-                                            <Text>Sign Out</Text>
+                                            <Text>{language?.navMenu?.signOut ? language?.navMenu?.signOut : 'Sign Out'}</Text>
 
                                         </Flex>
 
@@ -204,7 +222,7 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
                                             gap={3}>
 
                                             <i className={`pi pi-user-edit`} />
-                                            <Text>Sign Up</Text>
+                                            <Text>{language?.navMenu?.signUp ? language?.navMenu?.signUp : 'Sign Up'}</Text>
 
                                         </Flex>
 
@@ -236,7 +254,7 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
                                             gap={3}>
 
                                             <i className={`pi pi-sign-in`} />
-                                            <Text>Sign In</Text>
+                                            <Text>{language?.navMenu?.signIn ? language?.navMenu?.signIn : 'Sign In'}</Text>
 
                                         </Flex>
 
@@ -273,14 +291,14 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
                                             gap={3}>
 
                                             <i className={`pi pi-moon`} />
-                                            <Text>Mode</Text>
+                                            <Text>{language?.navMenu?.mode ? language?.navMenu?.mode : 'Mode'}</Text>
 
                                         </Flex>
 
                                     </Button>
                                 </Menu.Item>
                                 <Menu.Item>
-                                    <SelectionCheckSwitchMenu title={'Languages'}
+                                    <SelectionCheckSwitchMenu title={language?.navMenu?.languages?.trigger ? language?.navMenu?.languages?.trigger : 'Languages'}
                                         pi_icon={'pi-language'}
                                         navSide={pos}
                                         default_option={default_languages}
@@ -289,7 +307,7 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
                                 </Menu.Item>
                                 <Menu.Item>
                                     <SelectionCheckMenu
-                                        title={'Lesson Settings'}
+                                        title={language?.navMenu?.settings?.trigger ? language?.navMenu?.settings?.trigger : 'Lesson Settings'}
                                         pi_icon={'pi-cog'}
                                         navSide={pos}
                                         default_options={default_lesson_settings}
@@ -298,7 +316,7 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
                                         getSwitches={(thing) => { thing != set ? upUser('settings', thing) : null }} />
                                 </Menu.Item>
                                 <Menu.Item>
-                                    <SelectionCheckSwitchMenu title={'Menu Position'}
+                                    <SelectionCheckSwitchMenu title={language?.navMenu?.position?.trigger ? language?.navMenu?.position?.trigger : 'Menu Position'}
                                         pi_icon={'pi-angle-down'}
                                         navSide={pos}
                                         default_option={pos}
@@ -313,7 +331,7 @@ function NavMenu({ close, autoClose, navShort, title, pi_icon }) {
 
                 </Portal>
 
-            </Menu.Root>}
+            </ Menu.Root>}
     />)
 }
 
