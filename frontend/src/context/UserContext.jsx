@@ -53,22 +53,26 @@ export const UserProvider = ({ children }) => {
       setTimeout(() => { pop.current = false }, 30 * 1000);
     }
   }
+  
+  const pingSchedule = async () => {
+    await wait(0.2);
+
+    if (!response.current) {
+      await ping();
+
+      await wait(0.1);
+
+      serverBootPop();
+
+      await wait(30);
+    }
+  }
 
   const chatSend = async (userMessage) => {
     if (!!userMessage && userMessage.length >= 2) {
       let res;
 
-      await wait(0.2);
-
-      if (!response.current) {
-        await ping();
-
-        await wait(0.1);
-
-        serverBootPop();
-
-        await wait(30);
-      }
+      await pingSchedule();
 
       try {
         callLoadingToast({
@@ -102,17 +106,7 @@ export const UserProvider = ({ children }) => {
 
   const signOutfromTop = async () => {
     if (!!useToken) {
-      await wait(0.2);
-
-      if (!response.current) {
-        await ping();
-
-        await wait(0.1);
-
-        serverBootPop();
-
-        await wait(30);
-      }
+      await pingSchedule();
 
       try {
         const res = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/top/remove`, { token: useToken });
@@ -132,17 +126,7 @@ export const UserProvider = ({ children }) => {
 
   const signUpToTop = async () => {
     if (!!useToken) {
-      await wait(0.2);
-
-      if (!response.current) {
-        await ping();
-
-        await wait(0.1);
-
-        serverBootPop();
-
-        await wait(30);
-      }
+      await pingSchedule();
 
       try {
         const res = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/top/sign-up`, { token: useToken });
@@ -162,17 +146,7 @@ export const UserProvider = ({ children }) => {
 
   const deleteUser = async () => {
     if (!!useToken) {
-      await wait(0.2);
-
-      if (!response.current) {
-        await ping();
-
-        await wait(0.1);
-
-        serverBootPop();
-
-        await wait(30);
-      }
+      await pingSchedule();
 
       try {
         const res = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/user/delete`, { token: useToken });
@@ -218,17 +192,8 @@ export const UserProvider = ({ children }) => {
         navPosition: useUser.navPosition
       }
 
-      await wait(0.2);
+      await pingSchedule();
 
-      if (!response.current) {
-        await ping();
-
-        await wait(0.1);
-
-        serverBootPop();
-
-        await wait(30);
-      }
       // request:
       try {
         const res = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/user/sign-up`, {
@@ -263,17 +228,7 @@ export const UserProvider = ({ children }) => {
   }
 
   const signIn = async (email, password, token, logs) => {
-    await wait(0.2);
-
-    if (!response.current) {
-      await ping();
-
-      await wait(0.1);
-
-      serverBootPop();
-
-      await wait(30);
-    }
+    await pingSchedule();
 
     try {
       let res;
@@ -348,17 +303,7 @@ export const UserProvider = ({ children }) => {
       setCookie(1, "learn_math_user", message);
     }
     else { // update user in the db
-      await wait(0.2);
-
-      if (!response.current) {
-        await ping();
-
-        await wait(0.1);
-
-        serverBootPop();
-
-        await wait(30);
-      }
+      await pingSchedule();
 
       try {
         const res = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/user/update`, {
@@ -521,7 +466,7 @@ export const UserProvider = ({ children }) => {
       del: deleteUser, upTop: signUpToTop,
       outTop: signOutfromTop,
       logs: useLogs, send: chatSend,
-      pop: serverBootPop
+      pop: serverBootPop, pingSchedule
     }}>
     {children}
   </UserContext.Provider>)

@@ -1,27 +1,17 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { userContext } from './UserContext.jsx';
-import { pingContext } from './PingContext';
 
 import axios from 'axios';
 
 const LanguageContext = createContext();
 
 export const LanguagesProvider = ({ children }) => {
-    const { lang, pop } = userContext();
-    const { ping, wait, response } = pingContext();
+    const { lang, pingSchedule } = userContext();
 
     const [useLanguage, setLanguage] = useState(null);
 
     const fetchLang = async (thing) => {
-        if (!response.current) {
-            await ping();
-
-            await wait(0.1);
-
-            pop();
-
-            await wait(30);
-        }
+        await pingSchedule();
 
         // download package from the server and apply
         // ll be fetched as user is loaded
@@ -34,8 +24,6 @@ export const LanguagesProvider = ({ children }) => {
                 const data = res.data.data;
 
                 setLanguage(data);
-
-                await wait(0.5);
 
                 console.log('Success: succed to fetch language');
 
@@ -58,8 +46,6 @@ export const LanguagesProvider = ({ children }) => {
 
     useEffect(() => {
         const fetch = async () => {
-            await wait(0.2);
-
             await fetchLang(lang);
         }
 
