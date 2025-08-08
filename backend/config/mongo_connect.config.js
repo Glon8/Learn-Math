@@ -15,5 +15,3 @@ export const connect_mongo = async () => {
         process.exit(1); // 1 mean fail, 0 means success
     }
 }
-
-//Y6sC9w3KytnR1rWO mongo pass
