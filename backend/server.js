@@ -13,7 +13,7 @@ const port = process.env.PORT || 5000;
 
 app.use(cors({
     origin: [
-        `http://localhost:3000`,
+        `http://localhost:5173`,
         'https://learn-math-now.netlify.app',
     ],
     credentials: true
