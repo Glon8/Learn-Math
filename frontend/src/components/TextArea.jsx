@@ -1,18 +1,20 @@
 import { Field, Textarea } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import { userContext } from "../context/UserContext";
+import { languageContext } from "../context/LanguagesContext";
 
-function TextArea({ transPack }) {
+function TextArea() {
     const { logs, send } = userContext();
+    const { language } = languageContext();
 
     const [useValue, setValue] = useState('');
-    const [useHolder, setHolder] = useState(!!transPack?.holder ? transPack.holder.pre : 'Ask teach!');
+    const [useHolder, setHolder] = useState(language?.hints?.placeholder ? language?.hints?.placeholder : 'Ask teach!');
     const [useDisable, setDisable] = useState('');
     useEffect(() => {
         setDisable(false);
 
-        setHolder(!!transPack?.holder ? transPack.holder.pre : 'Ask teach!');
-    }, [logs?.user]);
+        setHolder(language?.hints?.placeholder ? language?.hints?.placeholder : 'Ask teach!');
+    }, [logs?.user, language]);
 
     return (<Field.Root>
         <Textarea disabled={useDisable ? true : false}
@@ -26,7 +28,7 @@ function TextArea({ transPack }) {
                     send(useValue);
                     setDisable(true);
                     setValue('');
-                    setHolder(!!transPack?.holder ? transPack.holder.post : 'Await for teacher to respond, please...');
+                    setHolder(language?.hints?.teacherWait ? language?.hints?.teacherWait : 'Await for teacher to respond, please...');
                 }
             }}
             minH={'5rem'}
@@ -46,7 +48,7 @@ function TextArea({ transPack }) {
         />
         <Field.HelperText
             color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
-        >{!!transPack?.limit ? transPack.limit : ('Max 350 characters')}</Field.HelperText>
+        >{language?.hints?.limitation ? language?.hints?.limitation : 'Max 350 characters'}</Field.HelperText>
     </Field.Root>)
 }
 

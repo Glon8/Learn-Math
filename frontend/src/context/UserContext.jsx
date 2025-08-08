@@ -469,6 +469,8 @@ export const UserProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchData = async () => {
+      await ping();
+
       const extractedUser = await fetchUser();
 
       if (!!extractedUser) {

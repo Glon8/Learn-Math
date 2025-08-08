@@ -14,6 +14,8 @@ export const TopScoresProvider = ({ children }) => {
     const [useScores, setScores] = useState(false);
 
     const fetchTop = async () => {
+        await wait(0.2);
+
         if (!response.current) {
             await ping();
 

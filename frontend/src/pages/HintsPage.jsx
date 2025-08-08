@@ -7,18 +7,22 @@ import 'katex/dist/katex.min.css'
 
 import { userContext } from "../context/UserContext";
 import { topicNames } from "../util/Statics.js";
+import { languageContext } from "../context/LanguagesContext.jsx";
 
 import TwoTitlesSlot from "../components/TwoTitlesSlot";
 import TopicBut from "../components/TopicBut";
 import Spin from "../components/Spin";
 import TextArea from "../components/TextArea";
+import { useEffect } from "react";
 
 function HintsPage() {
   const { pos, logs } = userContext();
+  const { language } = languageContext();
+
   const [useSchool, setSchool] = useState(true);
   const [useTop, setTop] = useState('sum_substract');
 
-  const [topic, setTopic] = useState(topicNames);
+  const [topic, setTopic] = useState(language?.statics?.topics ? language?.statics?.topics : topicNames);
 
   const mixedText = (message) => {
     const part = message.split(/(\$[^$]*\$)/g);
@@ -32,6 +36,10 @@ function HintsPage() {
       return <ReactMarkDown key={i}>{part}</ReactMarkDown>
     });
   }
+
+  useEffect(() => {
+    setTopic(language?.statics?.topics ? language?.statics?.topics : topicNames);
+  }, [language]);
 
   return (<Flex alignItems={'center'}
     flexDirection={"column"}
@@ -64,11 +72,11 @@ function HintsPage() {
       <TwoTitlesSlot title_info={{
         title_a: {
           pi_icon: 'pi-question',
-          title: 'HINTS'
+          title: language?.hints?.hintsTitle ? language?.hints?.hintsTitle : 'HINTS'
         },
         title_b: {
           pi_icon: 'pi-list-check',
-          title: 'SCHOOLS TOPICS'
+          title: language?.hints?.schoolsTopicTitle ? language?.hints?.schoolsTopicTitle : 'SCHOOLS TOPICS'
         },
 
       }} />
@@ -79,19 +87,19 @@ function HintsPage() {
           //  of the useTop or set cur value to the Spin.
         }
         <Spin classList={topic}
-          additional={{ teach: 'Discuss With Teach!' }}
+          additional={{ teach: (language?.hints?.teach ? language?.hints?.teach : 'Discuss With Teach!') }}
           getValue={(value) => setTop(value)} />
       </Flex>
 
       <Flex hideBelow={'lg'} justify={'space-between'}>
         <TopicBut pi_icon={'pi-list-check'}
-          title={'Elementary-School'}
+          title={language?.hints?.elementarySchool ? language?.hints?.elementarySchool : 'Elementary-School'}
           onClick={() => setSchool(true)}
           showSub={true}
         />
 
         <TopicBut pi_icon={'pi-list-check'}
-          title={'High-School'}
+          title={language?.hints?.highSchool ? language?.hints?.highSchool : 'High-School'}
           onClick={() => setSchool(false)}
           showSub={true}
           dir={'row-reverse'}
@@ -131,20 +139,24 @@ function HintsPage() {
                   <Flex flexDirection={'column'}
                     gapX={2}>
 
-                    <Text fontWeight={'medium'}>User:</Text>
+                    <Text fontWeight={'medium'}>{language?.hints?.user ? language?.hints?.user : 'User:'}</Text>
                     <ReactMarkDown>{logs.user}</ReactMarkDown>
 
                   </Flex>
                   <Flex flexDirection={'column'}
                     gapX={2}>
 
-                    <Text fontWeight={'medium'}>Teacher:</Text>
+                    <Text fontWeight={'medium'}>{language?.hints?.teacher ? language?.hints?.teacher : 'Teacher:'}</Text>
                     <Flex flexDir={'column'}>{mixedText(logs.model)}</Flex>
 
                   </Flex>
 
                 </Flex>) :
-                (<Text color={{ _light: '#1D282E', _dark: '#EEF6F9' }}>Its a chat with virtual teach! Ask it freely about math topics and exercises struggle!</Text>)
+                (<Text color={{ _light: '#1D282E', _dark: '#EEF6F9' }}>
+                  {language?.hints?.teacherWelcome ?
+                    language?.hints?.teacherWelcome :
+                    'Its a chat with virtual teach! Ask it freely about math topics and exercises struggle!'}
+                </Text>)
               ) :
                 (<Text color={{ _light: '#1D282E', _dark: '#EEF6F9' }}>Topics explanation here! This tab is scrollabble! Current topic is {topic[useTop]}</Text>)
             }
@@ -158,7 +170,7 @@ function HintsPage() {
           <Separator />
           <TopicBut
             pi_icon={'pi-question'}
-            title={'Discuss With Teach!'}
+            title={language?.hints?.placeholder ? language?.hints?.placeholder : 'Discuss With Teach!'}
             onClick={() => setTop('teach')}
             showSub={true}
           />

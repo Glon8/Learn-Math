@@ -1,9 +1,10 @@
 import { Stack, Text, Flex, Separator, Button, useBreakpointValue } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { userContext } from "../context/UserContext.jsx";
 import { topScoresContext } from "../context/TopScoresContext.jsx";
+import { languageContext } from "../context/LanguagesContext.jsx";
 import { topicNames } from "../util/Statics.js";
 
 import TitleSlot from '../components/TitleSlot.jsx'
@@ -18,14 +19,19 @@ function ScorePage() {
     share, upTop, outTop,
     upUser } = userContext();
   const { users, scores } = topScoresContext();
+  const { language } = languageContext();
 
-  const [topic, setTopic] = useState(topicNames);
+  const [topic, setTopic] = useState(language?.statics?.topics ? language?.statics?.topics : topicNames);
   const [use_compare, set_compare] = useState(false);
   const [useToCompare, setToCompare] = useState(0);
 
   const to_compare = useBreakpointValue({ sm: 0, md: 0, lg: (use_compare ? 2 : 0), xl: (use_compare ? 1 : 0) });
 
   const warningMes = () => callToast('Info:', 'Unable to share your grades! Please make online account to do so! You can check your status in profile or top left corner menu!', '', '', pos);
+
+  useEffect(() => {
+    setTopic(language?.statics?.topics ? language?.statics?.topics : topicNames);
+  }, [language]);
 
   return (<Flex gap={5} w={'100%'}
     paddingLeft={pos === 'left' ? { base: '3rem', sm: '3rem', md: '3rem', lg: '5rem' } : ''}
@@ -59,12 +65,12 @@ function ScorePage() {
     >
 
       <Stack>
-        <TitleSlot pi_icon={'pi-crown'} title={'TOP SCORES'} />
+        <TitleSlot pi_icon={'pi-crown'} title={language?.topScores?.topScoresTitle ? language?.topScores?.topScoresTitle : 'TOP SCORES'} />
         <Separator />
         {
           !users || users.length <= 0 ?
             (<Text color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
-            >Whoops! Something went wrong or no users shared their scores.</Text>) :
+            >{language?.topScores?.empty ? language?.topScores?.empty : 'Whoops! Something went wrong or no users shared their scores.'}</Text>) :
             (users.map((useri, i) => {
               return (<Flex key={i}>
                 <Flex display={{ base: 'flex', sm: 'flex', md: 'flex', lg: 'none', xl: 'none' }}
@@ -125,17 +131,21 @@ function ScorePage() {
         !users || users.length <= 0 || !scores || scores.length <= 0 ? null :
           (<Flex flexDirection={'column'} gapY={3}>
 
-            <CheckCard pi_icon={'pi-thumbtack'} title={'Compare with my grades'} ifChange={() => set_compare(!use_compare)} />
+            <CheckCard pi_icon={'pi-thumbtack'} title={language?.topScores?.compare ? language?.topScores?.compare : 'Compare with my grades'} ifChange={() => set_compare(!use_compare)} />
             {
               !!user._id ? (
                 share === 'false' || share === false ? (<FlexMenu pi_icon={'pi-book'}
-                  title={'Share my grades to the top'}
-                  inner_title={'Are you sure?'}
-                  options={[{ value: 'NO' }, { value: 'YES', click: () => { upTop(); upUser('shared', true); } }]} />) :
+                  title={language?.topScores?.share ? language?.topScores?.share : 'Share my grades to the top'}
+                  inner_title={language?.statics?.confirmation?.question ? language?.statics?.confirmation?.question : 'Are you sure?'}
+                  options={[
+                    { value: language?.statics?.confirmation?.false ? language?.statics?.confirmation?.false : 'NO' },
+                    { value: language?.statics?.confirmation?.true ? language?.statics?.confirmation?.true : 'YES', click: () => { upTop(); upUser('shared', true); } }]} />) :
                   (<FlexMenu pi_icon={'pi-book'}
-                    title={'Withdraw my scores from the top'}
-                    inner_title={'Are you sure?'}
-                    options={[{ value: 'NO' }, { value: 'YES', click: () => { outTop(); upUser('shared', false); } }]} />)
+                    title={language?.topScores?.remove ? language?.topScores?.remove : 'Withdraw my scores from the top'}
+                    inner_title={language?.statics?.confirmation?.question ? language?.statics?.confirmation?.question : 'Are you sure?'}
+                    options={[
+                      { value: language?.statics?.confirmation?.false ? language?.statics?.confirmation?.false : 'NO' },
+                      { value: language?.statics?.confirmation?.true ? language?.statics?.confirmation?.true : 'YES', click: () => { outTop(); upUser('shared', false); } }]} />)
               ) :
                 (<Button onClick={warningMes}
                   disabled={user._id === 0 ? false : true}
@@ -156,7 +166,7 @@ function ScorePage() {
                     focusRingColor: '#B1B7BA',
                     color: '#EEF6F9'
                   }}>
-                  <i className="pi pi-book" /><Text>Share my grades to the top</Text>
+                  <i className="pi pi-book" /><Text>{language?.topScores?.share ? language?.topScores?.share : 'Share my grades to the top'}</Text>
                 </Button>)
 
             }
@@ -169,15 +179,16 @@ function ScorePage() {
         (<GradesMenuComparable display={{ base: 'none', sm: 'none', md: 'none', lg: 'none', xl: 'flex' }}
           title_type={1}
           pi_icon={'pi-trophy'}
-          title={'PROGRESS'}
+          title={language?.topScores?.progressTitle ? language?.topScores?.progressTitle : 'GRADES'}
           title_info={{
             title_a: {
               pi_icon: 'pi-trophy',
-              title: 'PROGRESS'
+              title: language?.topScores?.progressTitle ? language?.topScores?.progressTitle : 'GRADES'
             },
             title_b: {
               pi_icon: '',
-              title: !!(user.name) ? user.name : 'No User'
+              title: !!(user.name) ? user.name :
+                (language?.statics?.error?.noUser ? language?.statics?.error?.noUser : 'User')
             }
           }
           }
@@ -185,7 +196,8 @@ function ScorePage() {
           my_scores={score}
           comparable={use_compare ? 1 : 0}
           compare_to_grades={scores[useToCompare]}
-          compare_to={!!(users[useToCompare].name) ? users[useToCompare].name : 'No User'}
+          compare_to={!!(users[useToCompare].name) ? users[useToCompare].name :
+            (language?.statics?.error?.noUser ? language?.statics?.error?.noUser : 'User')}
         />)
     }
     {
@@ -193,15 +205,16 @@ function ScorePage() {
         (<GradesMenuComparable display={{ base: 'none', sm: 'none', md: 'none', lg: 'flex', xl: 'flex' }}
           title_type={1}
           pi_icon={'pi-trophy'}
-          title={'PROGRESS'}
+          title={language?.topScores?.progressTitle ? language?.topScores?.progressTitle : 'GRADES'}
           title_info={{
             title_a: {
               pi_icon: 'pi-trophy',
-              title: 'PROGRESS'
+              title: language?.topScores?.progressTitle ? language?.topScores?.progressTitle : 'GRADES'
             },
             title_b: {
               pi_icon: '',
-              title: !!(users[useToCompare].name) ? users[useToCompare].name : 'No User'
+              title: !!(users[useToCompare].name) ? users[useToCompare].name :
+                (language?.statics?.error?.noUser ? language?.statics?.error?.noUser : 'User')
             }
           }
           }
@@ -209,7 +222,8 @@ function ScorePage() {
           my_scores={scores[useToCompare]}
           comparable={to_compare}
           compare_to_grades={score}
-          compare_to={!!(user.name) ? user.name : 'No User'}
+          compare_to={!!(user.name) ? user.name :
+            (language?.statics?.error?.noUser ? language?.statics?.error?.noUser : 'User')}
         />)
     }
 
