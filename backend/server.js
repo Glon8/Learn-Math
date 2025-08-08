@@ -7,12 +7,16 @@ import langRouter from './routes/lang.routes.js'
 import exercisesRouter from './routes/exercises.routes.js'
 import aiRouter from './routes/ai.routes.js'
 import utilRouter from './routes/util.routes.js'
-import { ping } from './controllers/util.controller.js'
 
 const app = express();
 const port = process.env.PORT || 5000;
 
-app.use(cors());
+app.use(cors({
+    origin: [
+        `http://localhost:3000`,
+        'https://learn-math-now.netlify.app',
+    ]
+}));
 app.use(express.json());
 
 // user calls
