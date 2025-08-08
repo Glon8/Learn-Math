@@ -8,7 +8,7 @@ const englishPackage = {
     },
     navMenu: {
         trigger: 'Menu',
-        userStatus: 'user:',
+        userStatus: 'user',
         userStatusLocal: 'Local',
         userStatusOnline: 'Online',
         userStatusNegative: 'No user connected!',
@@ -35,10 +35,11 @@ const englishPackage = {
     },
     topScores: {
         topScoresTitle: 'TOP SCORES',
-        progressTitle: 'PROGRESS',
+        progressTitle: 'GRADES',
         share: 'Share my grades',
         remove: 'Remove me from top list',
-        compare: 'Compare with my grades'
+        compare: 'Compare with my grades',
+        empty: 'Whoops! Something went wrong or no users shared their scores.'
     },
     schools: {
         schoolsTopicTitle: 'SCHOOLS TOPICS',
@@ -48,8 +49,8 @@ const englishPackage = {
     },
     profile: {
         profileTitle: 'PROFILE',
-        progressTitle: 'PROGRESS',
-        elementarySchool: 'Elementary-Schoo',
+        progressTitle: 'GRADES',
+        elementarySchool: 'Elementary-School',
         highSchool: 'High-School',
         share: 'Share my grades',
         remove: 'Remove me from top list',
@@ -64,14 +65,27 @@ const englishPackage = {
         highSchool: 'High-School',
         teach: 'Discuss With Teach!',
         placeholder: 'Ask teach!',
-        limitation: 'Max 350 characters'
+        limitation: 'Max 350 characters',
+        user: 'User:',
+        teacher: 'Teacher:',
+        teacherWelcome: 'Its a chat with virtual teach! Ask it freely about math topics and exercises struggle!',
+        teacherWait: 'Await for teacher to respond, please...',
     },
     exercise: {
+        title: 'Exercise',
         explanation: 'Solve exercises to recieve a grade! (Max grade is 100)',
-        done: 'Done'
+        done: 'Done',
     },
     statics: {
+        aiNote: 'Images were created by NN',
+        error: {
+            noUser: 'User',
+            listMissing: 'Something missing... maybe a list.',
+            exerciseMissing: 'Oooopps... its seems like something wrong, try to reconnect to internet or refresh the page.',
+            shortDescMissing: 'Missing subtitle',
+        },
         confirmation: {
+            question: 'Are you sure?',
             true: 'Yes, Im sure!',
             false: 'No, await please!'
         },
@@ -79,6 +93,8 @@ const englishPackage = {
             name: 'Name',
             email: 'Email',
             password: 'Password',
+            newPassword: 'New Password',
+            confPassword: 'Confirm Password',
             status: 'Status',
             statusTrue: 'Online',
             statusFalse: 'Offline',
@@ -105,8 +121,8 @@ const englishPackage = {
             exam_advanced: 'exam: advanced'
         },
         shortDesc: {
-            sum_substract: '',
-            multiply_divide: '',
+            sum_substract: 'Simple sum and substract exercises like: (100 - 80) + 15 = ?',
+            multiply_divide: 'Multiply and divide exercises as such: 25/5 * 25 = ?',
             mixed: '',
             power_root: '',
             fraction_fractionMixed: '',
