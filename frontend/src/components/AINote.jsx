@@ -8,14 +8,14 @@ function AINote() {
     const { language } = languageContext();
 
     return (<Flex position={'fixed'}
-        left={pos === 'top' ||
+        left={pos ? (pos === 'top' ||
             pos === 'bottom' ||
-            pos === 'right' ? 5 : ''}
-        bottom={pos === 'top' ||
+            pos === 'right' ? 5 : '') : 5}
+        bottom={pos ? (pos === 'top' ||
             pos === 'left' ||
-            pos === 'right' ? 5 : ''}
-        right={pos === 'left' ? 5 : ''}
-        top={pos === 'bottom' ? 5 : ''}
+            pos === 'right' ? 5 : '') : 5}
+        right={pos ? (pos === 'left' ? 5 : '') : ''}
+        top={pos ? (pos === 'bottom' ? 5 : '') : ''}
         padding={2}
         rounded={'xl'}
         border
@@ -31,7 +31,7 @@ function AINote() {
             borderColor: '#1D282E/60'
         }}>
         <Text fontWeight={'bold'}>
-            {language?.statics?.aiNote ? language?.statics?.aiNote : 'Some images were created by NN'}
+            {language?.statics?.aiNote ? language?.statics?.aiNote : 'Images were created by NN'}
         </Text>
     </Flex>)
 }

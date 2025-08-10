@@ -1,10 +1,15 @@
 import { Text, Flex, Input, Button } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
+import { useEffect } from "react";
 import { useState } from "react";
 
 function PassSlot({ placeholder, value, visible, getValue, edit, category, dir, auto, disableDark, maxLength }) {
     const [useValue, setValue] = useState(value ? ' ' + value : '');
     const [useVisible, setVisible] = useState(visible ? true : false);
+
+    useEffect(() => {
+        setValue(value);
+    }, [value]);
 
     return (<Flex width={'full'}
         flexDirection={dir ? dir : 'row'}

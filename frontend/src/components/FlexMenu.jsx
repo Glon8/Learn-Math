@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 // <Flexmenu disabled={false} close={true} pi_icon={''} title={'do something'} inner_title={'DO SOMETHING!'} options={['will do', 'negative']} />
 
-function FlexMenu({ pi_icon, title, inner_title, options, close, autoClose }) {
+function FlexMenu({ pi_icon, title, inner_title, options, close, autoClose, onClick }) {
     const [useOpen, setOpen] = useState(close ? close : false);
 
     useEffect(() => {
@@ -16,7 +16,11 @@ function FlexMenu({ pi_icon, title, inner_title, options, close, autoClose }) {
 
         <Menu.Trigger asChild w={'full'}>
 
-            <Button onClick={() => setOpen(!useOpen)}
+            <Button onClick={() => {
+                setOpen(!useOpen);
+
+                !!onClick ? onClick() : null;
+            }}
                 width={'xs'}
                 flexDirection={'row'}
                 gap={3}
@@ -79,7 +83,7 @@ function FlexMenu({ pi_icon, title, inner_title, options, close, autoClose }) {
                                     }}
                                     onClick={() => {
                                         setOpen(false);
-                                        option.click? option.click() : null;
+                                        option.click ? option.click() : null;
                                     }}
                                 >{option.value}</Button>
                             </Menu.Item>)

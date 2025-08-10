@@ -2,6 +2,7 @@
 import { Button, Flex, Separator, Text, Link } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import { userContext } from "../context/UserContext.jsx"
+import { languageContext } from '../context/LanguagesContext.jsx'
 import { callToast } from './Toast.jsx'
 
 import { verString, verEmail, verPassword } from '../util/Statics.js'
@@ -12,7 +13,8 @@ import CheckCard from './CheckCard.jsx'
 import PassSlot from './PassSlot.jsx'
 
 function SignForm({ isIn, isUp, close }) {
-  const { upUser, signUp, pos, signIn } = userContext();
+  const { upUser, signUp, pos, signIn, lang, secret } = userContext();
+  const { language } = languageContext();
 
   const [useOffline, setOffline] = useState(false);
   const [useIn, setIn] = useState(isIn ? isIn : false);
@@ -37,8 +39,6 @@ function SignForm({ isIn, isUp, close }) {
     setConfPass(null);
     setSecQues(null);
     setSecAns(null);
-
-    // <= visual glitch, problem within Slot, PassSlot, doesnt recieve live updates.
   }
 
   const verify = () => {
@@ -77,20 +77,22 @@ function SignForm({ isIn, isUp, close }) {
 
         flag = false;
       }
-      else if (!password) {
-        callToast('Error', 'Password cannot be empty!', '', 'error', pos);
+      else if (!useReset) {
+        if (!password) {
+          callToast('Error', 'Password cannot be empty!', '', 'error', pos);
 
-        flag = false;
-      }
-      else if (password.length < 4) {
-        callToast('Error', 'Password minimum length is 4!', '', 'error', pos);
+          flag = false;
+        }
+        else if (password.length < 4) {
+          callToast('Error', 'Password minimum length is 4!', '', 'error', pos);
 
-        flag = false;
-      }
-      else if (!verPassword(password)) {
-        callToast('Error', 'Password invalid, allowed: small, capital letters, digits and symbols\r\nExample: Dr552!@', '', 'error', pos);
+          flag = false;
+        }
+        else if (!verPassword(password)) {
+          callToast('Error', 'Password invalid, allowed: small, capital letters, digits and symbols\r\nExample: Dr552!@', '', 'error', pos);
 
-        flag = false;
+          flag = false;
+        }
       }
     }
     if (flag && !useOffline && useUp) {
@@ -151,21 +153,28 @@ function SignForm({ isIn, isUp, close }) {
 
   const signHandle = async () => {
     if (useIn) { // sign in: online only
-      await upUser('email', email);
-      await upUser('password', password);
+      if (!useReset) {
+        await upUser('email', email);
+        await upUser('password', password);
 
-      await signIn(email, password);
+        await signIn(email, password);
 
-      console.log('sign in');
+        console.log('sign in');
+      }
+      else if (!!useReset && useReset == 2) {
+        await signIn(email, password, false, false, secAns);
+
+        console.log('Sign in + password reset');
+      }
     }
     else if (useUp) {
       if (!useOffline) { // sign up: online
-        signUp(useOffline, name, email, password, secQues, secAns);
+        signUp(useOffline, false, name, email, password, secQues, secAns);
 
         console.log('sign up: online');
       }
       else if (useOffline) {  // sign up: offline and online
-        await signUp(useOffline, name);
+        await signUp(useOffline, false, name);
 
         console.log('sign up: offline');
       }
@@ -236,7 +245,12 @@ function SignForm({ isIn, isUp, close }) {
 
         <Flex justify={'space-between'}>
 
-          <TitleSlot pi_icon={useIn ? 'pi-sign-in' : 'pi-user-edit'} title={`SIGN ${useIn ? 'IN' : 'UP'}`} />
+          <TitleSlot pi_icon={useIn ? 'pi-sign-in' : 'pi-user-edit'}
+            title={
+              useIn ? (!!useReset ? (language?.sign?.resetTitle ? language?.sign?.resetTitle : 'PASSWORD RESET')
+                : (language?.sign?.inTitle ? language?.sign?.inTitle : 'SIGN IN'))
+                : (language?.sign?.upTitle ? language?.sign?.upTitle : 'SIGN UP')
+            } />
           <Button focusRing={'inside'}
             onClick={closeUP}
             _light={{
@@ -256,10 +270,14 @@ function SignForm({ isIn, isUp, close }) {
         </Flex>
         <Separator />
         {
-          useIn ? null : (<Slot placeholder={'name'}
-            category={'Name'}
+          useIn ? null : (<Slot placeholder={'-----'}
+            category={
+              language?.statics?.user?.name ? language?.statics?.user?.name :
+                ('Name')
+            }
             edit={true}
             getValue={(value) => setName(value)}
+            value={name}
           />)
         }
         {
@@ -267,57 +285,96 @@ function SignForm({ isIn, isUp, close }) {
             <Text textAlign={'center'}
               fontSize={'sm'}
               color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
-            >To create an offline user email or password are not rquired.
-              It will be stored in your cookies for a week, if you clear cookies or switch
-              user, your progress will be gone. To save the progress, you can sign up as an online user.
+            >
+              {
+                language?.sign?.offlineExp ? language?.sign?.offlineExp : ('To create an offline user email or password are not rquired.' +
+                  'It will be stored in your cookies for a week, if you clear cookies or switch' +
+                  'user, your progress will be gone. To save the progress, you can sign up as an online user.')
+              }
             </Text>) : null}
         {
-          !useOffline && (useUp || useIn && !useReset) ? (<Flex flexDirection={'column'}
-            gapY={3}
-          >
-
-            <Slot placeholder={'email'}
-              category={'Email'}
+          !useOffline && (useUp || (useIn && !useReset) || (!!useReset && useIn && useReset === 1)) ?
+            (<Slot placeholder={'-----'}
+              category={
+                language?.statics?.user?.email ? language?.statics?.user?.email :
+                  ('Email')
+              }
               edit={true}
               getValue={(value) => setEmail(value)}
               maxLength={32}
-            />
-            <PassSlot placeholder={'password'}
-              category={'Password'}
-              edit={true}
-              getValue={(value) => setPassword(value)}
-              maxLength={24}
-            />
-
-          </Flex>) : null
-        }
-        {
-          !useOffline && useUp ? (
-            <PassSlot placeholder={'confirm password'}
-              category={'Confirm Password'}
-              edit={true}
-              getValue={(value) => setConfPass(value)}
-              maxLength={24}
+              value={email}
             />) : null
         }
         {
-          !useOffline && (useUp || useIn && useReset) ? (<Flex flexDirection={'column'}
+          !useOffline && (useUp || useIn && !useReset) ?
+            (<PassSlot placeholder={'-----'}
+              category={
+                language?.statics?.user?.password ? language?.statics?.user?.password :
+                  ('Password')
+              }
+              edit={true}
+              getValue={(value) => setPassword(value)}
+              maxLength={24}
+              value={password}
+            />) : null
+        }
+        {
+          !useOffline && useUp ? (
+            <PassSlot placeholder={'-----'}
+              category={
+                language?.statics?.user?.confPassword ? language?.statics?.user?.confPassword :
+                  ('Confirm Password')
+              }
+              edit={true}
+              getValue={(value) => setConfPass(value)}
+              maxLength={24}
+              value={null}
+            />) : null
+        }
+        {
+          !useOffline && (useUp || useIn && !!useReset && useReset === 2) ? (<Flex flexDirection={'column'}
             gapY={3}
           >
-            <Slot placeholder={'secret question'}
-              category={'Secret Question'}
-              edit={useReset ? false : true}
-              value={useReset ? 'Some secret question' : ''}
+            <Slot placeholder={'-----'}
+              category={
+                language?.statics?.user?.secret ? language?.statics?.user?.secret :
+                  ('Secret Question')
+              }
+              edit={!!useReset ? false : true}
+              value={
+                !!secQues ? secQues :
+                  (!!useReset ? (
+                    language?.sign?.secretPlaceholder ?
+                      language?.sign?.secretPlaceholder :
+                      ('Some secret question')) :
+                    secQues)
+              }
               getValue={(value) => setSecQues(value)}
               maxLength={32}
             />
-            <Slot placeholder={'answer to the question'}
-              category={'Secret Answer'}
+            <Slot placeholder={'-----'}
+              category={
+                language?.statics?.user?.answer ? language?.statics?.user?.answer :
+                  ('Secret Answer')
+              }
+              value={secAns}
               edit={true}
               getValue={(value) => setSecAns(value)}
               maxLength={32}
             />
-
+            {
+              !!useReset && useReset == 2 && useIn ?
+                (<PassSlot placeholder={'-----'}
+                  category={
+                    language?.statics?.user?.password ? language?.statics?.user?.password :
+                      ('Password')
+                  }
+                  edit={true}
+                  getValue={(value) => setPassword(value)}
+                  maxLength={24}
+                  value={password}
+                />) : null
+            }
           </Flex>) : null
         }
 
@@ -325,19 +382,45 @@ function SignForm({ isIn, isUp, close }) {
       <Flex w={'full'}
         flexDirection={'column'}
         gapY={3}>
-        {
-          // flex to hold the send button
-        }
-        <Separator />
 
         <Button focusRing={'inside'}
           onClick={() => {
             let flag = verify();
 
-            if (flag && useOffline && useUp) callToast('Success', 'Local user created!', '', 'success', pos);
+            if (!useReset) {
+              if (flag && useOffline && useUp) callToast('Success', 'Local user created!', '', 'success', pos);
 
-            if (flag) signHandle();
-            //flag ? setSend(!send) : null;
+              if (flag) signHandle();
+            }
+            else {
+              if (flag && !!useIn) {
+                switch (useReset) {
+                  case 1:
+                    const getQuestion = async () => {
+                      const res = await secret(email);
+
+                      if (!res) callToast('Error', 'No matching user! Check the email you wrote!', '', 'error', pos);
+                      else {
+                        setSecQues(res?.secret);
+
+                        setReset(2);
+                      }
+                    }
+
+                    getQuestion();
+                    break;
+
+                  case 2:
+                    signHandle();
+
+                    console.log('Signed in without a password using secrert answer');
+                    break;
+
+                  default:
+                    break;
+                }
+              }
+            }
           }}
           _light={{
             background: "white",
@@ -351,59 +434,98 @@ function SignForm({ isIn, isUp, close }) {
             focusRingColor: '#B1B7BA',
             color: '#EEF6F9'
           }}
-        >Send</Button>
+        >
+          {
+            language?.sign?.send ? language?.sign?.send :
+              ('Send')
+          }
+        </Button>
+        <Separator />
         {
           useUp ? (<CheckCard ifChange={() => { setOffline(!useOffline) }}
             pi_icon={'pi-thumbtack'}
-            title={'Is OFFLINE user?'}
+            title={
+              language?.sign?.offline ? language?.sign?.offline :
+                ('Is OFFLINE user?')
+            }
           />) : null
         }
         {
-          useIn ? (!useReset ? (<Flex flexDir={'column'}>
+          useIn && !useReset ? (<Flex flexDir={'column'}>
 
-            <Text fontSize={'sm'}
+            <Flex fontSize={'sm'}
               color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
+              flexDir={lang == 'he' ? 'row-reverse' : 'row'}
+              justifyContent={lang == 'he' ? 'start' : ''}
             >
-              Have no accout? <Link onClick={() => {
+              {
+                language?.sign?.signUpLabel ? language?.sign?.signUpLabel :
+                  ('Have no accout?')
+              }
+              <Link onClick={() => {
                 setIn(false);
                 setUp(true);
                 setReset(false);
                 setOffline(false);
                 console.log('I need an account')
-              }}>SIGN UP!</Link>
-            </Text>
-            <Text fontSize={'sm'}
+              }}
+                marginX={1}
+              >
+                {
+                  language?.sign?.signUp ? language?.sign?.signUp :
+                    ('SIGN UP!')
+                }
+              </Link>
+            </Flex>
+            <Flex fontSize={'sm'}
               color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
-            >Forgot password? <Link onClick={() => {
-              setIn(true);
-              setUp(false);
-              setReset(true);
-              setOffline(false);
-              console.log('I need reset password')
-            }}>RESET!</Link>
-            </Text>
-
-          </Flex>) : (<Text fontSize={'sm'}
-            color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
-          >I wish to return to log-in! <Link onClick={() => {
-            setIn(true);
-            setUp(false);
-            setReset(false);
-            setOffline(false);
-            console.log('I need get back to login')
-          }}>LOG IN</Link>
-          </Text>)) :
-            (<Text fontSize={'sm'}
-              color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
+              flexDir={lang == 'he' ? 'row-reverse' : 'row'}
+              justifyContent={lang == 'he' ? 'start' : ''}
             >
-              Have an accout already? <Link onClick={() => {
+              {
+                language?.sign?.forgotPassLabel ? language?.sign?.forgotPassLabel :
+                  ('Forgot password?')
+              }
+              <Link onClick={() => {
                 setIn(true);
                 setUp(false);
-                setReset(false);
+                setReset(1);
                 setOffline(false);
-                console.log('I have an account')
-              }}>SIGN IN!</Link>
-            </Text>)
+                console.log('I need reset password')
+              }}
+                marginX={1}
+              >
+                {
+                  language?.sign?.forgotPass ? language?.sign?.forgotPass :
+                    ('RESET!')
+                }
+              </Link>
+            </Flex>
+
+          </Flex>) : (<Flex fontSize={'sm'}
+            color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
+            flexDir={lang == 'he' ? 'row-reverse' : 'row'}
+            justifyContent={lang == 'he' ? 'start' : ''}
+          >
+            {
+              language?.sign?.signInLabel ? language?.sign?.signInLabel :
+                ('Get back  to sign-in!')
+            }
+            <Link onClick={() => {
+              setIn(true);
+              setUp(false);
+              setReset(false);
+              setOffline(false);
+              console.log('I need get back to login')
+            }}
+              marginX={1}
+            >
+              {
+                language?.sign?.signIn ? language?.sign?.signIn :
+                  ('SIGN IN')
+              }
+            </Link>
+          </Flex>)
         }
       </Flex>
 
