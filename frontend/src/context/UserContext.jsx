@@ -42,6 +42,27 @@ export const UserProvider = ({ children }) => {
   const [useLogs, setLogs] = useState(false);
   const pop = useRef(false);
 
+  const getSecret = async (email) => {
+    if (!!email) {
+      await pingSchedule();
+
+      try {
+        const res = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/user/secret`, { email: email });
+
+        const data = res.data.data;
+
+        if (data.secret) console.log('Password reset: Secret fetched successfully');
+
+        return data;
+      }
+      catch (error) {
+        console.log('Error accured during fetching secret: ' + error.message);
+
+        callToast('Error:', error.message, '', 'error', useUser.navPosition);
+      }
+    }
+  }
+
   const serverBootPop = () => {
     if (!pop.current) {
       pop.current = true;
@@ -53,7 +74,7 @@ export const UserProvider = ({ children }) => {
       setTimeout(() => { pop.current = false }, 30 * 1000);
     }
   }
-  
+
   const pingSchedule = async () => {
     await wait(0.2);
 
@@ -173,9 +194,10 @@ export const UserProvider = ({ children }) => {
     return bcrypt.compare(thing, useUser.password);
   }
 
-  const signUp = async (offline, name, email, password, secQues, secAns) => {
+  const signUp = async (offline, save, name, email, password, secQues, secAns, score) => {
     if (!offline) { // sign up: online
       password = await encrypt(password);
+      secAns = await encrypt(secAns);
 
       const newUser = {
         _id: null,
@@ -192,13 +214,15 @@ export const UserProvider = ({ children }) => {
         navPosition: useUser.navPosition
       }
 
+      if (!!save && !!score) score._id = null;
+
       await pingSchedule();
 
       // request:
       try {
         const res = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/user/sign-up`, {
           user: newUser,
-          score: useScore
+          score: !!save ? score : useScore
         });
 
         if (res.data?.success) {
@@ -227,27 +251,40 @@ export const UserProvider = ({ children }) => {
     }
   }
 
-  const signIn = async (email, password, token, logs) => {
+  const signIn = async (email, password, token, logs, answer) => {
     await pingSchedule();
 
     try {
       let res;
 
-      if (!!email && !!password) {
+      if (!!email && !!password && !answer) {
         password = await encrypt(password);
 
         res = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/user/sign-in`, {
           token: false,
           email: email,
-          password: password
+          password: password,
+          answer: false
         });
       }
-      else
+      else if (!!token)
         res = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/user/sign-in`, {
           token: token,
           email: false,
-          password: false
+          password: false,
+          answer: false
         });
+      else if (!!email && !!password && !!answer) {
+        password = await encrypt(password);
+        answer = await encrypt(answer);
+
+        res = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/user/sign-in`, {
+          token: false,
+          email: email,
+          password: password,
+          answer: answer
+        });
+      }
 
       if (res.data?.success) {
         const data = res.data.data;
@@ -340,7 +377,7 @@ export const UserProvider = ({ children }) => {
         return unpackedUser;
       }
       else if (!!extractedUser.token && !extractedUser.key) { // server pull request with token
-        signIn(false, false, extractedUser.token, extractedUser.logs);
+        signIn(false, false, extractedUser.token, extractedUser.logs, false);
       }
     }
     else return { // empty user return
@@ -367,8 +404,8 @@ export const UserProvider = ({ children }) => {
     setUser(prev => ({ ...prev, [thing]: newValue }));
 
     if (thing === '_id') setScore(prev => ({ ...prev, [thing]: newValue }));
-    else if (thing === 'password') {
-      newValue = encrypt();
+    else if (thing === 'password' || thing === 'answer') {
+      newValue = await encrypt(newValue);
 
       setUser(prev => ({ ...prev, [thing]: newValue }));
     }
@@ -466,7 +503,8 @@ export const UserProvider = ({ children }) => {
       del: deleteUser, upTop: signUpToTop,
       outTop: signOutfromTop,
       logs: useLogs, send: chatSend,
-      pop: serverBootPop, pingSchedule
+      pop: serverBootPop, pingSchedule,
+      secret: getSecret
     }}>
     {children}
   </UserContext.Provider>)

@@ -57,7 +57,7 @@ export const verString = (string) => {
     if (string != null) {
         if (string.trim() == "") return false;
         else if (string.length < 2) return false;
-        else return !!string.match(/^[a-zA-Z0-9 ]{2,24}$/);
+        else return !!string.match(/^[a-zA-Z0-9 \u0400-\u04FF\u0590-\u05FF]{2,24}$/);
     }
 }
 
@@ -67,7 +67,6 @@ export const verEmail = (email) => {
             return false;
         else if (email.length < 9) return false;
         else return !!email.match(/^[a-zA-Z0-9._%+-]{2,}@(gmail|outlook|hotmail|yahoo|icloud|aol|protonmail|zoho|mail|gmx|yandex|walla)\.(com|net|org|ru|co\.uk|co\.il|de|fr|eu|me)$/);
-        // /^[a-zA-Z0-9._%+-]{2,}@(gmail|outlook|hotmail|yahoo|icloud|aol|protonmail|zoho|mail|gmx|yandex|walla)\.(com|net|org|ru|co\.uk|co\.il|de|fr|eu|me)$/
     }
 }
 

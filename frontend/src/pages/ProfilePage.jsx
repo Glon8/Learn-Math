@@ -18,7 +18,7 @@ import PassSlot from "../components/PassSlot.jsx";
 function ProfilePage() {
   const { user, stat, share,
     score, upUser, pos, compare,
-    del, upTop, outTop } = userContext();
+    del, upTop, outTop, signUp } = userContext();
   const { language } = languageContext();
 
   const [use_profile_edit, set_profile_edit] = useState(false);
@@ -29,100 +29,162 @@ function ProfilePage() {
   const [newPass, setNewPass] = useState(null);
   const [confPass, setConfPass] = useState(null);
   const [secQues, setSecQues] = useState(user.secret);
-  const [secAns, setSecAns] = useState(user.answer);
+  const [secAns, setSecAns] = useState(null);
+
+  const [convert, setConvert] = useState(false);
 
   const [topic, setTopic] = useState(language?.statics?.topics ? language?.statics?.topics : topicNames);
 
   const update = () => {
     if (user.name != name) {
-      if (!name)
+      if (!name) {
         callToast('Error', 'New user name cannot be empty!', '', 'error', pos);
-      else if (name.length < 2)
+        return;
+      }
+      else if (name.length < 2) {
         callToast('Error', 'New user name minimum length is 2!', '', 'error', pos);
-      else if (!verString(name))
+        return;
+      }
+      else if (!verString(name)) {
         callToast('Error', 'User name invalid, allowed small, capital letters, and digits\r\nExample: Dana999', '', 'error', pos);
+        return;
+      }
       else {
-        upUser('name', name);
+        if (!convert) {
+          upUser('name', name);
 
-        callToast('Success', 'Name changed', '', 'success', pos);
+          callToast('Success', 'Name changed', '', 'success', pos);
+        }
       }
     }
 
-    if (!!user._id && stat) {
+    if ((!!user._id && stat) || !!convert) {
       if (user.email != email) {
-        if (!email)
+        if (!email) {
           callToast('Error', 'New email cannot be empty!', '', 'error', pos);
-        else if (email.length < 9)
+          return;
+        }
+        else if (email.length < 9) {
           callToast('Error', 'New email minimum length is 9!', '', 'error', pos);
-        else if (!verEmail(email))
+          return;
+        }
+        else if (!verEmail(email)) {
           callToast('Error', 'Email invalid, allowed small, capital letters, and digits\r\nExample: amazing@gmail.com', '', 'error', pos);
+          return;
+        }
         else {
-          upUser('email', email);
+          if (!convert) {
+            upUser('email', email);
 
-          callToast('Success', 'Email changed', '', 'success', pos);
+            callToast('Success', 'Email changed', '', 'success', pos);
+          }
         }
       }
 
-      if (!!password)
-        if (!compare(password))
+      if (!!password) {
+        if (!compare(password)) {
           callToast('Error', 'Current password must match!', '', 'error', pos);
-        else if (password.length < 4)
+          return;
+        }
+        else if (password.length < 4) {
           callToast('Error', 'Current password minimum length is 4!', '', 'error', pos);
-        else if (!verPassword(password))
+          return;
+        }
+        else if (!verPassword(password)) {
           callToast('Error', 'Password invalid, allowed: small, capital letters, digits and symbols\r\nExample: Dr552!@', '', 'error', pos);
+          return;
+        }
+      }
+
+      if (!!password || !!convert) {
+        if (!newPass) {
+          callToast('Error', 'New password cannot be empty!', '', 'error', pos);
+          return;
+        }
+        else if (newPass.length < 4) {
+          callToast('Error', 'New password minimum length is 4!', '', 'error', pos);
+          return;
+        }
+        else if (password == newPass) {
+          callToast('Error', 'New password cannot match with old password!', '', 'error', pos);
+          return;
+        }
+        else if (!verPassword(newPass)) {
+          callToast('Error', 'New password invalid, allowed: small, capital letters, digits and symbols\r\nExample: Dr552!@', '', 'error', pos);
+          return;
+        }
         else {
-          if (!newPass)
-            callToast('Error', 'New password cannot be empty!', '', 'error', pos);
-          else if (newPass.length < 4)
+          if (!confPass) {
+            callToast('Error', 'Confirmation password cannot be empty!', '', 'error', pos);
+            return;
+          }
+          else if (confPass.length < 4) {
             callToast('Error', 'New password minimum length is 4!', '', 'error', pos);
-          else if (password == newPass)
-            callToast('Error', 'New password cannot match with old password!', '', 'error', pos);
-          else if (!verPassword(newPass))
-            callToast('Error', 'New password invalid, allowed: small, capital letters, digits and symbols\r\nExample: Dr552!@', '', 'error', pos);
+            return;
+          }
+          else if (confPass != newPass) {
+            callToast('Error', 'Confirmation password must match new password!', '', 'error', pos);
+            return;
+          }
+          else if (!verPassword(confPass)) {
+            callToast('Error', 'Confirmation password invalid, allowed small, capital letters, digits and symbols\r\nExample: Dr552!@', '', 'error', pos);
+            return;
+          }
           else {
-            if (!confPass)
-              callToast('Error', 'Confirmation password cannot be empty!', '', 'error', pos);
-            else if (confPass.length < 4)
-              callToast('Error', 'New password minimum length is 4!', '', 'error', pos);
-            else if (confPass != newPass)
-              callToast('Error', 'Confirmation password must match new password!', '', 'error', pos);
-            else if (!verPassword(confPass))
-              callToast('Error', 'Confirmation password invalid, allowed small, capital letters, digits and symbols\r\nExample: Dr552!@', '', 'error', pos);
-            else {
+            if (!convert) {
               upUser(newPass);
 
-              callToast('Success', 'Password changed changed', '', 'success', pos);
+              callToast('Success', 'Password changed', '', 'success', pos);
             }
           }
         }
+      }
 
-      if (user.secret != secQues) {
-        if (!secQues)
+      if (user.secret != secQues || !!convert) {
+        if (!secQues) {
           callToast('Error', 'New secret question cannot be empty!', '', 'error', pos);
-        else if (secQues.length < 2)
+          return;
+        }
+        else if (secQues.length < 2) {
           callToast('Error', 'New secret question minimum length is 2!', '', 'error', pos);
-        else if (!verString(secQues))
+          return;
+        }
+        else if (!verString(secQues)) {
           callToast('Error', 'Secret question invalid, allowed small, capital letters, and digits\r\nExample: My age', '', 'error', pos);
+          return;
+        }
         else {
-          upUser('secret', secQues);
+          if (!convert) {
+            upUser('secret', secQues);
 
-          callToast('Success', 'Secret question changed.', '', 'success', pos);
+            callToast('Success', 'Secret question changed.', '', 'success', pos);
+          }
         }
       }
 
-      if (user.answer != secAns) {
-        if (!secAns)
+      if ((!!secAns && user.answer != secAns) || (!!convert && !!secQues)) {
+        if (!secAns) {
           callToast('Error', 'New secret answer cannot be empty!', '', 'error', pos);
-        else if (secAns.length < 2)
+          return;
+        }
+        else if (secAns.length < 2) {
           callToast('Error', 'New secret answer minimum length is 2!', '', 'error', pos);
-        else if (!verString(secAns))
+          return;
+        }
+        else if (!verString(secAns)) {
           callToast('Error', 'Secret answer invalid, allowed small, capital letters, and digits\r\nExample: 6', '', 'error', pos);
+          return;
+        }
         else {
-          upUser('answer', secAns);
+          if (!convert) {
+            upUser('answer', secAns);
 
-          callToast('Success', 'Secret answer changed.', '', 'success', pos);
+            callToast('Success', 'Secret answer changed.', '', 'success', pos);
+          }
         }
       }
+
+      if (!!convert) signUp(false, true, name, email, newPass, secQues, secAns, score);
     }
   }
 
@@ -131,6 +193,21 @@ function ProfilePage() {
   useEffect(() => {
     setTopic(language?.statics?.topics ? language?.statics?.topics : topicNames);
   }, [language]);
+
+  useEffect(() => {
+    if (user.name != name) setName(user.name);
+    if (user.email != email) setEmail(user.email);
+    if (user.secret != secQues) setSecQues(user.secret);
+  }, [user.name, user.email, user.secret]);
+
+  useEffect(() => {
+    if (!use_profile_edit) {
+      setPassword(null);
+      setNewPass(null);
+      setConfPass(null);
+      setSecAns(null);
+    }
+  }, [use_profile_edit]);
 
   return (<Flex gap={5} w={'100%'}
     h={useBreakpointValue({ lg: 'auto', xl: '100vh' })}
@@ -169,16 +246,16 @@ function ProfilePage() {
         getValue={(thing) => setName(thing)}
       />
       {
-        stat && user._id != null && user._id != 0 ?
+        (stat && !!user._id) || !!convert ?
           <Slot value={user.email ? user.email : null}
             placeholder={'-----'}
             category={language?.statics?.user?.email ? language?.statics?.user?.email : 'Email'}
-            edit={use_profile_edit && stat ? true : false}
+            edit={(use_profile_edit && stat) || !!convert ? true : false}
             getValue={(thing) => setEmail(thing)}
           /> : ''
       }
       {
-        use_profile_edit && stat && user._id != null && user._id != 0 ?
+        use_profile_edit && stat && !!user._id ?
           <PassSlot placeholder={'-----'}
             category={'Current Password'}
             edit={true}
@@ -186,7 +263,7 @@ function ProfilePage() {
           /> : ''
       }
       {
-        use_profile_edit && stat && user._id != null && user._id != 0 ?
+        (use_profile_edit && stat && !!user._id) || !!convert ?
           <PassSlot placeholder={'-----'}
             category={'New Password'}
             edit={true}
@@ -194,7 +271,7 @@ function ProfilePage() {
           /> : ''
       }
       {
-        use_profile_edit && stat && user._id != null && user._id != 0 ?
+        (use_profile_edit && stat && !!user._id) || !!convert ?
           <PassSlot placeholder={'-----'}
             category={'Confirm Password'}
             edit={true}
@@ -202,7 +279,7 @@ function ProfilePage() {
           /> : ''
       }
       {
-        use_profile_edit && stat && user._id != null && user._id != 0 ?
+        (use_profile_edit && stat && !!user._id) || !!convert ?
           <Slot value={user.secret ? user.secret : ''}
             placeholder={'-----'}
             category={language?.statics?.user?.secret ? language?.statics?.user?.secret : 'Secret Question'}
@@ -211,9 +288,8 @@ function ProfilePage() {
           /> : ''
       }
       {
-        use_profile_edit && stat && user._id != null && user._id != 0 ?
-          <Slot value={user.answer ? user.answer : ''}
-            placeholder={'-----'}
+        (use_profile_edit && stat && !!user._id) || !!convert ?
+          <Slot placeholder={'-----'}
             category={language?.statics?.user?.answer ? language?.statics?.user?.answer : 'Secret Answer'}
             getValue={(thing) => setSecAns(thing)}
             edit={true}
@@ -278,11 +354,12 @@ function ProfilePage() {
         }
         {
           user._id === 0 ? (<FlexMenu pi_icon={'pi-cloud-upload'}
+            onClick={() => setConvert(true)}
             title={language?.profile?.convert ? language?.profile?.convert : 'Convert user to online'}
             inner_title={language?.statics?.confirmation?.question ? language?.statics?.confirmation?.question : 'Are you sure?'}
             options={[
-              { value: language?.statics?.confirmation?.false ? language?.statics?.confirmation?.false : 'NO' },
-              { value: language?.statics?.confirmation?.true ? language?.statics?.confirmation?.true : 'YES', click: () => { console.log('convert') } }]} />) : (
+              { value: language?.statics?.confirmation?.false ? language?.statics?.confirmation?.false : 'NO', click: () => { setConvert(false); console.log('Convert terminated'); } },
+              { value: language?.statics?.confirmation?.true ? language?.statics?.confirmation?.true : 'YES', click: () => { update(); setConvert(false); console.log('Convert applied'); } }]} />) : (
             !!user._id ? (<FlexMenu pi_icon={'pi-cloud-download'}
               title={language?.profile?.delete ? language?.profile?.delete : 'Delete user'}
               inner_title={language?.statics?.confirmation?.question ? language?.statics?.confirmation?.question : 'Are you sure?'}

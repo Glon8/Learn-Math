@@ -32,22 +32,22 @@ function BackGroundImage() {
         <Flex h={'auto'}
             maxW={'25rem'}
             position={'fixed'}
-            left={-1}
+            left={pos === 'left' ? '4rem' : -1}
             bottom={pos === 'bottom' ? '5rem' : 0}
             display={{ base: 'none', sm: 'none', md: 'none', lg: 'none', xl: 'flex' }}
         >
             <Image maxH={'70%'}
-                src={colorMode === 'light' ? Girl : ReadingBoy}
+                src={!!colorMode ? (colorMode === 'light' ? Girl : ReadingBoy) : Girl}
                 alt="welcome-image" />
         </Flex>
         <Flex h={'auto'}
             maxW={{ _light: '25rem', _dark: '18rem' }}
             position={'fixed'}
             bottom={pos === 'bottom' ? '5rem' : 0}
-            right={-1}
+            right={pos === 'right' ? '4rem' : -1}
             display={{ base: 'none', sm: 'none', md: 'none', lg: 'none', xl: 'flex' }}>
             <Image maxH={'70%'}
-                src={colorMode === 'light' ? Boy : SittingGirl}
+                src={!!colorMode ? (colorMode === 'light' ? Boy : SittingGirl) : Boy}
                 alt="welcome-image" />
         </Flex>
         <Flex display={{ base: 'none', sm: 'none', md: 'none', lg: 'none', xl: 'flex' }}>

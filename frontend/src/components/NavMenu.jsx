@@ -97,7 +97,7 @@ function NavMenu({ close, autoClose, navShort, pi_icon }) {
     }, [close]);
 
     useEffect(() => {
-        toggleColorMode(mode === 'light' ? 'light' : 'dark');
+        toggleColorMode(mode ? (mode === 'light' ? 'light' : 'dark') : ('light'));
     }, [mode]);
 
     return (<Tool navSide={pos}
