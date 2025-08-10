@@ -5,20 +5,50 @@ import { verify, createToken } from "../util/token.util.js";
 import { verifyName, verifyEmail, verifyPassword, verifySecretQuestion, verifySecretAnswer } from '../util/verification.util.js'
 import { validateEmail } from "../util/validation.util.js";
 
+export const getSecret = async (req, res) => {
+    const email = req.body.email;
+
+    if (await validateEmail(email)) {
+        try {
+            const fetchedUser = await User.findOne({ email: email });
+
+            if (!!fetchedUser) res.status(200).json({ success: true, message: 'User secret was successfully fetched!', data: { email: email, secret: fetchedUser.secret } });
+            else res.status(404).json({ success: false, message: 'There no such user!', data: { email: email, secret: null } })
+        }
+        catch (error) {
+            console.log('Error in fetching user secret: ' + error.message);
+            res.status(500).json({ success: false, message: 'Server error' });
+        }
+    }
+}
+
 export const signIn = async (req, res) => {
     const token = req.body.token;
 
     if (!token) { // sign in my email & password
         const email = req.body.email;
         const password = req.body.password;
+        const answer = req.body.answer;
 
         // email check in db
         if (await validateEmail(email)) {
             const fetchedUser = await User.findOne({ email: email });
 
             // credentials verification
-            if (verifyPassword(fetchedUser?.password, password).message) {
+            // Note: was: verifyPassword().message
+            const answerFlag = !!answer && verifySecretAnswer(fetchedUser?.answer, answer).success;
+            const passwordFlag = !answer && verifyPassword(fetchedUser?.password, password).success;
+
+            if (answerFlag || passwordFlag) {
                 try {
+                    if (answerFlag) {
+                        fetchedUser['password'] = password;
+
+                        const userModel = new User(fetchedUser);
+
+                        await userModel.save();
+                    }
+
                     const fetchedScore = await Score.findOne({ userId: fetchedUser._id });
 
                     // token creation
@@ -46,6 +76,7 @@ export const signIn = async (req, res) => {
             console.log('Error in loading user by email: no such account with that email exist!');
             res.status(500).json({ success: false, message: 'Server error' });
         }
+
     }
     else { // sign in by token
         try {
@@ -71,19 +102,17 @@ export const signUp = async (req, res) => {
     const newUser = req.body.user;
     const newScore = req.body.score;
 
-    // email check in db
-    if (!(await validateEmail(newUser.email))) {
-        // credentials verification
-        let box = verifyName(newUser.name);
-
-        if (box.success) {
-            box = verifyEmail(newUser.email);
+    if (!!newScore) {
+        // email check in db
+        if (!(await validateEmail(newUser.email))) {
+            // credentials verification
+            let box = verifyName(newUser.name);
 
             if (box.success) {
-                box = verifySecretQuestion(newUser.secret);
+                box = verifyEmail(newUser.email);
 
                 if (box.success) {
-                    box = verifySecretAnswer(newUser.answer);
+                    box = verifySecretQuestion(newUser.secret);
 
                     if (box.success) {
                         // validation succeed so I prepare values to save in db
@@ -120,12 +149,12 @@ export const signUp = async (req, res) => {
                             console.log('Error in creating user: ' + error.message);
                             res.status(500).json({ success: false, message: 'Server error' });
                         }
+
                     }
                     else {
                         console.log(box.message);
                         res.status(box.stat).json({ success: box.success, message: box.message });
                     }
-
                 }
                 else {
                     console.log(box.message);
@@ -138,12 +167,12 @@ export const signUp = async (req, res) => {
             }
         }
         else {
-            console.log(box.message);
-            res.status(box.stat).json({ success: box.success, message: box.message });
+            console.log('Error in creating user: this email already in db!');
+            res.status(500).json({ success: false, message: 'Server error' });
         }
     }
     else {
-        console.log('Error in creating user: this email already in db!');
+        console.log('Error in creating user: data corrupted no scores!');
         res.status(500).json({ success: false, message: 'Server error' });
     }
 }
@@ -170,52 +199,44 @@ export const upUser = async (req, res) => { // set request
                     box = verifySecretQuestion(newUser.secret);
 
                     if (box.success) {
-                        box = verifySecretAnswer(newUser.answer);
+                        // validation succeed so I prepare values to save in db
+                        try {
+                            // save in data base
+                            await User.updateOne({ _id: verImage._id }, {
+                                shared: newUser.shared,
+                                name: newUser.name,
+                                email: newUser.email,
+                                password: newUser.password,
+                                secret: newUser.secret,
+                                answer: newUser.answer,
+                                settings: newUser.settings,
+                                mode: newUser.mode,
+                                language: newUser.language,
+                                navPosition: newUser.navPosition
+                            });
+                            await Score.updateOne({ userId: verImage._id }, {
+                                sum_substract: newScore.sum_substract,
+                                multiply_divide: newScore.multiply_divide,
+                                mixed: newScore.mixed,
+                                power_root: newScore.power_root,
+                                fraction_fractionMixed: newScore.fraction_fractionMixed,
+                                forms_sizes: newScore.forms_sizes,
+                                exam_basic: newScore.exam_basic,
+                                equasions_basic: newScore.equasions_basic,
+                                equations_two_more: newScore.equations_two_more,
+                                verbal_problems: newScore.verbal_problems,
+                                geometry: newScore.geometry,
+                                quadratic_equation: newScore.quadratic_equation,
+                                circles: newScore.circles,
+                                exam_advanced: newScore.exam_advanced
+                            });
 
-                        if (box.success) {
-                            // validation succeed so I prepare values to save in db
-                            try {
-                                // save in data base
-                                await User.updateOne({ _id: verImage._id }, {
-                                    shared: newUser.shared,
-                                    name: newUser.name,
-                                    email: newUser.email,
-                                    password: newUser.password,
-                                    secret: newUser.secret,
-                                    answer: newUser.answer,
-                                    settings: newUser.settings,
-                                    mode: newUser.mode,
-                                    language: newUser.language,
-                                    navPosition: newUser.navPosition
-                                });
-                                await Score.updateOne({ userId: verImage._id }, {
-                                    sum_substract: newScore.sum_substract,
-                                    multiply_divide: newScore.multiply_divide,
-                                    mixed: newScore.mixed,
-                                    power_root: newScore.power_root,
-                                    fraction_fractionMixed: newScore.fraction_fractionMixed,
-                                    forms_sizes: newScore.forms_sizes,
-                                    exam_basic: newScore.exam_basic,
-                                    equasions_basic: newScore.equasions_basic,
-                                    equations_two_more: newScore.equations_two_more,
-                                    verbal_problems: newScore.verbal_problems,
-                                    geometry: newScore.geometry,
-                                    quadratic_equation: newScore.quadratic_equation,
-                                    circles: newScore.circles,
-                                    exam_advanced: newScore.exam_advanced
-                                });
-
-                                //return form back with updated user
-                                res.status(200).json({ success: true, message: 'User has been updated in db!' });
-                            }
-                            catch (error) {
-                                console.log('Error in updating user: ' + error.message);
-                                res.status(500).json({ success: false, message: 'Server error' });
-                            }
+                            //return form back with updated user
+                            res.status(200).json({ success: true, message: 'User has been updated in db!' });
                         }
-                        else {
-                            console.log(box.message);
-                            res.status(box.stat).json({ success: box.success, message: box.message });
+                        catch (error) {
+                            console.log('Error in updating user: ' + error.message);
+                            res.status(500).json({ success: false, message: 'Server error' });
                         }
                     }
                     else {
@@ -267,4 +288,4 @@ export const delUser = async (req, res) => {
         console.log('Error in deleting user: expired token!');
         res.status(500).json({ success: false, message: 'Server error' });
     }
-} 
+}
