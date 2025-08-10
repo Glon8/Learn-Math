@@ -76,6 +76,23 @@ const englishPackage = {
         explanation: 'Solve exercises to recieve a grade! (Max grade is 100)',
         done: 'Done',
     },
+    sign: {
+        inTitle: 'SIGN IN',
+        upTitle: 'SIGN UP',
+        resetTitle: 'PASSWORD RESET',
+        send: 'Send',
+        signUp: 'SIGN UP!',
+        signUpLabel: 'Have no accout?',
+        signIn: 'SIGN IN!',
+        signInLabel: 'Get back to sign-in!',
+        forgotPass: 'RESET!',
+        forgotPassLabel: 'Forgot password?',
+        offline: 'Is OFFLINE user?',
+        offlineExp: ('To create an offline user email or password are not rquired.' +
+            'It will be stored in your cookies for a week, if you clear cookies or switch' +
+            'user, your progress will be gone. To save the progress, you can sign up as an online user.'),
+        secretPlaceholder: 'Yours secret question',
+    },
     statics: {
         aiNote: 'Images were created by NN',
         error: {
@@ -100,7 +117,7 @@ const englishPackage = {
             statusFalse: 'Offline',
             shared: 'Scores',
             sharedTrue: 'Shared',
-            sharedFalse: 'NotShared',
+            sharedFalse: 'Not Shared',
             secret: 'Question',
             answer: 'Answer'
         },

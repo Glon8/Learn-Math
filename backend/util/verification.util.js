@@ -5,7 +5,7 @@ const verString = (string) => {
     if (string != null) {
         if (string.trim() == "") return false;
         else if (string.length < 2) return false;
-        else return !!string.match(/^[a-zA-Z0-9 ]{2,24}$/);
+        else return !!string.match(/^[a-zA-Z0-9 \u0400-\u04FF\u0590-\u05FF]{2,24}$/);
     }
 }
 
@@ -15,7 +15,6 @@ const verEmail = (email) => {
             return false;
         else if (email.length < 9) return false;
         else return !!email.match(/^[a-zA-Z0-9._%+-]{2,}@(gmail|outlook|hotmail|yahoo|icloud|aol|protonmail|zoho|mail|gmx|yandex|walla)\.(com|net|org|ru|co\.uk|co\.il|de|fr|eu|me)$/);
-        // /^[a-zA-Z0-9._%+-]{2,}@(gmail|outlook|hotmail|yahoo|icloud|aol|protonmail|zoho|mail|gmx|yandex|walla)\.(com|net|org|ru|co\.uk|co\.il|de|fr|eu|me)$/
     }
 }
 
@@ -119,24 +118,25 @@ export const verifySecretQuestion = (secQues) => {
     return box;
 };
 
-export const verifySecretAnswer = (secAns) => {
+export const verifySecretAnswer = (thing, answer) => {
     const box = {
         success: true,
         message: 'Server secret answer verify success!',
         stat: 200
     };
 
-    if (!secAns) {
+    if (!answer) {
         box.success = false;
         box.message = ServerAddon + 'Secret answer cannot be empty!';
         box.stat = 400;
-    } else if (secAns.length < 2) {
+    } else if (answer.length < 2) {
         box.success = false;
         box.message = ServerAddon + 'Secret answer minimum length is 2!';
         box.stat = 422;
-    } else if (!verString(secAns)) {
+    }
+    else if (!verPassword(thing, answer)) {
         box.success = false;
-        box.message = ServerAddon + 'Secret answer invalid, allowed small, capital letters, and digits\r\nExample: 6';
+        box.message = ServerAddon + 'Secret answers dont match!';
         box.stat = 422;
     }
 
