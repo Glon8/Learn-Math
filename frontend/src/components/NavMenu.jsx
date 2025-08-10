@@ -91,13 +91,18 @@ function NavMenu({ close, autoClose, navShort, pi_icon }) {
         onClick: () => toRight()
     }];
 
-    //========================< useStates
+    //========================< useEffects
     useEffect(() => {
         setOpen(close);
     }, [close]);
 
     useEffect(() => {
-        toggleColorMode(mode ? (mode === 'light' ? 'light' : 'dark') : ('light'));
+        console.log('User mode: ' + mode);
+        console.log('Settings mode: ' + colorMode);
+
+        const color = !mode ? 'light' : mode;
+        if (color !== colorMode) toggleColorMode();
+        
     }, [mode]);
 
     return (<Tool navSide={pos}
