@@ -21,6 +21,7 @@
     "primeicons": "^7.0.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-geogebra": "^1.2.5",
     "react-icons": "^5.5.0",
     "react-katex": "^3.1.0",
     "react-markdown": "^10.1.0",
