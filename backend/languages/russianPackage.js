@@ -143,18 +143,18 @@ const russianPackage = {
         shortDesc: {
             sum_substract: '',
             multiply_divide: '',
-            mixed: '',
+            mixed: 'Смешаные примеры включают в себя, сложение и вычитание вместе с умножением и делением.',
             power_root: '',
             fraction_fractionMixed: '',
             forms_sizes: '',
-            exam_basic: '',
+            exam_basic: 'Базовый экзамен, включает в себя все темы из младшей школы.',
             equasions_basic: '',
             equations_two_more: '',
             verbal_problems: '',
             geometry: '',
             quadratic_equation: '',
             circles: '',
-            exam_advanced: ''
+            exam_advanced: 'Продвинутый экзамен, включает в себя все темы из старшей школы и так-же несколко тем из младшей школы.'
         },
         longDesc: {
             sum_substract: '',
@@ -163,14 +163,17 @@ const russianPackage = {
             power_root: '',
             fraction_fractionMixed: '',
             forms_sizes: '',
-            exam_basic: '',
+            exam_basic: ('Базовый экзамен, включает в себя все темы из младшей школы такие как, сложение и вычитание, ' +
+                'умножение и деление, смешанные примеры, корни и степени, дроби и формы.'),
             equasions_basic: '',
             equations_two_more: '',
             verbal_problems: '',
             geometry: '',
             quadratic_equation: '',
             circles: '',
-            exam_advanced: ''
+            exam_advanced: ('Продвинутый экзамен, включает в себя все темы из старшей школы такие как, уровнения, ' +
+                'уровнения два и больше, задачи, геометрия, кривое/квадратное уровнение и круги. А так-же, ' +
+                'продвинутый экзамен может состоять из тем и примеров для младшей школы тоже.')
         },
         exerciseForms: {
             sum_substract: '',
