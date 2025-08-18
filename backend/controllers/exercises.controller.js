@@ -203,7 +203,7 @@ const mixed = async (dif, sett) => {
     const fSign = Math.floor(Math.random() * 2); // first sign (0 - negative, 1 - positive, depends on signSwitch)
     const sSign = Math.floor(Math.random() * 2); // second sign (0 - negative, 1 - positive, depends on signSwitch)
     const signSwitch = Math.floor(Math.random() * 2); // sign switches determine which one ll multiply and whom ll sum (0 - first is summing, 1 - first is multiplying)
-    //const bracketSwitch = Math.floor(Math.random() * 2); // bracket switch, determine if brackets appear or not (0 - no brackets, 1 - with brackets)
+    const bracketSwitch = Math.floor(Math.random() * 2); // bracket switch, determine if brackets appear or not (0 - no brackets, 1 - with brackets)
 
     let quota;
     let first;
@@ -217,108 +217,26 @@ const mixed = async (dif, sett) => {
     const answer = [];
     const minQuota = Math.floor(quota * 0.1);
 
-    //if (bracketSwitch == 0) {
-    if (fSign == 0 && signSwitch == 0) { // first sign is minus
-        if (sSign == 0) { // second sign is divide
-            third = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-            second = (Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)))) * third;
-            first = Math.floor(Math.random() * (quota + 1 - (second / third) - minQuota)) + (second / third) + minQuota;
-
-            exercise.push({ type: 0, message: `${first} - ${second} : ${third} = ?` });
-
-            answer.push(first - (second / third));
-        }
-        else { // second sign is multiply
-            second = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-            third = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-            first = Math.floor(Math.random() * (quota + 1 - (second * third))) + (second * third);
-
-            exercise.push({ type: 0, message: `${first} - ${second} * ${third} = ?` });
-
-            answer.push(first - (second * third));
-        }
-    }
-    else if (fSign == 0 && signSwitch == 1) { // first sign is divide
-        if (sSign == 0) { // second sign is minus
-            second = Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-            first = (Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)))) * second;
-            third = Math.floor(Math.random() * ((first / second) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-
-            exercise.push({ type: 0, message: `${first} : ${second} - ${third} = ?` });
-
-            answer.push((second / third) - first);
-        }
-        else { // second sign is plus
-            second = Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-            first = (Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)))) * second;
-            third = Math.floor(Math.random() * (quota + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-
-            exercise.push({ type: 0, message: `${first} : ${second} + ${third} = ?` });
-
-            answer.push((second / third) + first);
-        }
-    }
-    else if (fSign == 1 && signSwitch == 0) { // first sign is plus
-        if (sSign == 0) { // second sign is divide
-            second = Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-            first = (Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)))) * second;
-            third = Math.floor(Math.random() * (quota + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-
-            exercise.push({ type: 0, message: `${third} + ${first} : ${second} = ?` });
-
-            answer.push(third + (first / second));
-        }
-        else { // second sign is multiply
-            second = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-            third = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-            first = Math.floor(Math.random() * ((quota - (second * third)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-
-            exercise.push({ type: 0, message: `${first} + ${second} * ${third} = ?` });
-
-            answer.push(first + (second * third));
-        }
-    }
-    else if (fSign == 1 && signSwitch == 1) { // first sign is multiply
-        if (sSign == 0) { // second sign is minus
-            second = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-            third = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-            first = Math.floor(Math.random() * ((second * third) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-
-            exercise.push({ type: 0, message: `${second} * ${third} - ${first} = ?` });
-
-            answer.push((second * third) - first);
-        }
-        else { // second sign is plus
-            second = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-            third = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-            first = Math.floor(Math.random() * ((quota - (second * third)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-
-            exercise.push({ type: 0, message: `${second} * ${third} + ${first} = ?` });
-
-            answer.push((second * third) + first);
-        }
-    }
-    /*}
-    else { //========================================================================<
+    if (bracketSwitch == 0) {
         if (fSign == 0 && signSwitch == 0) { // first sign is minus
             if (sSign == 0) { // second sign is divide
                 third = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
                 second = (Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)))) * third;
                 first = Math.floor(Math.random() * (quota + 1 - (second / third) - minQuota)) + (second / third) + minQuota;
 
-                exercise.push({ type: 0, message: `(${first} - ${second}) : ${third} = ?` });
+                exercise.push({ type: 0, message: `${first} - ${second} : ${third} = ?` });
 
-                answer.push((first - second) / third);
-            }
+                answer.push(first - (second / third));
+            }// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
             else { // second sign is multiply
                 second = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
                 third = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
                 first = Math.floor(Math.random() * (quota + 1 - (second * third))) + (second * third);
 
-                exercise.push({ type: 0, message: `(${first} - ${second}) * ${third} = ?` });
+                exercise.push({ type: 0, message: `${first} - ${second} * ${third} = ?` });
 
-                answer.push((first - second) * third);
-            }
+                answer.push(first - (second * third));
+            }// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
         }
         else if (fSign == 0 && signSwitch == 1) { // first sign is divide
             if (sSign == 0) { // second sign is minus
@@ -326,19 +244,19 @@ const mixed = async (dif, sett) => {
                 first = (Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)))) * second;
                 third = Math.floor(Math.random() * ((first / second) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
 
-                exercise.push({ type: 0, message: `${first} : (${second} - ${third}) = ?` });
+                exercise.push({ type: 0, message: `${first} : ${second} - ${third} = ?` });
 
-                answer.push(second / (third - first));
-            }
+                answer.push((second / third) - first);
+            }// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
             else { // second sign is plus
                 second = Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
                 first = (Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)))) * second;
                 third = Math.floor(Math.random() * (quota + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
 
-                exercise.push({ type: 0, message: `${first} : (${second} + ${third}) = ?` });
+                exercise.push({ type: 0, message: `${first} : ${second} + ${third} = ?` });
 
-                answer.push(second / (third + first));
-            }
+                answer.push((second / third) + first);
+            }// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
         }
         else if (fSign == 1 && signSwitch == 0) { // first sign is plus
             if (sSign == 0) { // second sign is divide
@@ -346,19 +264,19 @@ const mixed = async (dif, sett) => {
                 first = (Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)))) * second;
                 third = Math.floor(Math.random() * (quota + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
 
-                exercise.push({ type: 0, message: `(${third} + ${first}) : ${second} = ?` });
+                exercise.push({ type: 0, message: `${third} + ${first} : ${second} = ?` });
 
-                answer.push((third + first) / second);
-            }
+                answer.push(third + (first / second));
+            }// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
             else { // second sign is multiply
                 second = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
                 third = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
                 first = Math.floor(Math.random() * ((quota - (second * third)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
 
-                exercise.push({ type: 0, message: `(${first} + ${second}) * ${third} = ?` });
+                exercise.push({ type: 0, message: `${first} + ${second} * ${third} = ?` });
 
-                answer.push((first + second) * third);
-            }
+                answer.push(first + (second * third));
+            }// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
         }
         else if (fSign == 1 && signSwitch == 1) { // first sign is multiply
             if (sSign == 0) { // second sign is minus
@@ -366,21 +284,105 @@ const mixed = async (dif, sett) => {
                 third = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
                 first = Math.floor(Math.random() * ((second * third) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
 
-                exercise.push({ type: 0, message: `${second} * (${third} - ${first}) = ?` });
+                exercise.push({ type: 0, message: `${second} * ${third} - ${first} = ?` });
 
-                answer.push(second * (third - first));
-            }
+                answer.push((second * third) - first);
+            }// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
             else { // second sign is plus
                 second = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
                 third = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
                 first = Math.floor(Math.random() * ((quota - (second * third)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
 
+                exercise.push({ type: 0, message: `${second} * ${third} + ${first} = ?` });
+
+                answer.push((second * third) + first);
+            }// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
+        }
+    }
+    else { //========================================================================<
+        if (fSign == 0 && signSwitch == 0) { // first sign is minus
+            if (sSign == 0) { // second sign is divide
+                third = Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
+                second = Math.floor(Math.random() * (quota - (quota == 999 ? (Math.floor(minQuota * 0.3) ** 2) : ((Math.floor(minQuota * 0.1) ** 2))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
+                first = (Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)))) * third + second;
+
+                exercise.push({ type: 0, message: `(${first} - ${second}) : ${third} = ?` });
+
+                answer.push((first - second) / third);
+            }// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
+            else { // second sign is multiply
+                third = Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
+                second = Math.floor(Math.random() * (quota - (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
+                first = Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))) + second;
+
+                exercise.push({ type: 0, message: `(${first} - ${second}) * ${third} = ?` });
+
+                answer.push((first - second) * third);
+            } // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
+        }
+        else if (fSign == 0 && signSwitch == 1) { // first sign is divide
+            if (sSign == 0) { // second sign is minus
+                third = Math.floor(Math.random() * (quota - (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
+                second = (Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)))) + third;
+                first = (Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)))) * (second - third);
+
+                exercise.push({ type: 0, message: `${first} : (${second} - ${third}) = ?` });
+
+                answer.push(first / (second - third));
+            } // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
+            else { // second sign is plus
+                second = Math.floor(Math.random() * (((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) - 2) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
+                third = Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) - second + 1 - 2)) + 2;
+                first = (Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)))) * second
+
+                exercise.push({ type: 0, message: `${first} : (${second} + ${third}) = ?` });
+
+                answer.push(first / (second + third));
+            } // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
+        }
+        else if (fSign == 1 && signSwitch == 0) { // first sign is plus
+            if (sSign == 0) { // second sign is divide
+                second = Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
+                third = (Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)))) * second;
+                first = Math.floor(Math.random() * (Math.floor(third * 0.8) + 1 - Math.floor(third * 0.2))) + Math.floor(third * 0.2);
+                third -= first;
+
+                exercise.push({ type: 0, message: `(${third} + ${first}) : ${second} = ?` });
+
+                answer.push((third + first) / second);
+            } // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
+            else { // second sign is multiply
+                third = Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
+                first = Math.floor(Math.random() * (((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) - 2) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
+                second = Math.floor(Math.random() * (((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) - first) + 1 - 2)) + 2;
+
+                exercise.push({ type: 0, message: `(${first} + ${second}) * ${third} = ?` });
+
+                answer.push((first + second) * third);
+            } // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
+        }
+        else if (fSign == 1 && signSwitch == 1) { // first sign is multiply
+            if (sSign == 0) { // second sign is minus
+                second = Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
+                first = Math.floor(Math.random() * (quota - (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
+                third = (Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)))) + first;
+
+                exercise.push({ type: 0, message: `${second} * (${third} - ${first}) = ?` });
+
+                answer.push(second * (third - first));
+            } // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
+            else { // second sign is plus
+                second = Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
+                third = Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
+                first = Math.floor(Math.random() * (Math.floor(third * 0.8) + 1 - Math.floor(third * 0.2))) + Math.floor(third * 0.2);
+                third -= first;
+
                 exercise.push({ type: 0, message: `${second} * (${third} + ${first}) = ?` });
 
                 answer.push(second * (third + first));
-            }
+            } // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
         }
-    }*/
+    }
 
     box['exe'] = exercise;
     box['ans'] = answer;
@@ -389,14 +391,28 @@ const mixed = async (dif, sett) => {
     return box;
 }
 
-const mixedTest = async (sett) => { }
+const mixedTest = async (sett) => {
+    let pack = [];
+
+    const difficultyCheck = [30, 30, 30, 30, 30, 100, 100, 100, 100, 100];
+
+    difficultyCheck.forEach(async(diff) => {
+        const box = await mixed(diff, sett);
+
+        pack.push(box);
+    });
+
+    console.log(pack)
+
+    return pack;
+}
 
 const exercisePack = async (difficulty, topic, settings) => {
     let pack = [];
     let box = {};
 
     if (topic != 'exam_basic' && topic != 'exam_advanced') {
-        if (difficulty == 0 && topic == 'mixed') difficulty = 30; // <====================== FOR TEST ONLY!!!! delete as you done!!!
+        //if (difficulty == 0 && topic == 'mixed') difficulty = 30; // <====================== FOR TEST ONLY!!!! delete as you done!!!
 
         if (difficulty != 0) {
             for (let i = 0; i < 10; i++) {
@@ -451,7 +467,7 @@ const exercisePack = async (difficulty, topic, settings) => {
                     pack = await multiplyAndDivideTest(settings);
                     break;
                 case 'mixed':
-                    // pack = await mixedTest(settings);
+                    pack = await mixedTest(settings);
                     break;
                 case 'power_root':
                     break;
