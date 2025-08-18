@@ -1,9 +1,9 @@
 import express from 'express'
-import { } from '../controllers/exercises.controller.js'
+import { exerciseGen } from '../controllers/exercises.controller.js'
 
 const exercisesRouter = express.Router();
 
 // exercise calls
-exercisesRouter.get('/get-exercise', () => { });
+exercisesRouter.post('/get-exercise', exerciseGen);
 
 export default exercisesRouter;

@@ -138,20 +138,20 @@ const englishPackage = {
             exam_advanced: 'exam: advanced'
         },
         shortDesc: {
-            sum_substract: 'Simple sum and substract exercises like: (100 - 80) + 15 = ?',
-            multiply_divide: 'Multiply and divide exercises as such: 25/5 * 25 = ?',
-            mixed: '',
+            sum_substract: '',
+            multiply_divide: '',
+            mixed: 'Mixed theme includes mixed exercises of sum and substract with multipication and division.',
             power_root: '',
             fraction_fractionMixed: '',
             forms_sizes: '',
-            exam_basic: '',
+            exam_basic: 'Basic exam includes themses of elementary school.',
             equasions_basic: '',
             equations_two_more: '',
             verbal_problems: '',
             geometry: '',
             quadratic_equation: '',
             circles: '',
-            exam_advanced: ''
+            exam_advanced: 'Advanced exam includes mainly themes of high school. But, it might contain themes from elementary school too.'
         },
         longDesc: {
             sum_substract: '',
@@ -160,14 +160,16 @@ const englishPackage = {
             power_root: '',
             fraction_fractionMixed: '',
             forms_sizes: '',
-            exam_basic: '',
+            exam_basic: ('Basic exam includes themses of elementary school: sum and substract, multiplication and divition, aka mixed, powers and roots, ' +
+                'fractions and forms and sizes.'),
             equasions_basic: '',
             equations_two_more: '',
             verbal_problems: '',
             geometry: '',
             quadratic_equation: '',
             circles: '',
-            exam_advanced: ''
+            exam_advanced: ('Advanced exam includes mainly themes of high school: equasions, equasions two and more, verbal problems, geometry,' +
+                'quadratic equasion and circles. But, it might contain themes from elementary school too.')
         },
         exerciseForms: {
             sum_substract: '',

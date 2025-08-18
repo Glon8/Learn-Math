@@ -138,18 +138,18 @@ const hebrewPackage = {
         shortDesc: {
             sum_substract: '',
             multiply_divide: '',
-            mixed: '',
+            mixed: '.תרגילים מעורבבים מכילים תרגילים של חיבור חיסור ביחד עם כפל וחילוק',
             power_root: '',
             fraction_fractionMixed: '',
             forms_sizes: '',
-            exam_basic: '',
+            exam_basic: '.מבחן בסיסי מכיל בעצמו את כלל הנושאים ממגמה היסודית',
             equasions_basic: '',
             equations_two_more: '',
             verbal_problems: '',
             geometry: '',
             quadratic_equation: '',
             circles: '',
-            exam_advanced: ''
+            exam_advanced: '.מבחן מתקדם מכיל בעצמו את כלל הנושאים ממגמה התיכון. אבל יתכן ויכלול גם נושאים ממגמה היסודית'
         },
         longDesc: {
             sum_substract: '',
@@ -158,14 +158,14 @@ const hebrewPackage = {
             power_root: '',
             fraction_fractionMixed: '',
             forms_sizes: '',
-            exam_basic: '',
+            exam_basic: ('מבחן בסיס מכיל בעצמו את כלל הנושאים ממגמה היסודית כגון: חיבור וחיסור, כפל וחילוק בצורה מעורבבת, חזקות ושורשים, שברים, צורות וגדלים'),
             equasions_basic: '',
             equations_two_more: '',
             verbal_problems: '',
             geometry: '',
             quadratic_equation: '',
             circles: '',
-            exam_advanced: ''
+            exam_advanced: ('מבחן מתקדם מכיל בעצמו את כלל הנושאים ממגמה התיכון כגון: משוואות בסיסיות, משוואות שתיים ויותר, בעיות מילוליות, גאומטריה, בעיות ריבועיות ומעגלים')
         },
         exerciseForms: {
             sum_substract: '',
