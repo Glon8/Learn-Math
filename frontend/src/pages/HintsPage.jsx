@@ -158,7 +158,15 @@ function HintsPage() {
                     'Its a chat with virtual teach! Ask it freely about math topics and exercises struggle!'}
                 </Text>)
               ) :
-                (<Text color={{ _light: '#1D282E', _dark: '#EEF6F9' }}>Topics explanation here! This tab is scrollabble! Current topic is {topic[useTop]}</Text>)
+                (<Text color={{ _light: '#1D282E', _dark: '#EEF6F9' }}>
+                  {
+                    language?.statics?.longDesc?.[useTop] ?
+                      language?.statics?.longDesc?.[useTop] :
+                      (language?.statics?.error?.shortDescMissing ?
+                        (language?.statics?.error?.shortDescMissing + ` ${topic[useTop]}`) :
+                        (`${topic[useTop]} missing description!`))
+                  }
+                </Text>)
             }
           </Flex>
           {
