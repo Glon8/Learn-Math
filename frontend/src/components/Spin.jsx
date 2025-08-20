@@ -46,9 +46,9 @@ function Spin({ classList, additional, getValue }) {
     <Button onClick={backward}
       focusRing={'inside'}
       _light={{
-        color: '#1D282E',
-        background: 'white',
-        borderColor: '#B1B7BA/20',
+        color: '#1D282E/90',
+        background: '#8b8da0/20',
+        borderColor: '#B1B7BA/10',
         focusRingColor: '#B1B7BA'
       }}
       _dark={{
@@ -64,16 +64,18 @@ function Spin({ classList, additional, getValue }) {
       fontSize={'lg'}
       textAlign={'center'}
       background={{ _dark: '#1D282E/65' }}
-      rounded={{ _dark: 'xl' }}
-      paddingX={{_dark: '1rem'}}
+      rounded={'sm'}
+      paddingX={3}
+      paddingY={1}
+      boxShadow={'sm'}
       color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
     >{useNames[usePage]}</Text>
     <Button onClick={forward}
       focusRing={'inside'}
       _light={{
-        color: '#1D282E',
-        background: 'white',
-        borderColor: '#B1B7BA/20',
+        color: '#1D282E/90',
+        background: '#8b8da0/20',
+        borderColor: '#B1B7BA/10',
         focusRingColor: '#B1B7BA'
       }}
       _dark={{

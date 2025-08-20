@@ -2,7 +2,7 @@ import { Text, Flex } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 
 function CompareSlot({ value_a, value_b, category, disableDark }) {
-    return (<Flex width={'full'}
+    return (<Flex width={'100%'}
         minW={'17rem'}
         position={'relative'}
         flexDirection={'row'}
@@ -20,10 +20,13 @@ function CompareSlot({ value_a, value_b, category, disableDark }) {
         >{value_a}</Text>
         <Text textAlign={'center'}
             position={'absolute'}
-            left={'20%'}
+            left={'15%'}
             color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
             background={disableDark === true ? '' : { _dark: '#1D282E/65' }}
-            rounded={disableDark === true ? '' : { _dark: 'sm' }}
+            rounded={'sm'}
+            boxShadow={'sm'}
+            paddingX={3}
+            paddingY={1}
         >{category}</Text>
         <Text fontSize={'xl'}
             textAlign={'center'}

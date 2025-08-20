@@ -102,7 +102,7 @@ function NavMenu({ close, autoClose, navShort, pi_icon }) {
 
         const color = !mode ? 'light' : mode;
         if (color !== colorMode) toggleColorMode();
-        
+
     }, [mode]);
 
     return (<Tool navSide={pos}
@@ -179,10 +179,10 @@ function NavMenu({ close, autoClose, navShort, pi_icon }) {
                                         color={"black"}
                                         w={'full'}
                                         _light={{
-                                            background: "white",
-                                            borderColor: "#B1B7BA/20",
+                                            background: "#8b8da0/30",
+                                            borderColor: "#B1B7BA/10",
                                             focusRingColor: '#B1B7BA',
-                                            color: '#1D282E'
+                                            color: '#1D282E/90'
                                         }}
                                         _dark={{
                                             background: "#1D282E",
@@ -211,10 +211,10 @@ function NavMenu({ close, autoClose, navShort, pi_icon }) {
                                         }}
                                         w={'full'}
                                         _light={{
-                                            background: "white",
-                                            borderColor: "#B1B7BA/20",
+                                            background: "#8b8da0/20",
+                                            borderColor: "#B1B7BA/10",
                                             focusRingColor: '#B1B7BA',
-                                            color: '#1D282E'
+                                            color: '#1D282E/90'
                                         }}
                                         _dark={{
                                             background: "#1D282E",
@@ -243,10 +243,10 @@ function NavMenu({ close, autoClose, navShort, pi_icon }) {
                                         }}
                                         w={'full'}
                                         _light={{
-                                            background: "white",
-                                            borderColor: "#B1B7BA/20",
+                                            background: "#8b8da0/20",
+                                            borderColor: "#B1B7BA/10",
                                             focusRingColor: '#B1B7BA',
-                                            color: '#1D282E'
+                                            color: '#1D282E/90'
                                         }}
                                         _dark={{
                                             background: "#1D282E",
@@ -280,10 +280,10 @@ function NavMenu({ close, autoClose, navShort, pi_icon }) {
                                                 upUser('mode', 'light')
                                         }}
                                         _light={{
-                                            background: "white",
-                                            borderColor: "#B1B7BA/20",
+                                            background: "#8b8da0/20",
+                                            borderColor: "#B1B7BA/10",
                                             focusRingColor: '#B1B7BA',
-                                            color: '#1D282E'
+                                            color: '#1D282E/90'
                                         }}
                                         _dark={{
                                             background: "#1D282E/80",
@@ -297,7 +297,11 @@ function NavMenu({ close, autoClose, navShort, pi_icon }) {
                                             alignItems={'center'}
                                             gap={3}>
 
-                                            <i className={`pi pi-moon`} />
+                                            {
+                                                mode === 'light' ?
+                                                    (<i className={`pi pi-moon`} />) :
+                                                    (<i className={`pi pi-sun`} />)
+                                            }
                                             <Text>{language?.navMenu?.mode ? language?.navMenu?.mode : 'Mode'}</Text>
 
                                         </Flex>

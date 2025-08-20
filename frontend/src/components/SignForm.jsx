@@ -254,10 +254,10 @@ function SignForm({ isIn, isUp, close }) {
           <Button focusRing={'inside'}
             onClick={closeUP}
             _light={{
-              background: "white",
-              borderColor: "#B1B7BA/20",
+              background: "#8b8da0/20",
+              borderColor: "#B1B7BA/10",
               focusRingColor: '#B1B7BA',
-              color: '#1D282E'
+              color: '#1D282E/90'
             }}
             _dark={{
               background: "#1D282E",
@@ -268,7 +268,7 @@ function SignForm({ isIn, isUp, close }) {
           ><i className="pi pi-times" /></Button>
 
         </Flex>
-        <Separator />
+        <Separator marginTop={2} />
         {
           useIn ? null : (<Slot placeholder={'-----'}
             category={
@@ -284,10 +284,15 @@ function SignForm({ isIn, isUp, close }) {
           useOffline && useUp ? (
             <Text textAlign={'center'}
               fontSize={'sm'}
+              paddingX={3}
+              paddingY={1}
+              boxShadow={'sm'}
+              rounded={'sm'}
+              background={{ _dark: '#464547' }}
               color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
             >
               {
-                language?.sign?.offlineExp ? language?.sign?.offlineExp : ('To create an offline user email or password are not rquired.' +
+                language?.sign?.offlineExp ? language?.sign?.offlineExp : ('NOTE: To create an offline user email or password are not rquired.' +
                   'It will be stored in your cookies for a week, if you clear cookies or switch' +
                   'user, your progress will be gone. To save the progress, you can sign up as an online user.')
               }
@@ -423,10 +428,10 @@ function SignForm({ isIn, isUp, close }) {
             }
           }}
           _light={{
-            background: "white",
-            borderColor: "#B1B7BA/20",
+            background: "#8b8da0/20",
+            borderColor: "#B1B7BA/10",
             focusRingColor: '#B1B7BA',
-            color: '#1D282E'
+            color: '#1D282E/90'
           }}
           _dark={{
             background: "#1D282E",

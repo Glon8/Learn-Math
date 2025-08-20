@@ -66,7 +66,7 @@ function ScorePage() {
 
       <Stack>
         <TitleSlot pi_icon={'pi-crown'} title={language?.topScores?.topScoresTitle ? language?.topScores?.topScoresTitle : 'TOP SCORES'} />
-        <Separator />
+        <Separator marginTop={3} />
         {
           !users || users.length <= 0 ?
             (<Text color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
@@ -89,10 +89,10 @@ function ScorePage() {
                 <Flex display={{ base: 'none', sm: 'none', md: 'none', lg: 'flex', xl: 'flex' }}>
                   <Button onClick={() => setToCompare(i)}
                     _light={{
-                      backgroundColor: 'white',
-                      borderColor: '#B1B7BA/20',
+                      backgroundColor: '#8b8da0/20',
+                      borderColor: '#B1B7BA/10',
                       focusRingColor: '#B1B7BA/20',
-                      color: '#1D282E'
+                      color: '#1D282E/90'
                     }}
                     _dark={{
                       background: "#1D282E",
@@ -155,10 +155,10 @@ function ScorePage() {
                   color={'black'}
                   focusRing={'inside'}
                   _light={{
-                    backgroundColor: 'white',
-                    borderColor: '#B1B7BA/20',
+                    backgroundColor: '#8b8da0/20',
+                    borderColor: '#B1B7BA/10',
                     focusRingColor: '#B1B7BA/20',
-                    color: '#1D282E'
+                    color: '#1D282E/90'
                   }}
                   _dark={{
                     background: "#1D282E",

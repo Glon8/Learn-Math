@@ -42,7 +42,7 @@ function SchoolsPage() {
     setTopic(language?.statics?.topics ? language?.statics?.topics : topicNames);
   }, [language]);
 
-  return (<Flex w={'100vw'}
+  return (<Flex w={'100%'}
     alignItems={'center'}
     flexDirection={"column"}
     paddingLeft={pos === 'left' ? { base: '3rem', sm: '3rem', md: '3rem', lg: '5rem' } : ''}
@@ -55,7 +55,7 @@ function SchoolsPage() {
       paddingY={7}
       rounded={'xl'}
       gap={3}
-      w={{ base: 'full', sm: 'auto' }}
+      w={{base: "100%", sm: '80%'}}
       minW={{ base: 'auto', sm: '25rem' }}
       maxW={'65rem'}
       _light={{
@@ -70,7 +70,7 @@ function SchoolsPage() {
       }}>
 
       <TitleSlot pi_icon={'pi-list-check'} title={language?.schools?.schoolsTopicTitle ? language?.schools?.schoolsTopicTitle : 'SCHOOLS TOPICS'} />
-      <Separator />
+      <Separator marginTop={3} />
       <Flex justify={'space-between'}
         gapX={3}
         hideBelow={'md'}>
@@ -86,12 +86,10 @@ function SchoolsPage() {
           width={'full'}
           textAlign={'center'}
           background={{ _dark: '#1D282E/65' }}
-          rounded={'xl'}
-          _light={{
-            borderColor: '#B1B7BA',
-            borderWidth: 1,
-            boxShadow: 'sm'
-          }}
+          rounded={'sm'}
+          paddingX={3}
+          paddingY={1}
+          boxShadow={'sm'}
           color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
           fontWeight={'medium'}
         >{language?.schools?.innerTitle ? language?.schools?.innerTitle : 'Select topic that you would like to exercise at!'}</Text>
