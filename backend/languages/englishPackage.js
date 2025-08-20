@@ -88,7 +88,7 @@ const englishPackage = {
         forgotPass: 'RESET!',
         forgotPassLabel: 'Forgot password?',
         offline: 'Is OFFLINE user?',
-        offlineExp: ('To create an offline user email or password are not rquired.' +
+        offlineExp: ('NOTE: To create an offline user email or password are not rquired.' +
             'It will be stored in your cookies for a week, if you clear cookies or switch' +
             'user, your progress will be gone. To save the progress, you can sign up as an online user.'),
         secretPlaceholder: 'Yours secret question',
