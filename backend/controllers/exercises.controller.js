@@ -396,7 +396,7 @@ const mixedTest = async (sett) => {
 
     const difficultyCheck = [30, 30, 30, 30, 30, 100, 100, 100, 100, 100];
 
-    difficultyCheck.forEach(async(diff) => {
+    difficultyCheck.forEach(async (diff) => {
         const box = await mixed(diff, sett);
 
         pack.push(box);
@@ -407,12 +407,263 @@ const mixedTest = async (sett) => {
     return pack;
 }
 
+const toolNumDenumDivider = (denum, num) => {
+    const min = Math.min(denum, num);
+    const max = Math.max(denum, num);
+
+    let divider;
+
+    for (let i = 1; i <= min; i++)
+        if (min % i == 0 && max % i == 0)
+            divider = i;
+
+    return divider;
+}
+
+const toolFracSimplify = (den, num) => {
+    const box = {
+        whole: 0,
+        num: 0,
+        den: 0
+    };
+
+    if (num >= den) {
+        box.whole = Math.floor(num / den);
+
+        num = num % den;
+    }
+
+    if (num > 0) {
+        const divider = toolNumDenumDivider(num, den);
+
+        box.num = num / divider;
+        box.den = den / divider;
+    }
+
+    return box;
+}
+
+const fractions = async (dif, sett) => {
+    const box = {};
+
+    const first = {
+        whole: 0,
+        num: 0,
+        den: 0
+    }
+    const second = {
+        whole: 0,
+        num: 0,
+        den: 0
+    }
+
+    let quota; // max value allowed
+    let signSwitch; // sign switch, changes the outputs to multiply and division. (0 - devide, 1 - multiply)
+    let fSign; // first sign (0 - minus, 1 - plus)
+    let deno;
+
+    if (dif < 50) {
+        quota = 90;
+        signSwitch = 0;
+        deno = Math.floor(Math.random() * ((quota * 0.1) + 1 - 2)) + 2;
+
+        fSign = Math.floor(Math.random() * 2);
+    }
+    else if (dif >= 50 && dif < 85) {
+        quota = 900;
+        signSwitch = Math.floor(Math.random() * 2);
+        deno = Math.floor(Math.random() * ((quota * 0.1) + 1 - 10)) + 10;
+
+        fSign = Math.floor(Math.random() * 2);
+    }
+    else if (dif >= 85) {
+        quota = 9000;
+        signSwitch = Math.floor(Math.random() * 2);
+        deno = Math.floor(Math.random() * ((quota * 0.1) + 1 - 100)) + 100;
+
+        fSign = Math.floor(Math.random() * 2);
+    }
+
+    const exercise = [];
+    const answer = [];
+    const wholeQuota = 9;
+    //PS. minQuota for a whole is 0, while for mumerator is 1.
+    // whole = quota / deno (floored).
+
+    if (!signSwitch) { // first sign is plus or minus
+        if (!fSign) { // first sign is minus
+            first['whole'] = Math.floor(Math.random() * (wholeQuota + 1 - 1)) + 1;
+            second['whole'] = Math.floor(Math.random() * ((first['whole'] - 1) + 1));
+
+            first['num'] = Math.floor(Math.random() * ((deno - 1) + 1 - (dif < 40 ? 1 : Math.floor((deno - 1) * 0.1)))) + (dif < 40 ? 1 : Math.floor((deno - 1) * 0.1));
+            second['num'] = Math.floor(Math.random() * (first['num'] + 1 - (dif < 40 ? 1 : Math.floor((deno - 1) * 0.1)))) + (dif < 40 ? 1 : Math.floor((deno - 1) * 0.1));
+
+            const fPack = toolFracSimplify(deno, first['num']);
+
+            first['num'] = fPack['num'];
+            first['den'] = fPack['den'];
+
+            const sPack = toolFracSimplify(deno, second['num']);
+
+            second['num'] = sPack['num'];
+            second['den'] = sPack['den'];
+
+            exercise.push({
+                type: 1, message: String.raw`${!!first.whole && first.whole != 0 ? `${first.whole}` : ``}\tfrac{${first.num}}{${first.den}}\;-\;${!!second.whole && second.whole != 0 ? `${second.whole}` : ``}\tfrac{${second.num}}{${second.den}}\;=\;?`
+            });
+
+            let aWhole = first.whole - second.whole;
+            let aNum = first.num * second.den - second.num * first.den;
+            let aDen = first.den * second.den;
+
+            const aPack = toolFracSimplify(aDen, aNum);
+
+            aWhole += aPack['whole'];
+            aNum = aPack['num'];
+            aDen = aPack['den'];
+
+            answer.push(!!aWhole ?
+                (`${aWhole}${!!aNum ? `/${aNum}/${aDen}` : ``}`) :
+                (`${!!aNum ? `${aNum}/${aDen}` : 0}`));
+        } // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<DONE
+        else { // first sign is plus
+            first['whole'] = Math.floor(Math.random() * ((wholeQuota - 2) + 1));
+            second['whole'] = Math.floor(Math.random() * ((wholeQuota - first['whole'] + (first['whole'] != 0 ? (- 1) : 0)) + 1));
+
+            first['num'] = Math.floor(Math.random() * ((deno - 1) + 1 - (dif < 40 ? 1 : Math.floor((deno - 1) * 0.1)))) + (dif < 40 ? 1 : Math.floor((deno - 1) * 0.1));
+            second['num'] = Math.floor(Math.random() * ((deno - first['num']) + 1 - (dif < 40 ? 1 : Math.floor((deno - 1) * 0.01)))) + (dif < 40 ? 1 : Math.floor((deno - 1) * 0.01));
+
+            const fPack = toolFracSimplify(deno, first['num']);
+
+            first['num'] = fPack['num'];
+            first['den'] = fPack['den'];
+
+            const sPack = toolFracSimplify(deno, second['num']);
+
+            second['num'] = sPack['num'];
+            second['den'] = sPack['den'];
+
+            exercise.push({
+                type: 1, message: String.raw`${!!first.whole && first.whole != 0 ? `${first.whole}` : ``}\tfrac{${first.num}}{${first.den}}\;+\;${!!second.whole && second.whole != 0 ? `${second.whole}` : ``}\tfrac{${second.num}}{${second.den}}\;=\;?`
+            });
+
+            let aWhole = first.whole + second.whole;
+            let aNum = first.num * second.den + second.num * first.den;
+            let aDen = first.den * second.den;
+
+            const aPack = toolFracSimplify(aDen, aNum);
+
+            aWhole += aPack['whole'];
+            aNum = aPack['num'];
+            aDen = aPack['den'];
+
+            answer.push(!!aWhole ?
+                (`${aWhole}${!!aNum ? `/${aNum}/${aDen}` : ``}`) :
+                (`${!!aNum ? `${aNum}/${aDen}` : 0}`));
+        } // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<DONE
+    }
+    else { // first sign is multiply or divide
+        if (!fSign) { // first sign is divide
+            first['whole'] = Math.floor(Math.random() * ((wholeQuota - 1) + 1));
+            second['whole'] = Math.floor(Math.random() * ((first['whole']) + 1));
+
+            first['num'] = Math.floor(Math.random() * ((deno - 1) + 1 - (dif < 40 ? 1 : Math.floor((deno - 1) * 0.1)))) + (dif < 40 ? 1 : Math.floor((deno - 1) * 0.1));
+            second['num'] = Math.floor(Math.random() * ((deno - first['num']) + 1 - (dif < 40 ? 1 : Math.floor((deno - 1) * 0.01)))) + (dif < 40 ? 1 : Math.floor((deno - 1) * 0.01));
+
+            const fPack = toolFracSimplify(deno, first['num']);
+
+            first['num'] = fPack['num'];
+            first['den'] = fPack['den'];
+
+            const sPack = toolFracSimplify(deno, second['num']);
+
+            second['num'] = sPack['num'];
+            second['den'] = sPack['den'];
+
+            exercise.push({
+                type: 1, message: String.raw`${!!first.whole && first.whole != 0 ? `${first.whole}` : ``}\tfrac{${first.num}}{${first.den}}\;:\; ${!!second.whole && second.whole != 0 ? `${second.whole}` : ``}\tfrac{${second.num}}{${second.den}}\;=\;?`
+            });
+
+            let aWhole = 0;
+            let aNum = (first.num + first.whole * first.den) * second.den;
+            let aDen = first.den * (second.num + second.whole * second.den);
+
+            const aPack = toolFracSimplify(aDen, aNum);
+
+            aWhole += aPack['whole'];
+            aNum = aPack['num'];
+            aDen = aPack['den'];
+
+            answer.push(!!aWhole ?
+                (`${aWhole}${!!aNum ? `/${aNum}/${aDen}` : ``}`) :
+                (`${!!aNum ? `${aNum}/${aDen}` : 0}`));
+        } // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<DONE
+        else { // first sign is multiply
+            first['whole'] = Math.floor(Math.random() * (wholeQuota + 1));
+            second['whole'] = Math.floor(Math.random() * (wholeQuota + 1));
+
+            first['num'] = Math.floor(Math.random() * ((deno - 1) + 1 - (dif < 40 ? 1 : Math.floor((deno - 1) * 0.1)))) + (dif < 40 ? 1 : Math.floor((deno - 1) * 0.1));
+            second['num'] = Math.floor(Math.random() * ((deno - first['num']) + 1 - (dif < 40 ? 1 : Math.floor((deno - 1) * 0.01)))) + (dif < 40 ? 1 : Math.floor((deno - 1) * 0.01));
+
+            const fPack = toolFracSimplify(deno, first['num']);
+
+            first['num'] = fPack['num'];
+            first['den'] = fPack['den'];
+
+            const sPack = toolFracSimplify(deno, second['num']);
+
+            second['num'] = sPack['num'];
+            second['den'] = sPack['den'];
+
+            exercise.push({
+                type: 1, message: String.raw`${!!first.whole && first.whole != 0 ? `${first.whole}` : ``}\tfrac{${first.num}}{${first.den}}\;*\; ${!!second.whole && second.whole != 0 ? `${second.whole}` : ``}\tfrac{${second.num}}{${second.den}}\;=\;?`
+            });
+
+            let aWhole = 0;
+            let aNum = (first.num + first.whole * first.den) * (second.num + second.whole * second.den);
+            let aDen = first.den * second.den;
+
+            const aPack = toolFracSimplify(aDen, aNum);
+
+            aWhole += aPack['whole'];
+            aNum = aPack['num'];
+            aDen = aPack['den'];
+
+            answer.push(!!aWhole ?
+                (`${aWhole}${!!aNum ? `/${aNum}/${aDen}` : ``}`) :
+                (`${!!aNum ? `${aNum}/${aDen}` : 0}`));
+        } // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<DONE
+    }
+
+    box['exe'] = exercise;
+    box['ans'] = answer;
+    box['desc'] = false;
+
+    return box;
+}
+
+const fractionsTest = async (sett) => {
+    const pack = [];
+
+    const difficultyCheck = [30, 30, 30, 30, 70, 70, 70, 70, 100, 100];
+
+    difficultyCheck.forEach(async (diff) => {
+        const box = await fractions(diff, sett);
+
+        pack.push(box);
+    });
+
+    console.log(pack);
+
+    return pack;
+}
+
 const exercisePack = async (difficulty, topic, settings) => {
     let pack = [];
     let box = {};
 
     if (topic != 'exam_basic' && topic != 'exam_advanced') {
-        //if (difficulty == 0 && topic == 'mixed') difficulty = 30; // <====================== FOR TEST ONLY!!!! delete as you done!!!
+        //if (difficulty == 0 && topic == 'fraction_fractionMixed') difficulty = 30; // <====================== FOR TEST ONLY!!!! delete as you done!!!
 
         if (difficulty != 0) {
             for (let i = 0; i < 10; i++) {
@@ -429,6 +680,7 @@ const exercisePack = async (difficulty, topic, settings) => {
                     case 'power_root':
                         break;
                     case 'fraction_fractionMixed':
+                        box = await fractions(difficulty, settings);
                         break;
                     case 'forms_sizes':
                         break;
@@ -472,6 +724,7 @@ const exercisePack = async (difficulty, topic, settings) => {
                 case 'power_root':
                     break;
                 case 'fraction_fractionMixed':
+                    pack = await fractionsTest(settings);
                     break;
                 case 'forms_sizes':
                     break;
