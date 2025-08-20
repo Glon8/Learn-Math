@@ -89,6 +89,7 @@ export const UserProvider = ({ children }) => {
         await wait(30);
       }
     }
+    console.log(response.current)
   }
 
   const chatSend = async (userMessage) => {

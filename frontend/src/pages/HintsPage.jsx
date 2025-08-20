@@ -130,7 +130,7 @@ function HintsPage() {
             background: '#464547'
           }}>
 
-          <Flex flexDir='column' h={'full'} minH={'60%'}>
+          <Flex flexDir='column' h={'fit'}>
             {
               useTop == 'teach' ? (!!logs?.user ? (
                 <Flex color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
@@ -153,13 +153,13 @@ function HintsPage() {
                   </Flex>
 
                 </Flex>) :
-                (<Text color={{ _light: '#1D282E', _dark: '#EEF6F9' }}>
+                (<Text color={{ _light: '#1D282E', _dark: '#EEF6F9' }} h={'fit'}>
                   {language?.hints?.teacherWelcome ?
                     language?.hints?.teacherWelcome :
                     'Its a chat with virtual teach! Ask it freely about math topics and exercises struggle!'}
                 </Text>)
               ) :
-                (<Text color={{ _light: '#1D282E', _dark: '#EEF6F9' }}>
+                (<Text color={{ _light: '#1D282E', _dark: '#EEF6F9' }} h={'fit'}>
                   {
                     language?.statics?.longDesc?.[useTop] ?
                       language?.statics?.longDesc?.[useTop] :
@@ -171,7 +171,7 @@ function HintsPage() {
             }
           </Flex>
           {
-            useTop == 'teach' ? (<Flex><TextArea /></Flex>) : null
+            useTop == 'teach' ? (<TextArea />) : null
           }
         </Flex>
         <Flex flexDirection={"column"} gapY={3} hideBelow={'lg'}>
