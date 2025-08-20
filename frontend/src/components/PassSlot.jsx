@@ -51,11 +51,13 @@ function PassSlot({ placeholder, value, visible, getValue, edit, category, dir, 
             </Button>
         </Flex>
         <Flex w={auto ? 'auto' : '7rem'}
-            justifyContent={'end'}>
+            justifyContent={'end'}
+            paddingX={3}
+            rounded={disableDark === true ? '' : { _dark: 'sm' }}
+            color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
+            background={disableDark === true ? '' : { _dark: '#1D282E/65' }}
+            boxShadow={'sm'}>
             <Text textAlign={'right'}
-                color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
-                background={disableDark === true ? '' : { _dark: '#1D282E/65' }}
-                rounded={disableDark === true ? '' : { _dark: 'sm' }}
             >{category}</Text>
         </Flex>
 

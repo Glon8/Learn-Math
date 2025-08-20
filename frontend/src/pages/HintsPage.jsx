@@ -54,7 +54,7 @@ function HintsPage() {
       paddingX={5}
       paddingY={7}
       rounded={'xl'}
-
+      width={{ base: "100%", sm: '80%' }}
       h={'fit'}
       gap={3}
       maxW={'65rem'}
@@ -80,7 +80,7 @@ function HintsPage() {
         },
 
       }} />
-      <Separator colorPalette="green" />
+      <Separator marginTop={3} />
       <Flex hideFrom={'lg'}>
         {
           // BUG: (minor) by resizing the screen to mobile, it should reset value
@@ -107,11 +107,12 @@ function HintsPage() {
       </Flex>
       <Flex gap={3}
         flexDirection={useSchool ? 'row-reverse' : 'row'}
-        position={'relative'}>
+        position={'relative'}
+      >
 
         <Flex position={'relative'}
           w={'full'}
-          h={'auto'}
+          h={{base: 'fit', sm: 'auto'}}
           border
           borderWidth={1}
           justifyItems={'center'}
@@ -170,7 +171,7 @@ function HintsPage() {
             }
           </Flex>
           {
-            useTop == 'teach' ? (<TextArea />) : null
+            useTop == 'teach' ? (<Flex><TextArea /></Flex>) : null
           }
         </Flex>
         <Flex flexDirection={"column"} gapY={3} hideBelow={'lg'}>

@@ -19,7 +19,6 @@ function TextArea() {
     return (<Field.Root>
         <Textarea disabled={useDisable ? true : false}
             value={useValue}
-            bottom={0}
             onChange={(el) => setValue(el.target.value)}
             onKeyDown={(el) => {
                 if (el.key === 'Enter' && !el.shiftKey) {

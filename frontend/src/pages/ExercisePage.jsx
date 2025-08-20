@@ -151,7 +151,7 @@ function ExercisePage() {
     >
 
         <Stack border
-            w={{ base: '100%', sm: 'fit' }}
+            w={{ base: "100%", sm: 'fit' }}
             borderWidth={1}
             paddingX={5}
             paddingY={7}
@@ -200,7 +200,7 @@ function ExercisePage() {
                             'Solve exercises to recieve a grade! (Max grade is 100)'}</Text>
                     </Separator>) : null
             }
-            <Separator />
+            <Separator marginTop={3} />
             <Flex flexDir={'column'} gapY={'2rem'}>
                 {
                     useExercise.length != 0 ? (

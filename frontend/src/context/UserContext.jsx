@@ -76,16 +76,18 @@ export const UserProvider = ({ children }) => {
   }
 
   const pingSchedule = async () => {
-    await wait(0.2);
+    await wait(0.35);
 
     if (!response.current) {
       await ping();
 
-      await wait(0.1);
+      await wait(0.35);
 
-      serverBootPop();
+      if (!response.current) {
+        serverBootPop();
 
-      await wait(30);
+        await wait(30);
+      }
     }
   }
 

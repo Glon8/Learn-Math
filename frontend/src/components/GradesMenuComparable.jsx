@@ -46,7 +46,7 @@ function GradesMenuComparable({ display,
     return (<Flex display={display ? display : 'none'}
         height={'fit'}
         width={'25rem'}
-        gapY={3}
+        gapY={5}
         paddingX={5}
         paddingY={7}
         flexDirection={"column"}
@@ -97,7 +97,8 @@ function GradesMenuComparable({ display,
                         case 0: {
                             if (topic[0] === 'equasions_basic')
                                 return (
-                                    <Separator key={i + topic[1]}>
+                                    <Separator key={i + topic[1]}
+                                        paddingTop={3}>
                                         <Slot value={score ? score : 0}
                                             placeholder={'0'}
                                             category={topic[1]}
@@ -114,7 +115,8 @@ function GradesMenuComparable({ display,
                         case 1: {
                             if (topic[0] === 'equasions_basic')
                                 return (
-                                    <Separator key={i + topic[1]}>
+                                    <Separator key={i + topic[1]}
+                                        paddingTop={3}>
                                         <Slot value={score ? score : 0}
                                             placeholder={'0'}
                                             category={topic[1]}
@@ -132,7 +134,8 @@ function GradesMenuComparable({ display,
                         }
                         case 2: {
                             if (topic[0] === 'equasions_basic')
-                                return (<Separator key={i + topic[1]}>
+                                return (<Separator key={i + topic[1]}
+                                    paddingTop={3}>
                                     <CompareSlot value_a={other_score ? other_score : 0}
                                         value_b={score ? score : 0}
                                         category={topic[1]}

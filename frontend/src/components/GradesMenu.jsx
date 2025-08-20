@@ -10,7 +10,7 @@ function GradesMenu({ display, title_type, pi_icon, title, title_info, topic_nam
         h={'fit'}
         width={{ base: 'full', sm: '25rem' }}
         justifyContent={'center'}
-        gapY={3}
+        gapY={5}
         paddingX={5}
         paddingY={7}
         flexDirection={"column"}
@@ -54,7 +54,8 @@ function GradesMenu({ display, title_type, pi_icon, title, title_info, topic_nam
                         }
                         else if (size === 1) {
                             if (index === 7) {
-                                return (<Separator key={topic[1]}>
+                                return (<Separator key={topic[1]}
+                                    paddingTop={3}>
                                     <Slot key={score} value={score ? score : 0} category={topic[1]} auto={true} />
                                 </Separator>)
                             }

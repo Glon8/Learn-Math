@@ -28,10 +28,10 @@ function TopicBut({ dir, display, pi_icon, title, onClick, subTitle, align, just
             w={{ base: 'full', sm: 'full', md: 'fit', lg: 'fit', xl: 'fit' }}
             onClick={onClick}
             _light={{
-                backgroundColor: 'white',
-                borderColor: '#B1B7BA/20',
+                backgroundColor: '#8b8da0/20',
+                borderColor: '#B1B7BA/10',
                 focusRingColor: '#B1B7BA',
-                color: '#1D282E'
+                color: '#1D282E/90'
             }}
             _dark={{
                 background: "#1D282E",
@@ -52,12 +52,15 @@ function TopicBut({ dir, display, pi_icon, title, onClick, subTitle, align, just
 
         </Button>
         <Flex display={subTitle ? 'flex' : 'none'}
+            paddingX={3}
+            paddingY={1}
             color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
             background={{ _dark: '#464547' }}
-            rounded={{ _dark: 'sm' }}
+            rounded={'sm'}
             w={'full'}
             justifyContent={dir === 'row-reverse' ? null : 'right'}
             overflow={'hidden'}
+            boxShadow={'sm'}
         >
             <Text>{subTitle}</Text>
         </Flex>

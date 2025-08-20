@@ -11,10 +11,10 @@ function CheckCard({ pi_icon, title, ifChange, disabled, def_checked }) {
             defaultChecked={def_checked ? def_checked : false}
             onChange={() => { ifChange() }}
             _light={{
-                background: "white",
-                borderColor: "#B1B7BA/20",
+                background: "#8b8da0/20",
+                borderColor: "#B1B7BA/10",
                 focusRingColor: '#1D282E',
-                color: '#1D282E'
+                color: '#1D282E/90'
             }}
             _dark={{
                 color: '#EEF6F9'

@@ -27,10 +27,10 @@ function TopScoresSlot({ i, user, user_scores_list, topic_names, use_compare, my
         w={'full'}
         onClick={() => setOpen(!useOpen)}
         _light={{
-          backgroundColor: 'white',
-          borderColor: '#B1B7BA/20',
+          backgroundColor: '#8b8da0/20',
+          borderColor: '#B1B7BA/10',
           focusRingColor: '#B1B7BA',
-          color: '#1D282E'
+          color: '#1D282E/90'
         }}
         _dark={{
           background: "#1D282E",
@@ -87,20 +87,22 @@ function TopScoresSlot({ i, user, user_scores_list, topic_names, use_compare, my
             disableDark={true} />
           {
             use_compare && user_scores_list && user_scores_list.length > 0 ?
-              (<TwoTitlesSlot title_info={{
-                title_a: {
-                  pi_icon: '',
-                  title: user.name ? user.name : 'No User'
-                },
-                title_b: {
-                  pi_icon: '',
-                  title: my_user.name ? my_user.name : 'No User'
-                }
-              }}
-                disableDark={true}
-                boldness={'normal'} />) : ''
+              (<Flex marginTop={3}>
+                <TwoTitlesSlot title_info={{
+                  title_a: {
+                    pi_icon: '',
+                    title: user.name ? user.name : 'No User'
+                  },
+                  title_b: {
+                    pi_icon: '',
+                    title: my_user.name ? my_user.name : 'No User'
+                  }
+                }}
+                  disableDark={true}
+                  boldness={'normal'} />
+              </Flex>) : ''
           }
-          <Separator />
+          <Separator marginTop={3} />
           {
             !user_scores_list || user_scores_list.length <= 0 ?
               (<Text>Whoops! Something went wrong, no grades awailable.</Text>) :
@@ -113,7 +115,9 @@ function TopScoresSlot({ i, user, user_scores_list, topic_names, use_compare, my
                     const score = scores[topic[0]];
 
                     if (topic[0] === 'equasions_basic')
-                      return (<Separator key={i2 + topic[1]}>
+                      return (<Separator key={i2 + topic[1]}
+                        paddingTop={3}
+                        marginTop={5}>
                         <Slot value={score ? score : ''}
                           category={topic[1]}
                           auto={true}
@@ -121,12 +125,15 @@ function TopScoresSlot({ i, user, user_scores_list, topic_names, use_compare, my
                           disableDark={true} />
                       </Separator>)
                     else
-                      return (<Slot key={i2 + topic[1]}
-                        value={score ? score : ''}
-                        category={topic[1]}
-                        auto={true}
-                        placeholder={'0'}
-                        disableDark={true} />)
+                      return (<Flex marginTop={5}
+                        key={i2 + topic[1]}>
+                        <Slot key={i2 + topic[1]}
+                          value={score ? score : ''}
+                          category={topic[1]}
+                          auto={true}
+                          placeholder={'0'}
+                          disableDark={true} />
+                      </Flex>)
                   })
 
                 }
@@ -137,7 +144,9 @@ function TopScoresSlot({ i, user, user_scores_list, topic_names, use_compare, my
                     const user_score = my_scores[topic[0]];
 
                     if (topic[0] === 'equasions_basic')
-                      return (<Separator key={i2 + topic[1]}>
+                      return (<Separator key={i2 + topic[1]}
+                        paddingTop={3}
+                        marginTop={5}>
                         <CompareSlot value_a={score ? score : 0}
                           value_b={user_score ? user_score : 0}
                           category={topic[1]}
@@ -145,11 +154,15 @@ function TopScoresSlot({ i, user, user_scores_list, topic_names, use_compare, my
                       </Separator>)
 
                     else
-                      return (<CompareSlot key={i2 + topic[1]}
-                        value_a={score ? score : 0}
-                        value_b={user_score ? user_score : 0}
-                        category={topic[1]}
-                        disableDark={true} />)
+                      return (<Flex marginTop={5}
+                        key={i2 + topic[1]}
+                      >
+                        <CompareSlot key={i2 + topic[1]}
+                          value_a={score ? score : 0}
+                          value_b={user_score ? user_score : 0}
+                          category={topic[1]}
+                          disableDark={true} />
+                      </Flex>)
                   })
 
                 }

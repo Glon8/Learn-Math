@@ -5,7 +5,8 @@ function TitleSlot({ pi_icon, title, disableDark }) {
     return (<Flex width={'1xs'}
         flexDirection={'row'}
         alignItems={'center'}
-        gapX={2}
+        gapX={3}
+        paddingX={3}
         color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
         background={disableDark === true ? '' : { _dark: '#1D282E/65' }}
         rounded={{ _dark: 'sm' }}

@@ -40,10 +40,10 @@ function SelectionCheckMenu({ options, default_options, disabled, navSide, title
             <Button onClick={() => setOpen(!useOpen)}
                 w={'full'}
                 _light={{
-                    background: "white",
-                    borderColor: "#B1B7BA/20",
+                    background: "#8b8da0/20",
+                    borderColor: "#B1B7BA/10",
                     focusRingColor: '#B1B7BA/20',
-                    color: '#1D282E'
+                    color: '#1D282E/90'
                 }}
                 _dark={{
                     background: "#1D282E/80",
@@ -80,10 +80,10 @@ function SelectionCheckMenu({ options, default_options, disabled, navSide, title
                                         disabled={disabled ? disabled : false}
                                         onClick={() => update_switches(index, option.onClick)}
                                         _light={{
-                                            background: "white",
-                                            borderColor: "#B1B7BA/20",
+                                            background: "#8b8da0/20",
+                                            borderColor: "#B1B7BA/10",
                                             focusRingColor: '#B1B7BA',
-                                            color: '#1D282E'
+                                            color: '#1D282E/90'
                                         }}
                                         _dark={{
                                             background: "#1D282E/80",

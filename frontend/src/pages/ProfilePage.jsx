@@ -219,7 +219,10 @@ function ProfilePage() {
     paddingTop={pos === 'top' ? { base: '2.5rem', sm: '2.5rem', md: '2.5rem', lg: '10%' } : { md: '5%' }}
     paddingBottom={pos === 'bottom' ? { base: '2.5rem', sm: '2.5rem', md: '2.5rem', lg: '5rem' } : ''}>
 
-    <Flex width={{ base: 'full', sm: '25rem' }} gapY={3} paddingX={5} paddingY={7}
+    <Flex width={{ base: 'full', sm: '25rem' }}
+      gapY={5}
+      paddingX={5}
+      paddingY={7}
       alignSelf={'top'}
       h={'fit'}
       flexDirection={"column"}
@@ -338,10 +341,10 @@ function ProfilePage() {
               color={'black'}
               focusRing={'inside'}
               _light={{
-                backgroundColor: 'white',
-                borderColor: '#B1B7BA/20',
+                backgroundColor: '#8b8da0/20',
+                borderColor: '#B1B7BA/10',
                 focusRingColor: '#B1B7BA/20',
-                color: '#1D282E'
+                color: '#1D282E/90'
               }}
               _dark={{
                 background: "#1D282E",
