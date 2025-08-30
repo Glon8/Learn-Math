@@ -1,9 +1,9 @@
 const sumAndSub = async (dif, sett) => {
     const box = {};
 
-    const setTypo = sett?.sumTypo;
-    const difSpike = sett?.sumDif; // overwriting the difficulty according to users settings (true - on, false - off)
-    const typo = setTypo ? setTypo : Math.floor(Math.random() * 2); // the way exercise is shown to the user (0 - string, 1 - LaTeX)
+    const setTypo = !!sett?.[3] ? sett?.[3] : false;
+    const difSpike = !!sett?.[4] ? sett?.[4] : false; // overwriting the difficulty according to users settings (true - on, false - off)
+    const typo = setTypo ? 1 : Math.floor(Math.random() * 2); // the way exercise is shown to the user (0 - string, 1 - LaTeX)
 
     let quota; // max value allowed
     let threeValues; // amount numbers in the exercise (0 - two, 1 - three)
@@ -18,14 +18,14 @@ const sumAndSub = async (dif, sett) => {
         }
         else if (dif >= 40 && dif < 75) {
             quota = 999;
-            threeValues = Math.floor(Math.random() * 2);
+            threeValues = !setTypo ? Math.floor(Math.random() * 2) : 0;
             fSign = Math.floor(Math.random() * 2);
 
             if (threeValues == 1) sSign = Math.floor(Math.random() * 2);
         }
         else if (dif >= 75) {
             quota = 9999;
-            threeValues = Math.floor(Math.random() * 2);
+            threeValues = !setTypo ? Math.floor(Math.random() * 2) : 0;
             fSign = Math.floor(Math.random() * 2);
 
             if (threeValues == 1) sSign = Math.floor(Math.random() * 2);
@@ -33,7 +33,7 @@ const sumAndSub = async (dif, sett) => {
     }
     else {
         quota = 999999;
-        threeValues = Math.floor(Math.random() * 2);
+        threeValues = !setTypo ? Math.floor(Math.random() * 2) : 0;
         fSign = Math.floor(Math.random() * 2);
 
         if (threeValues == 1) sSign = Math.floor(Math.random() * 2)
@@ -130,10 +130,10 @@ const sumAndSubTest = async (sett) => {
 const multiplyAndDivide = async (dif, sett) => {
     const box = {};
 
-    const difSpike = sett?.mulDif; // overwriting the difficulty according to users settings (true - on, false - off)
-    const setTypo = sett?.mulTypo;
+    const difSpike = !!sett?.[6] ? sett?.[6] : false; // overwriting the difficulty according to users settings (true - on, false - off)
+    const setTypo = !!sett?.[5] ? sett?.[5] : false;
     const sign = Math.floor(Math.random() * 2); // sign (0 - divide, 1 - multiply)
-    const typo = setTypo ? setTypo : Math.floor(Math.random() * 2); // the way exercise is shown to the user (0 - string, 1 - LaTeX)
+    const typo = setTypo ? 1 : Math.floor(Math.random() * 2); // the way exercise is shown to the user (0 - string, 1 - LaTeX)
 
     let quota; // maximum allowed number size
     let first; // first number
@@ -167,8 +167,8 @@ const multiplyAndDivide = async (dif, sett) => {
             second = Math.floor(Math.random() * (quota + 1 - minQuota)) + minQuota;
 
             exercise.push({
-                type: typo, message: (typo == 0 ? (`${first} * ${second} = ?`) :
-                    (String.raw`\begin{array}{r} *\;${first} \\ \underline{${second}} \\ \end{array}`))
+                type: typo, message: (typo == 0 ? (`${first} x ${second} = ?`) :
+                    (String.raw`\begin{array}{r} \text{x}\;${first} \\ \underline{${second}} \\ \end{array}`))
             });
             answer.push(first * second);
             break;
@@ -233,7 +233,7 @@ const mixed = async (dif, sett) => {
                 third = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
                 first = Math.floor(Math.random() * (quota + 1 - (second * third))) + (second * third);
 
-                exercise.push({ type: 0, message: `${first} - ${second} * ${third} = ?` });
+                exercise.push({ type: 0, message: `${first} - ${second} x ${third} = ?` });
 
                 answer.push(first - (second * third));
             }// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
@@ -246,7 +246,7 @@ const mixed = async (dif, sett) => {
 
                 exercise.push({ type: 0, message: `${first} : ${second} - ${third} = ?` });
 
-                answer.push((second / third) - first);
+                answer.push((first / second) - third);
             }// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
             else { // second sign is plus
                 second = Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
@@ -255,7 +255,7 @@ const mixed = async (dif, sett) => {
 
                 exercise.push({ type: 0, message: `${first} : ${second} + ${third} = ?` });
 
-                answer.push((second / third) + first);
+                answer.push((first / second) + third);
             }// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
         }
         else if (fSign == 1 && signSwitch == 0) { // first sign is plus
@@ -273,7 +273,7 @@ const mixed = async (dif, sett) => {
                 third = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
                 first = Math.floor(Math.random() * ((quota - (second * third)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
 
-                exercise.push({ type: 0, message: `${first} + ${second} * ${third} = ?` });
+                exercise.push({ type: 0, message: `${first} + ${second} x ${third} = ?` });
 
                 answer.push(first + (second * third));
             }// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
@@ -284,7 +284,7 @@ const mixed = async (dif, sett) => {
                 third = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
                 first = Math.floor(Math.random() * ((second * third) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
 
-                exercise.push({ type: 0, message: `${second} * ${third} - ${first} = ?` });
+                exercise.push({ type: 0, message: `${second} x ${third} - ${first} = ?` });
 
                 answer.push((second * third) - first);
             }// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
@@ -293,7 +293,7 @@ const mixed = async (dif, sett) => {
                 third = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
                 first = Math.floor(Math.random() * ((quota - (second * third)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
 
-                exercise.push({ type: 0, message: `${second} * ${third} + ${first} = ?` });
+                exercise.push({ type: 0, message: `${second} x ${third} + ${first} = ?` });
 
                 answer.push((second * third) + first);
             }// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
@@ -315,7 +315,7 @@ const mixed = async (dif, sett) => {
                 second = Math.floor(Math.random() * (quota - (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
                 first = Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))) + second;
 
-                exercise.push({ type: 0, message: `(${first} - ${second}) * ${third} = ?` });
+                exercise.push({ type: 0, message: `(${first} - ${second}) x ${third} = ?` });
 
                 answer.push((first - second) * third);
             } // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
@@ -356,7 +356,7 @@ const mixed = async (dif, sett) => {
                 first = Math.floor(Math.random() * (((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) - 2) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
                 second = Math.floor(Math.random() * (((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) - first) + 1 - 2)) + 2;
 
-                exercise.push({ type: 0, message: `(${first} + ${second}) * ${third} = ?` });
+                exercise.push({ type: 0, message: `(${first} + ${second}) x ${third} = ?` });
 
                 answer.push((first + second) * third);
             } // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
@@ -367,7 +367,7 @@ const mixed = async (dif, sett) => {
                 first = Math.floor(Math.random() * (quota - (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
                 third = (Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)))) + first;
 
-                exercise.push({ type: 0, message: `${second} * (${third} - ${first}) = ?` });
+                exercise.push({ type: 0, message: `${second} x (${third} - ${first}) = ?` });
 
                 answer.push(second * (third - first));
             } // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
@@ -377,7 +377,7 @@ const mixed = async (dif, sett) => {
                 first = Math.floor(Math.random() * (Math.floor(third * 0.8) + 1 - Math.floor(third * 0.2))) + Math.floor(third * 0.2);
                 third -= first;
 
-                exercise.push({ type: 0, message: `${second} * (${third} + ${first}) = ?` });
+                exercise.push({ type: 0, message: `${second} x (${third} + ${first}) = ?` });
 
                 answer.push(second * (third + first));
             } // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
@@ -616,7 +616,7 @@ const fractions = async (dif, sett) => {
             second['den'] = sPack['den'];
 
             exercise.push({
-                type: 1, message: String.raw`${!!first.whole && first.whole != 0 ? `${first.whole}` : ``}\tfrac{${first.num}}{${first.den}}\;*\; ${!!second.whole && second.whole != 0 ? `${second.whole}` : ``}\tfrac{${second.num}}{${second.den}}\;=\;?`
+                type: 1, message: String.raw`${!!first.whole && first.whole != 0 ? `${first.whole}` : ``}\tfrac{${first.num}}{${first.den}}\;\text{x}\; ${!!second.whole && second.whole != 0 ? `${second.whole}` : ``}\tfrac{${second.num}}{${second.den}}\;=\;?`
             });
 
             let aWhole = 0;
@@ -867,11 +867,11 @@ const powerAndRoot = async (dif, sett) => {
 
         let exerciseStr = !turn ?
             (!powerFlip ?
-                (`\\sqrt{${first}}\\;*\\;${second}\\;=\\;?`) :
-                (`${first}^{2}\\;*\\;${second}\\;=\\;?`)) :
+                (`\\sqrt{${first}}\\;\text{x}\\;${second}\\;=\\;?`) :
+                (`${first}^{2}\\;\text{x}\\;${second}\\;=\\;?`)) :
             (!powerFlip ?
-                (`${first}\\;*\\;\\sqrt{${second}}\\;=\\;?`) :
-                (`${first}\\;*\\;${second}^{2}\\;=\\;?`));
+                (`${first}\\;\text{x}\\;\\sqrt{${second}}\\;=\\;?`) :
+                (`${first}\\;\text{x}\\;${second}^{2}\\;=\\;?`));
 
 
         exercise.push({
