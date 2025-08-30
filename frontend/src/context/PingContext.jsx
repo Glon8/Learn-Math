@@ -13,13 +13,16 @@ export const PingProvider = ({ children }) => {
 
     const ping = async () => {
         if (!useDelay) {
-            setDelay(true);
+            setDelay(true); // sealing the enterance
             console.log('pinged!')
+
+            // setting timer for 15 minutes
             setTimeout(() => {
                 setDelay(false);
                 response.current = false;
             }, (15 * 60 * 1000));
 
+            // if there a few requests at once, it ll run only one ping and one timer, for the last one.
             if (attemptRef.current)
                 clearTimeout(attemptRef.current);
 

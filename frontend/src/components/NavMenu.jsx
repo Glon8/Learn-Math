@@ -39,16 +39,28 @@ function NavMenu({ close, autoClose, navShort, pi_icon }) {
 
     //========================< lesson settings
     const lesson_settings = [{
-        value: 'set1',
-        title: 'Form awaits to be fully filled'
+        value: '123',
+        title: 'Display Score'
     }, {
-        value: 'set2',
-        title: 'Exercises instant replacement'
+        value: '124',
+        title: 'Sign Correct Answers'
     }, {
-        value: 'set3',
-        title: '...'
-    }];
-    const default_lesson_settings = set ? set : [];
+        value: '125',
+        title: 'Disable Correct Fields'
+    }, {
+        value: '126',
+        title: 'Add & Sub Columns Only'
+    }, {
+        value: '127',
+        title: 'Add & Sub Difficulty Spike'
+    }, {
+        value: '128',
+        title: 'Mult & Div Columns Only'
+    }, {
+        value: '129',
+        title: 'Mult & Div Difficulty Spike'
+    },];
+    const default_lesson_settings = set ? set : [true, true, false, false, false, false, false];
 
 
     //========================< menu position settings

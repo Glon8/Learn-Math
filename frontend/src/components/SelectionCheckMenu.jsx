@@ -68,7 +68,8 @@ function SelectionCheckMenu({ options, default_options, disabled, navSide, title
                     color: '#1D282E/50',
                     background: '#1D282E/95',
                     borderColor: '#1D282E'
-                }}>
+                }}
+                >
 
                     <Flex flexDirection={'column'} gapY={1}>
                         {

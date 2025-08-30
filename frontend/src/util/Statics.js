@@ -7,7 +7,7 @@ export const emptyUser = {
     password: null,
     secret: null,
     answer: null,
-    settings: [],
+    settings: [true, true, false, false, false, false, false],
     mode: 'light',
     language: 'en',
     navPosition: 'top'
