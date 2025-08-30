@@ -1,7 +1,7 @@
 import { Flex, Text } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 
-function TwoTitlesSlot({ title_info, boldness, disableDark }) {
+function TwoTitlesSlot({ title_info, boldness, disableDark, color, fontSize }) {
     return (<Flex width={'1xs'}
         paddingX={3}
         flexDirection={'row'}
@@ -17,7 +17,7 @@ function TwoTitlesSlot({ title_info, boldness, disableDark }) {
                 return (<Flex key={info[0]} width={'1xs'} flexDirection={'row'} alignItems={'center'} gapX={3}>
 
                     {
-                        info[1].pi_icon ? <i className={`pi ${info[1].pi_icon}`} /> : null
+                        info[1].pi_icon ? <i className={`pi ${info[1].pi_icon}`} style={{ color: color, fontSize: fontSize }} /> : null
                     }
                     <Text fontWeight={`${boldness ? boldness : 'medium'}`} fontSize={'lg'} textAlign={'center'}>{info[1].title}</Text>
 

@@ -1,23 +1,51 @@
-import { Flex, Stack, Text, Separator, Input, useBreakpointValue } from "@chakra-ui/react"
+import { Flex, Text, Separator, Input, useBreakpointValue } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 
+import TwoTitlesSlot from './TwoTitlesSlot.jsx'
 import Geogebra from 'react-geogebra'
 import { BlockMath, InlineMath } from 'react-katex'
 import 'katex/dist/katex.min.css'
 
-function ExerciseForm({ item, getValue, maxLength, color, ind }) {
+function ExerciseForm({ item, getValue, maxLength, color, ind, sett }) {
     const [topic, setTopic] = useState('');
     const [exe, setExe] = useState('');
-    const [ans, setAns] = useState('');
+    const [ans, setAns] = useState([]);
     const [desc, setDesc] = useState('');
     const [value, setValue] = useState([]);
+    const [settings, setSettings] = useState(sett);
+    const [check, setCheck] = useState(-1);
+    const [change, setChange] = useState(true);
 
     const [useIndex, setIndex] = useState(ind);
     const GGWidth = useBreakpointValue({ base: 315, sm: 350, md: 550, lg: 750, xl: 850 });
     const GGHight = useBreakpointValue({ base: 400, sm: 450, md: 500, lg: 550, });
 
-    const answers = [];
+    const answers = useRef([]);
+
+
+    if (!!settings)
+        useEffect(() => {
+            if (value.length > 0) {
+                let flag = true;
+
+                console.log('check flag at start is ' + flag);
+
+                answers.current.forEach((answer) => {
+                    if (!answer) flag = false;
+                });
+
+
+                console.log('check flag at the end is ' + flag);
+                setCheck(flag);
+
+                console.log('check at the end is ' + check);
+            }
+        }, [change]);
+
+    useEffect(() => {
+        setSettings(sett);
+    }, [sett]);
 
     useEffect(() => {
         console.log(item);
@@ -27,7 +55,7 @@ function ExerciseForm({ item, getValue, maxLength, color, ind }) {
         setAns(item?.ans ? item?.ans : '');
         setDesc(item?.desc ? item?.desc : '');
 
-        for (let i = 0; i < ans.length; i++) answers[i] = false;
+        for (let i = 0; i < ans.length; i++) answers.current[i] = false;
     }, [item]);
 
     return (<Flex w={"100%"}
@@ -52,22 +80,38 @@ function ExerciseForm({ item, getValue, maxLength, color, ind }) {
             color: '#EEF6F9'
         }}
     >
-        <Flex gapX={3}>
-            <Text w={!!desc || !!exe ? '5rem' : 'fit'}
-                fontWeight={'bold'}>
-                {
-                    useIndex ? (useIndex + '.') : ('@')
+
+        {
+            !desc && !exe ? (<Text>Ooops!! This exercise missing its body!</Text>) : (<TwoTitlesSlot title_info={{
+                title_a: {
+                    pi_icon: '',
+                    title: useIndex ? (useIndex + '.') : ('@')
+                },
+                title_b: {
+                    pi_icon: !!settings.formSign ? (check == -1 ? '' :
+                        (!!check ?
+                            ('pi-check') :
+                            ('pi-times')
+                        )
+                    ) : '',
+                    title: ''
                 }
-            </Text>
-            {
-                !desc && !exe ? (<Text>Ooops!! This exercise missing its body!</Text>) : ''
-            }
-        </Flex>
+            }}
+                boldness={'normal'}
+                color={check == -1 ? '' :
+                    (!!check ?
+                        ('green') :
+                        ('red')
+                    )}
+                fontSize={'1.5rem'} />)
+        }
         {
             !!desc || !!exe ? (<Flex
                 flexDir={'column'}
-                gapY={3}
+                gapY={5}
+                minH={'9rem'}
             >
+                <Separator />
                 {
                     !!desc && !!topic ? (
                         <Flex
@@ -126,19 +170,31 @@ function ExerciseForm({ item, getValue, maxLength, color, ind }) {
                     exe.map((item, index) => {
                         return (
                             <Flex w={'100%'}
+                                minH={'10rem'}
                                 key={index}
-                                gap={5}
                                 alignItems={!!item && !item?.type === 1 ? ('center') : ''}
                                 flexDir={'column'}
                             >
-                                {
-                                    !!item ?
-                                        (
-                                            item?.type === 1 ?
-                                                (<BlockMath math={item.message} />) :
-                                                (<Text textAlign={'center'}>{item.message}</Text>)
-                                        ) : null
-                                }
+                                <Flex minH={'5rem'}
+                                    flexDir={'column'}
+                                    justifyContent={'center'}
+                                    marginBottom={'auto'}
+                                    rounded={'sm'}
+                                    _light={{
+                                        boxShadow: 'md'
+                                    }}
+                                    _dark={{
+                                        background: '#464547'
+                                    }}>
+                                    {
+                                        !!item ?
+                                            (
+                                                item?.type === 1 ?
+                                                    (<BlockMath math={item.message} />) :
+                                                    (<Text textAlign={'center'}>{item.message}</Text>)
+                                            ) : null
+                                    }
+                                </Flex>
                                 <Input placeholder={`Answer No. ${useIndex}.${index}`}
                                     w={'100%'}
                                     value={value[index]}
@@ -147,24 +203,31 @@ function ExerciseForm({ item, getValue, maxLength, color, ind }) {
                                     rounded={'md'}
                                     maxLength={maxLength ? maxLength : 16}
                                     fontWeight={{ _dark: 'bold' }}
+                                    disabled={!!sett.trueLock && !!answers.current[index] ? true : false}
                                     onChange={(el) => {
                                         const val = el.target.value;
 
-                                        answers[index] = ans[index] == val;
+                                        console.log('desired value is ' + ans[index]);
+                                        console.log('my value is ' + val);
+
+                                        answers.current[index] = val.toString() === ans[index].toString();
 
                                         setValue(prev => {
                                             const temp = [...prev];
 
-                                            temp[index] = val;
+                                            temp[index] = val.toString();
 
                                             return temp;
                                         });
+
+                                        setChange(!change);
+
                                         // val must be compared with answer because it is encrypted!
                                         // also better to check via String.equals or contains
                                         if (!!getValue) {
-                                            getValue(answers);
+                                            getValue(answers.current);
                                             console.log(ind + ': I pushed out new answers pack!')
-                                            console.log(answers);
+                                            console.log(answers.current);
 
                                             console.log('my value is ' + val)
                                             console.log('desired value is ' + ans[index])

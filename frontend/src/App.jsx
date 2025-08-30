@@ -31,16 +31,16 @@ function App() {
 
           <BackGroundImage />
 
-          <Routes>
+            <Routes>
 
-            <Route path='/' element={<WelcomePage />} />
-            <Route path='/profile' element={<ProfilePage />} />
-            <Route path='/top-scores' element={<TopScoresProvider><TopScoresPage /></TopScoresProvider>} />
-            <Route path='/hints' element={<HintsPage />} />
-            <Route path='/schools' element={<SchoolsPage />} />
-            <Route path='/exercise' element={<ExercisePage />} />
+              <Route path='/' element={<WelcomePage />} />
+              <Route path='/profile' element={<ProfilePage />} />
+              <Route path='/top-scores' element={<TopScoresProvider><TopScoresPage /></TopScoresProvider>} />
+              <Route path='/hints' element={<HintsPage />} />
+              <Route path='/schools' element={<SchoolsPage />} />
+              <Route path='/exercise' element={<ExercisePage />} />
 
-          </Routes>
+            </Routes>
 
         </LanguagesProvider>
 

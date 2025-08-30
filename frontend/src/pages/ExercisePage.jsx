@@ -1,6 +1,6 @@
 import { Flex, Stack, Text, Separator, Button } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useState, useRef, useEffect } from 'react'
 import { userContext } from "../context/UserContext.jsx";
 import { languageContext } from "../context/LanguagesContext.jsx";
@@ -10,28 +10,28 @@ import { callToast } from '../components/Toast.jsx'
 
 import TwoTitlesSlot from '../components/TwoTitlesSlot.jsx'
 import ExerciseForm from "../components/ExerciseForm.jsx";
+import FinishForm from "../components/FinishForm.jsx";
 
 function ExercisePage() {
     const location = useLocation();
     const { exerciseId, exerciseWritten } = location.state || {};
 
-    const navigate = useNavigate();
     const { user, upScore, score, pos, pingSchedule, set } = userContext();
     const { language } = languageContext();
 
     const [useGrade, setGrade] = useState(0);
     const [useExercise, setExercise] = useState([]);
+    const appendScore = useRef(false);
+    const oldGrade = useRef(!!score?.[exerciseId] ? score[exerciseId] : 0);
 
     const avrGrade = useRef(0);
 
     const [useScores, setScores] = useState([]);
 
-    const toSchools = () => { navigate('/schools'); }
-
     const addGrade = () => {
-        upScore(exerciseId, useGrade);
+        appendScore.current = useGrade;
 
-        toSchools();
+        upScore(exerciseId, useGrade);
 
         if (user._id === null) callToast('Info:', 'Dear user, note, that unable to save your progress for the future, because you are not logged in!', '', '', pos);
     }
@@ -39,15 +39,15 @@ function ExercisePage() {
     const testAddGrade = () => {
         const grade = Math.floor(Math.random() * 100) + 1;
 
+        appendScore.current = grade;
+
         upScore(exerciseId, grade);
         //upScore(exerciseId, useGrade);
-
-        toSchools();
 
         if (user._id === null) callToast('Info:', 'Dear user, note, that unable to save your progress for the future, because you are not logged in!', '', '', pos);
     }
 
-    const fetchGrades = async (topic, grade, settings) => {
+    const fetchExercises = async (topic, grade, settings) => {
         //console.log(topic)
         //console.log(grade)
         // console.log(settings)
@@ -134,7 +134,7 @@ function ExercisePage() {
 
     useEffect(() => {
         const fetch = async () => {
-            await fetchGrades(exerciseId, score[exerciseId], set);
+            await fetchExercises(exerciseId, score[exerciseId], set);
 
             console.log('averageGrade: ' + avrGrade.current)
         }
@@ -180,8 +180,8 @@ function ExercisePage() {
     ${language?.statics?.topics?.[exerciseId] ? language?.statics?.topics[exerciseId] : exerciseWritten}`
                 },
                 title_b: {
-                    pi_icon: 'pi-verified',
-                    title: useGrade
+                    pi_icon: !!set[0] ? 'pi-verified' : null,
+                    title: !!set[0] ? useGrade : null
                 }
             } : {
                 title_a: {
@@ -219,6 +219,10 @@ function ExercisePage() {
                                     console.log(useScores)
                                 }
                                 }
+                                sett={{
+                                    formSign: !!set[1] ? set[1] : false,
+                                    trueLock: !!set[2] ? set[2] : false
+                                }}
                             />)
                         })
                     ) : (<Flex gapX={3}>
@@ -276,7 +280,9 @@ function ExercisePage() {
             }
 
         </Stack>
-
+        {
+            appendScore.current != null && appendScore.current != false ? <FinishForm newScore={appendScore.current} oldScore={oldGrade.current} /> : null
+        }
     </Flex >)
 }
 
