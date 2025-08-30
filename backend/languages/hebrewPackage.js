@@ -1,7 +1,7 @@
 const hebrewPackage = {
     navBar: {
         main: 'Learn Math',
-        hints: 'אזרה',
+        hints: 'עזרה',
         topScores: 'מצטיינים',
         profile: 'פרופיל',
         schools: 'מגמות'
@@ -51,15 +51,15 @@ const hebrewPackage = {
         profileTitle: 'פרופיל',
         progressTitle: 'ציונים',
         elementarySchool: 'מגמת יסודי',
-        highSchool: 'מתמת תיכון',
+        highSchool: 'מגמת תיכון',
         share: 'לשטף ציונים',
         remove: 'להסיר ציונים מהרשימה',
-        convert: 'להפוך משתמש ל משתמש ענן',
+        convert: 'להפוך משתמש למשתמש ענן',
         delete: 'למחוק משתמש',
         edit: 'עריכת פרופיל'
     },
     hints: {
-        hintsTitle: 'אזרה',
+        hintsTitle: 'עזרה',
         schoolsTopicTitle: 'נושאי מגמות',
         elementarySchool: 'יסודי',
         highSchool: 'תיכון',
@@ -88,7 +88,7 @@ const hebrewPackage = {
         forgotPass: '!איפוס',
         forgotPassLabel: '?שכחתה סיסמה',
         offline: '?משתמש מקומי',
-        offlineExp: ('.סימו לב : על מנת ליצור משתמש מקומי, אין צורך בדואר או סיסמה המשתמש ישמר באוגיות של הדפדפן לשבוע ימים, אם תמחק את האוגיות או תצא מהמשתמש, אז כל הסיגך ימחקו. על מנת לשמר הסיגך תשקל ליצור משתמש ענן'),
+        offlineExp: ('.שימו לב : על מנת ליצור משתמש מקומי, אין צורך בדואר או סיסמה המשתמש ישמר בעוגיות של הדפדפן לשבוע ימים, אם תמחק את האוגיות או תצא מהמשתמש, אז כל השיגך ימחקו. על מנת לשמר השיגך תשקל ליצור משתמש ענן'),
         secretPlaceholder: 'פה שאלה סודית שלך',
     },
     statics: {
