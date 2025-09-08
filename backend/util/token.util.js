@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const createToken = async (id) => {
-    return jwt.sign({ id: id }, process.env.tokenKey, { expiresIn: '3h' });
+    return jwt.sign({ id: id }, process.env.tokenKey, { expiresIn: '7d' });
 }
 
 export const verify = async (token) => {
@@ -15,7 +15,7 @@ export const verify = async (token) => {
         if (!userId.id) return false;
 
         const user = await User.findOne({ _id: userId.id });
-        
+
         if (!user) return false;
         else return user;
     }
