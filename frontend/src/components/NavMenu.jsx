@@ -40,25 +40,25 @@ function NavMenu({ close, autoClose, navShort, pi_icon }) {
     //========================< lesson settings
     const lesson_settings = [{
         value: '123',
-        title: 'Display Score'
+        title: language?.navMenu?.settings?.['123'] ? language?.navMenu?.settings?.['123'] : 'Display Score'
     }, {
         value: '124',
-        title: 'Sign Correct Answers'
+        title: language?.navMenu?.settings?.['124'] ? language?.navMenu?.settings?.['124'] : 'Sign Correct Answers'
     }, {
         value: '125',
-        title: 'Disable Correct Fields'
+        title: language?.navMenu?.settings?.['125'] ? language?.navMenu?.settings?.['125'] : 'Disable Correct Fields'
     }, {
         value: '126',
-        title: 'Add & Sub Columns Only'
+        title: language?.navMenu?.settings?.['126'] ? language?.navMenu?.settings?.['126'] : 'Add & Sub Columns Only'
     }, {
         value: '127',
-        title: 'Add & Sub Difficulty Spike'
+        title: language?.navMenu?.settings?.['127'] ? language?.navMenu?.settings?.['127'] : 'Add & Sub Difficulty Spike'
     }, {
         value: '128',
-        title: 'Mult & Div Columns Only'
+        title: language?.navMenu?.settings?.['128'] ? language?.navMenu?.settings?.['128'] : 'Mult & Div Columns Only'
     }, {
         value: '129',
-        title: 'Mult & Div Difficulty Spike'
+        title: language?.navMenu?.settings?.['129'] ? language?.navMenu?.settings?.['129'] : 'Mult & Div Difficulty Spike'
     },];
     const default_lesson_settings = set ? set : [true, true, false, false, false, false, false];
 

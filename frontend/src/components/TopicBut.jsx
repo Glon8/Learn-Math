@@ -1,5 +1,6 @@
 import { Flex, Text, Button } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
+import { userContext } from "../context/UserContext";
 
 /*
   <TopicBut display={false}
@@ -14,6 +15,8 @@ import "primeicons/primeicons.css";
 */
 
 function TopicBut({ dir, display, pi_icon, title, onClick, subTitle, align, justify }) {
+    const { lang } = userContext();
+
     return (<Flex display={display ? 'none' : 'flex'}
         w={'full'}
         flexDirection={dir ? dir : "row"}
@@ -58,11 +61,11 @@ function TopicBut({ dir, display, pi_icon, title, onClick, subTitle, align, just
             background={{ _dark: '#464547' }}
             rounded={'sm'}
             w={'full'}
-            justifyContent={dir === 'row-reverse' ? null : 'right'}
+            justifyContent={dir === 'row-reverse' && lang != 'he' ? null : 'right'}
             overflow={'hidden'}
             boxShadow={'sm'}
         >
-            <Text>{subTitle}</Text>
+            <Text direction={lang == 'he' ? 'rtl' : 'ltr'}>{subTitle}</Text>
         </Flex>
 
     </Flex>)
