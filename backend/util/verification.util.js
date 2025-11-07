@@ -18,8 +18,11 @@ const verEmail = (email) => {
     }
 }
 
-export const verPassword = (thing, password) => {
-    return bcrypt.compare(thing, password);
+export const verPassword = (plain, hashed) => {
+    if (typeof plain !== 'string' || !plain.trim() || typeof hashed !== 'string' || !hashed.trim())
+        return false;
+    
+    return bcrypt.compare(plain, hashed);
 }
 
 export const verifyName = (name) => {
