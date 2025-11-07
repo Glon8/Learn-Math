@@ -1,11 +1,12 @@
-import { Flex, Text, Separator, Input, useBreakpointValue } from "@chakra-ui/react"
+import { Flex, Text, Separator, Input, useBreakpointValue } from "@chakra-ui/react";
 import "primeicons/primeicons.css";
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef } from 'react';
+import bcrypt from 'bcryptjs';
 
-import TwoTitlesSlot from './TwoTitlesSlot.jsx'
-import Geogebra from 'react-geogebra'
-import { BlockMath, InlineMath } from 'react-katex'
-import 'katex/dist/katex.min.css'
+import TwoTitlesSlot from './TwoTitlesSlot.jsx';
+import Geogebra from 'react-geogebra';
+import { BlockMath, InlineMath } from 'react-katex';
+import 'katex/dist/katex.min.css';
 
 function ExerciseForm({ item, getValue, maxLength, color, ind, sett }) {
     const [topic, setTopic] = useState('');
@@ -29,17 +30,11 @@ function ExerciseForm({ item, getValue, maxLength, color, ind, sett }) {
             if (value.length > 0) {
                 let flag = true;
 
-                console.log('check flag at start is ' + flag);
-
                 answers.current.forEach((answer) => {
-                    if (!answer) flag = false;
+                    if (!answer?.[0]) flag = false;
                 });
 
-
-                console.log('check flag at the end is ' + flag);
                 setCheck(flag);
-
-                console.log('check at the end is ' + check);
             }
         }, [change]);
 
@@ -48,12 +43,12 @@ function ExerciseForm({ item, getValue, maxLength, color, ind, sett }) {
     }, [sett]);
 
     useEffect(() => {
-        console.log(item);
+        //console.log(item);
 
-        setTopic(item?.topic ? item?.topic : '');
-        setExe(item?.exe ? item?.exe : '');
-        setAns(item?.ans ? item?.ans : '');
-        setDesc(item?.desc ? item?.desc : '');
+        setTopic(item?.topic ?? '');
+        setExe(item?.exe ?? '');
+        setAns(item?.ans ?? '');
+        setDesc(item?.desc ?? '');
 
         for (let i = 0; i < ans.length; i++) answers.current[i] = false;
     }, [item]);
@@ -198,19 +193,19 @@ function ExerciseForm({ item, getValue, maxLength, color, ind, sett }) {
                                 <Input placeholder={`Answer No. ${useIndex}.${index}`}
                                     w={'100%'}
                                     value={value[index]}
-                                    color={color ? color : ({ _light: '#1D282E', _dark: '#EEF6F9' })}
+                                    color={color ?? ({ _light: '#1D282E', _dark: '#EEF6F9' })}
                                     backgroundColor={{ _light: 'white', _dark: '#1D282E', _disabled: 'transparent' }}
                                     rounded={'md'}
-                                    maxLength={maxLength ? maxLength : 16}
+                                    maxLength={maxLength ?? 16}
                                     fontWeight={{ _dark: 'bold' }}
                                     disabled={!!sett.trueLock && !!answers.current[index] ? true : false}
-                                    onChange={(el) => {
+                                    onChange={async (el) => {
                                         const val = el.target.value;
 
-                                        console.log('desired value is ' + ans[index]);
-                                        console.log('my value is ' + val);
+                                        //console.log('desired value is ' + ans[index]);
+                                        //console.log('my value is ' + val);
 
-                                        answers.current[index] = val.toString() === ans[index].toString();
+                                        answers.current[index] = [await bcrypt.compare(val.toString(), ans[index].toString()), val.toString()];
 
                                         setValue(prev => {
                                             const temp = [...prev];
@@ -226,11 +221,11 @@ function ExerciseForm({ item, getValue, maxLength, color, ind, sett }) {
                                         // also better to check via String.equals or contains
                                         if (!!getValue) {
                                             getValue(answers.current);
-                                            console.log(ind + ': I pushed out new answers pack!')
-                                            console.log(answers.current);
+                                            //console.log(ind + ': I pushed out new answers pack!')
+                                            //console.log(answers.current);
 
-                                            console.log('my value is ' + val)
-                                            console.log('desired value is ' + ans[index])
+                                            //console.log('my value is ' + val)
+                                            //console.log('desired value is ' + ans[index])
                                         }
                                     }}
                                 />

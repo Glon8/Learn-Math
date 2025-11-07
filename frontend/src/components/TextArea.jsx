@@ -5,15 +5,15 @@ import { languageContext } from "../context/LanguagesContext";
 
 function TextArea() {
     const { logs, send } = userContext();
-    const { language } = languageContext();
+    const { language, defPack } = languageContext();
 
     const [useValue, setValue] = useState('');
-    const [useHolder, setHolder] = useState(language?.hints?.placeholder ? language?.hints?.placeholder : 'Ask teach!');
+    const [useHolder, setHolder] = useState(language?.hints?.placeholder ?? defPack.hints.placeholder);
     const [useDisable, setDisable] = useState('');
     useEffect(() => {
         setDisable(false);
 
-        setHolder(language?.hints?.placeholder ? language?.hints?.placeholder : 'Ask teach!');
+        setHolder(language?.hints?.placeholder ?? defPack.hints.placeholder);
     }, [logs?.user, language]);
 
     return (<Field.Root>
@@ -27,7 +27,7 @@ function TextArea() {
                     send(useValue);
                     setDisable(true);
                     setValue('');
-                    setHolder(language?.hints?.teacherWait ? language?.hints?.teacherWait : 'Await for teacher to respond, please...');
+                    setHolder(language?.hints?.teacherWait ?? defPack.hints.teacherWait);
                 }
             }}
             minH={'5rem'}
@@ -47,7 +47,7 @@ function TextArea() {
         />
         <Field.HelperText
             color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
-        >{language?.hints?.limitation ? language?.hints?.limitation : 'Max 350 characters'}</Field.HelperText>
+        >{language?.hints?.limitation ?? defPack.hints.limitation}</Field.HelperText>
     </Field.Root>)
 }
 

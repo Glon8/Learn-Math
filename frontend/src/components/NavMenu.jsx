@@ -15,52 +15,52 @@ import Tool from "./Tooltip.jsx";
 function NavMenu({ close, autoClose, navShort, pi_icon }) {
     const { pos, mode, upUser, user, out, lang, set } = userContext();
     const { isIn, isUp } = signContext();
-    const { language } = languageContext();
+    const { language, defPack } = languageContext();
 
     const { colorMode, toggleColorMode } = useColorMode();
 
-    const [useOpen, setOpen] = useState(close ? close : false);
+    const [useOpen, setOpen] = useState(close ?? false);
 
     //========================< language settings
     const languages = [{
         value: 'en',
-        title: language?.navMenu?.languages?.en ? language?.navMenu?.languages?.en : 'EN',
+        title: language?.navMenu?.languages?.en ?? defPack.navMenu.languages.en,
         onClick: () => upUser('language', 'en')
     }, {
         value: 'he',
-        title: language?.navMenu?.languages?.he ? language?.navMenu?.languages?.he : 'HE',
+        title: language?.navMenu?.languages?.he ?? defPack.navMenu.languages.he,
         onClick: () => upUser('language', 'he')
     }, {
         value: 'ru',
-        title: language?.navMenu?.languages?.ru ? language?.navMenu?.languages?.ru : 'RU',
+        title: language?.navMenu?.languages?.ru ?? defPack.navMenu.languages.ru,
         onClick: () => upUser('language', 'ru')
     }];
-    const default_languages = lang ? lang : 'en';
+    const default_languages = lang ?? 'en';
 
     //========================< lesson settings
     const lesson_settings = [{
         value: '123',
-        title: language?.navMenu?.settings?.['123'] ? language?.navMenu?.settings?.['123'] : 'Display Score'
+        title: language?.navMenu?.settings?.['123'] ?? defPack.navMenu.settings['123']
     }, {
         value: '124',
-        title: language?.navMenu?.settings?.['124'] ? language?.navMenu?.settings?.['124'] : 'Sign Correct Answers'
+        title: language?.navMenu?.settings?.['124'] ?? defPack.navMenu.settings['124']
     }, {
         value: '125',
-        title: language?.navMenu?.settings?.['125'] ? language?.navMenu?.settings?.['125'] : 'Disable Correct Fields'
+        title: language?.navMenu?.settings?.['125'] ?? defPack.navMenu.settings['125']
     }, {
         value: '126',
-        title: language?.navMenu?.settings?.['126'] ? language?.navMenu?.settings?.['126'] : 'Add & Sub Columns Only'
+        title: language?.navMenu?.settings?.['126'] ?? defPack.navMenu.settings['126']
     }, {
         value: '127',
-        title: language?.navMenu?.settings?.['127'] ? language?.navMenu?.settings?.['127'] : 'Add & Sub Difficulty Spike'
+        title: language?.navMenu?.settings?.['127'] ?? defPack.navMenu.settings['127']
     }, {
         value: '128',
-        title: language?.navMenu?.settings?.['128'] ? language?.navMenu?.settings?.['128'] : 'Mult & Div Columns Only'
+        title: language?.navMenu?.settings?.['128'] ?? defPack.navMenu.settings['128']
     }, {
         value: '129',
-        title: language?.navMenu?.settings?.['129'] ? language?.navMenu?.settings?.['129'] : 'Mult & Div Difficulty Spike'
+        title: language?.navMenu?.settings?.['129'] ?? defPack.navMenu.settings['129']
     },];
-    const default_lesson_settings = set ? set : [true, true, false, false, false, false, false];
+    const default_lesson_settings = set ?? [true, true, false, false, false, false, false];
 
 
     //========================< menu position settings
@@ -87,19 +87,19 @@ function NavMenu({ close, autoClose, navShort, pi_icon }) {
 
     const menu_pos = [{
         value: 'top',
-        title: language?.navMenu?.position?.top ? language?.navMenu?.position?.top : 'Top',
+        title: language?.navMenu?.position?.top ?? defPack.navMenu.position.top,
         onClick: () => toTop()
     }, {
         value: 'left',
-        title: language?.navMenu?.position?.left ? language?.navMenu?.position?.left : 'Left',
+        title: language?.navMenu?.position?.left ?? defPack.navMenu.position.left,
         onClick: () => toLeft()
     }, {
         value: 'bottom',
-        title: language?.navMenu?.position?.bottom ? language?.navMenu?.position?.bottom : 'Bottom',
+        title: language?.navMenu?.position?.bottom ?? defPack.navMenu.position.bottom,
         onClick: () => toBottom()
     }, {
         value: 'right',
-        title: language?.navMenu?.position?.right ? language?.navMenu?.position?.right : 'Right',
+        title: language?.navMenu?.position?.right ?? defPack.navMenu.position.right,
         onClick: () => toRight()
     }];
 
@@ -109,9 +109,6 @@ function NavMenu({ close, autoClose, navShort, pi_icon }) {
     }, [close]);
 
     useEffect(() => {
-        console.log('User mode: ' + mode);
-        console.log('Settings mode: ' + colorMode);
-
         const color = !mode ? 'light' : mode;
         if (color !== colorMode) toggleColorMode();
 
@@ -119,7 +116,7 @@ function NavMenu({ close, autoClose, navShort, pi_icon }) {
 
     return (<Tool navSide={pos}
         navShort={navShort}
-        title={language?.navMenu?.trigger ? language?.navMenu?.trigger : 'Menu'}
+        title={language?.navMenu?.trigger ?? defPack.navMenu.trigger}
         value={
             <Menu.Root open={useOpen}
                 onInteractOutside={autoClose ? null : () => setOpen(false)}
@@ -141,7 +138,7 @@ function NavMenu({ close, autoClose, navShort, pi_icon }) {
                     >
                         <i className={`pi ${pi_icon}`} />
                         {
-                            navShort ? null : <Text>{language?.navMenu?.trigger ? language?.navMenu?.trigger : 'Menu'}</Text>
+                            navShort ? null : <Text>{language?.navMenu?.trigger ?? defPack.navMenu.trigger}</Text>
                         }
                     </Button>
 
@@ -162,13 +159,13 @@ function NavMenu({ close, autoClose, navShort, pi_icon }) {
                                     {
                                         user._id != null ? (lang != 'he' ?
                                             (`${!user.status ?
-                                                (language?.navMenu?.userStatusLocal ? language?.navMenu?.userStatusLocal : 'Local') :
-                                                (language?.navMenu?.userStatusOnline ? language?.navMenu?.userStatusOnline : 'Online')}
-                                                 ${language?.navMenu?.userStatus ? language?.navMenu?.userStatus : 'user'}:`) :
-                                            (`:${language?.navMenu?.userStatus ? language?.navMenu?.userStatus : 'user'} 
-                                                 ${!user.status ? (language?.navMenu?.userStatusLocal ? language?.navMenu?.userStatusLocal : 'Local') :
-                                                    (language?.navMenu?.userStatusOnline ? language?.navMenu?.userStatusOnline : 'Online')} `)) :
-                                            (language?.navMenu?.userStatusNegative ? language?.navMenu?.userStatusNegative : 'No user connected!')
+                                                (language?.navMenu?.userStatusLocal ?? defPack.navMenu.userStatusLocal) :
+                                                (language?.navMenu?.userStatusOnline ?? defPack.navMenu.userStatusOnline)}
+                                                 ${language?.navMenu?.userStatus ?? defPack.navMenu.userStatus}:`) :
+                                            (`:${language?.navMenu?.userStatus ?? defPack.navMenu.userStatus} 
+                                                 ${!user.status ? (language?.navMenu?.userStatusLocal ?? defPack.navMenu.userStatusLocal) :
+                                                    (language?.navMenu?.userStatusOnline ?? defPack.navMenu.userStatusOnline)} `)) :
+                                            (language?.navMenu?.userStatusNegative ?? defPack.navMenu.userStatusNegative)
                                     }
                                 </Menu.ItemGroupLabel>
                                 {
@@ -209,7 +206,7 @@ function NavMenu({ close, autoClose, navShort, pi_icon }) {
                                             gap={3}>
 
                                             <i className={`pi pi-sign-out`} />
-                                            <Text>{language?.navMenu?.signOut ? language?.navMenu?.signOut : 'Sign Out'}</Text>
+                                            <Text>{language?.navMenu?.signOut ?? defPack.navMenu.signOut}</Text>
 
                                         </Flex>
 
@@ -241,7 +238,7 @@ function NavMenu({ close, autoClose, navShort, pi_icon }) {
                                             gap={3}>
 
                                             <i className={`pi pi-user-edit`} />
-                                            <Text>{language?.navMenu?.signUp ? language?.navMenu?.signUp : 'Sign Up'}</Text>
+                                            <Text>{language?.navMenu?.signUp ?? defPack.navMenu.signUp}</Text>
 
                                         </Flex>
 
@@ -273,7 +270,7 @@ function NavMenu({ close, autoClose, navShort, pi_icon }) {
                                             gap={3}>
 
                                             <i className={`pi pi-sign-in`} />
-                                            <Text>{language?.navMenu?.signIn ? language?.navMenu?.signIn : 'Sign In'}</Text>
+                                            <Text>{language?.navMenu?.signIn ?? defPack.navMenu.signIn}</Text>
 
                                         </Flex>
 
@@ -314,14 +311,14 @@ function NavMenu({ close, autoClose, navShort, pi_icon }) {
                                                     (<i className={`pi pi-moon`} />) :
                                                     (<i className={`pi pi-sun`} />)
                                             }
-                                            <Text>{language?.navMenu?.mode ? language?.navMenu?.mode : 'Mode'}</Text>
+                                            <Text>{language?.navMenu?.mode ?? defPack.navMenu.mode}</Text>
 
                                         </Flex>
 
                                     </Button>
                                 </Menu.Item>
                                 <Menu.Item>
-                                    <SelectionCheckSwitchMenu title={language?.navMenu?.languages?.trigger ? language?.navMenu?.languages?.trigger : 'Languages'}
+                                    <SelectionCheckSwitchMenu title={language?.navMenu?.languages?.trigger ?? defPack.navMenu.languages.trigger}
                                         pi_icon={'pi-language'}
                                         navSide={pos}
                                         default_option={default_languages}
@@ -330,7 +327,7 @@ function NavMenu({ close, autoClose, navShort, pi_icon }) {
                                 </Menu.Item>
                                 <Menu.Item>
                                     <SelectionCheckMenu
-                                        title={language?.navMenu?.settings?.trigger ? language?.navMenu?.settings?.trigger : 'Lesson Settings'}
+                                        title={language?.navMenu?.settings?.trigger ?? defPack.navMenu.settings.trigger}
                                         pi_icon={'pi-cog'}
                                         navSide={pos}
                                         default_options={default_lesson_settings}
@@ -339,7 +336,7 @@ function NavMenu({ close, autoClose, navShort, pi_icon }) {
                                         getSwitches={(thing) => { thing != set ? upUser('settings', thing) : null }} />
                                 </Menu.Item>
                                 <Menu.Item>
-                                    <SelectionCheckSwitchMenu title={language?.navMenu?.position?.trigger ? language?.navMenu?.position?.trigger : 'Menu Position'}
+                                    <SelectionCheckSwitchMenu title={language?.navMenu?.position?.trigger ?? defPack.navMenu.position.trigger}
                                         pi_icon={'pi-angle-down'}
                                         navSide={pos}
                                         default_option={pos}

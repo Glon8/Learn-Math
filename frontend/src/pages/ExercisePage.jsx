@@ -16,13 +16,13 @@ function ExercisePage() {
     const location = useLocation();
     const { exerciseId, exerciseWritten } = location.state || {};
 
-    const { user, upScore, score, pos, pingSchedule, set } = userContext();
-    const { language } = languageContext();
+    const { user, upScore, score, pos, pingSchedule, set, token, repAns } = userContext();
+    const { language, defPack } = languageContext();
 
     const [useGrade, setGrade] = useState(0);
     const [useExercise, setExercise] = useState([]);
     const appendScore = useRef(false);
-    const oldGrade = useRef(!!score?.[exerciseId] ? score[exerciseId] : 0);
+    const oldGrade = useRef(score?.[exerciseId] ?? 0);
 
     const avrGrade = useRef(0);
 
@@ -31,41 +31,28 @@ function ExercisePage() {
     const addGrade = () => {
         appendScore.current = useGrade;
 
+        // local update of the scores
         upScore(exerciseId, useGrade);
 
+        // online user sending answers to the server
+        if (!!token) repAns(useScores, token, exerciseId);
+
+        // note for unregistered users
         if (user._id === null) callToast('Info:', 'Dear user, note, that unable to save your progress for the future, because you are not logged in!', '', '', pos);
     }
 
-    const testAddGrade = () => {
-        const grade = Math.floor(Math.random() * 100) + 1;
-
-        appendScore.current = grade;
-
-        upScore(exerciseId, grade);
-        //upScore(exerciseId, useGrade);
-
-        if (user._id === null) callToast('Info:', 'Dear user, note, that unable to save your progress for the future, because you are not logged in!', '', '', pos);
-    }
-
-    const fetchExercises = async (topic, grade, settings) => {
-        //console.log(topic)
-        //console.log(grade)
-        // console.log(settings)
+    const fetchExercises = async (topic, grade, settings, theToken) => {
         await pingSchedule();
 
         try {
-            const res = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/exercise/get-exercise`, { topic: topic, grade: grade, settings: settings });
+            const res = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/exercise/get-exercise`, { topic: topic, grade: grade, settings: settings, token: theToken });
 
             const data = res.data.data;
-
-            console.log('Exercise fetch success!');
-            console.log(data);
 
             setExercise(data);
         }
         catch (error) {
-            console.log('Error in fetching exercises: ' + error.message);
-            callToast('Error:', error.message, '', 'error', pos);
+            console.log('Error in fetching exercises');
         }
     }
 
@@ -83,43 +70,26 @@ function ExercisePage() {
             console.log(questionsList[questionsList.length - 1])
         });
 
-        //console.log('questionsList')
-        //console.log(questionsList)
-
         for (let i = 0; i < questionsList.length; i++) {
             if (!!questionsList[i])
                 totalQuestions += questionsList[i];
             else totalQuestions += 0;
         }
 
-        //console.log('totalQuestions is ' + totalQuestions)
-
         let shouldBe = !!totalQuestions ? (100 / totalQuestions) : 0;
 
-        //console.log('unpolished average grade is ' + shouldBe)
-
         shouldBe = shouldBe.toFixed(1);
-
-        //console.log('polished average grade is ' + shouldBe)
 
         return parseFloat(shouldBe);
     }
 
     useEffect(() => {
-        // update useGrade
-
-        console.log('scores are :')
-        console.log(useScores)
-
         let gradeUpdated = 0;
 
         useScores.forEach((item) => {
             if (!!item)
-                for (let i = 0; i < item.length; i++) if (!!item[i]) gradeUpdated += avrGrade.current;
+                for (let i = 0; i < item.length; i++) if (!!item[i][0]) gradeUpdated += avrGrade.current;
         });
-
-        console.log('gradeUpdated: ' + gradeUpdated)
-        console.log('averageGrade: ' + avrGrade.current)
 
         setGrade(gradeUpdated);
     }, [useScores]);
@@ -134,9 +104,7 @@ function ExercisePage() {
 
     useEffect(() => {
         const fetch = async () => {
-            await fetchExercises(exerciseId, score[exerciseId], set);
-
-            console.log('averageGrade: ' + avrGrade.current)
+            await fetchExercises(exerciseId, !!score?.[exerciseId] ?? 0, set, token);
         }
 
         fetch();
@@ -146,7 +114,7 @@ function ExercisePage() {
         flexDirection={"column"}
         paddingLeft={pos === 'left' ? { base: '3rem', sm: '3rem', md: '3rem', lg: '5rem' } : ''}
         paddingRight={pos === 'right' ? { base: '3rem', sm: '3rem', md: '3rem', lg: '5rem' } : ''}
-        paddingTop={pos === 'top' ? { base: '2.5rem', sm: '2.5rem', md: '2.5rem', lg: '10%' } : { md: '5%' }}
+        paddingTop={!pos || pos === 'top' ? { base: '2.5rem', sm: '2.5rem', md: '2.5rem', lg: '10%' } : { md: '5%' }}
         paddingBottom={pos === 'bottom' ? { base: '2.5rem', sm: '2.5rem', md: '2.5rem', lg: '5rem' } : ''}
     >
 
@@ -176,8 +144,8 @@ function ExercisePage() {
             <TwoTitlesSlot title_info={exerciseCheckList() ? {
                 title_a: {
                     pi_icon: 'pi-hashtag',
-                    title: `${language?.exercise?.title ? language?.exercise?.title : 'Exercise'} 
-    ${language?.statics?.topics?.[exerciseId] ? language?.statics?.topics[exerciseId] : exerciseWritten}`
+                    title: `${language?.exercise?.title ?? defPack.exercise.title} 
+    ${language?.statics?.topics?.[exerciseId] ?? exerciseWritten}`
                 },
                 title_b: {
                     pi_icon: !!set[0] ? 'pi-verified' : null,
@@ -186,8 +154,8 @@ function ExercisePage() {
             } : {
                 title_a: {
                     pi_icon: 'pi-hashtag',
-                    title: `${language?.exercise?.title ? language?.exercise?.title : 'Exercise'} 
-    ${language?.statics?.topics?.[exerciseId] ? language?.statics?.topics[exerciseId] : exerciseWritten}`
+                    title: `${language?.exercise?.title ?? defPack.exercise.title} 
+    ${language?.statics?.topics?.[exerciseId] ?? exerciseWritten}`
                 }
             }} />
             {
@@ -195,9 +163,9 @@ function ExercisePage() {
                     (<Separator paddingTop={3}>
                         <Text textAlign={'center'}
                             fontWeight={'medium'}
-                        >{language?.exercise?.explanation ?
-                            language?.exercise?.explanation :
-                            'Solve exercises to recieve a grade! (Max grade is 100)'}</Text>
+                        >
+                            {language?.exercise?.explanation ?? defPack.exercise.explanation}
+                        </Text>
                     </Separator>) : null
             }
             <Separator marginTop={3} />
@@ -216,12 +184,13 @@ function ExercisePage() {
 
                                         return temp;
                                     });
-                                    console.log(useScores)
+
+                                    //console.log(useScores)
                                 }
                                 }
                                 sett={{
-                                    formSign: !!set[1] ? set[1] : false,
-                                    trueLock: !!set[2] ? set[2] : false
+                                    formSign: !!set[1] ?? false,
+                                    trueLock: !!set[2] ?? false
                                 }}
                             />)
                         })
@@ -230,9 +199,8 @@ function ExercisePage() {
                         <i className="pi pi-wrench" />
                         <Text>
                             {
-                                language?.statics?.error?.exerciseMissing ?
-                                    language?.statics?.error?.exerciseMissing :
-                                    ('Oooopps... its seems like something wrong, try to reconnect to internet or refresh the page.')
+                                language?.statics?.error?.exerciseMissing ??
+                                defPack.statics.error.exerciseMissing
                             }
                         </Text>
 
@@ -255,27 +223,7 @@ function ExercisePage() {
                             borderColor: "#1D282E",
                             focusRingColor: '#B1B7BA',
                             color: '#EEF6F9'
-                        }} >{language?.exercise?.done ?
-                            language?.exercise?.done :
-                            'Done'}</Button>) : null
-            }
-            {
-                useExercise.length != 0 ?
-                    (< Button focusRing={'inside'}
-                        onClick={() => testAddGrade()}
-                        marginTop={3}
-                        _light={{
-                            backgroundColor: 'white',
-                            borderColor: '#B1B7BA/20',
-                            focusRingColor: '#B1B7BA',
-                            color: '#1D282E'
-                        }}
-                        _dark={{
-                            background: "#1D282E",
-                            borderColor: "#1D282E",
-                            focusRingColor: '#B1B7BA',
-                            color: '#EEF6F9'
-                        }}>Add a random grade (Test)
+                        }} >{language?.exercise?.done ?? defPack.exercise.done}
                     </Button>) : null
             }
 

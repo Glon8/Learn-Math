@@ -6,7 +6,7 @@ import TwoTitlesSlot from "../components/TwoTitlesSlot";
 import Slot from "../components/Slot";
 
 function GradesMenu({ display, title_type, pi_icon, title, title_info, topic_names, my_scores, size, part }) {
-    return (<Flex display={display ? display : 'none'}
+    return (<Flex display={display ?? 'none'}
         h={'fit'}
         width={{ base: 'full', sm: '25rem' }}
         justifyContent={'center'}
@@ -29,8 +29,8 @@ function GradesMenu({ display, title_type, pi_icon, title, title_info, topic_nam
             borderColor: '#1D282E',
         }} >
         {
-            title_type === 0 ? (<TitleSlot pi_icon={pi_icon ? pi_icon : ''} title={title ? title : 'Deffault Title'} />) :
-                (title_type === 1 && title_info ? (<TwoTitlesSlot title_info={title_info ? title_info : ''} />) :
+            title_type === 0 ? (<TitleSlot pi_icon={pi_icon ?? ''} title={title ?? 'Deffault Title'} />) :
+                (title_type === 1 && title_info ? (<TwoTitlesSlot title_info={title_info ?? ''} />) :
                     'error: "title_type" accepts 0 or 1')
         }
         <Separator />
@@ -38,17 +38,17 @@ function GradesMenu({ display, title_type, pi_icon, title, title_info, topic_nam
             topic_names ?
                 (Object.entries(topic_names)
                     .map((topic, index) => {
-                        const score = my_scores[topic[0]];
+                        const score = my_scores?.[topic[0]] ?? 0;
 
                         if (size === 0) {
                             if (part === 0) {
                                 if (index < 7) {
-                                    return (<Slot key={topic[1]} value={score ? score : 0} category={topic[1]} auto={true} />)
+                                    return (<Slot key={topic[1]} value={score ?? 0} category={topic[1]} auto={true} />)
                                 }
                             }
                             else {
                                 if (index >= 7) {
-                                    return (<Slot key={topic[1]} value={score ? score : 0} category={topic[1]} auto={true} />)
+                                    return (<Slot key={topic[1]} value={score ?? 0} category={topic[1]} auto={true} />)
                                 }
                             }
                         }
@@ -56,10 +56,10 @@ function GradesMenu({ display, title_type, pi_icon, title, title_info, topic_nam
                             if (index === 7) {
                                 return (<Separator key={topic[1]}
                                     paddingTop={3}>
-                                    <Slot key={score} value={score ? score : 0} category={topic[1]} auto={true} />
+                                    <Slot key={score} value={score ?? 0} category={topic[1]} auto={true} />
                                 </Separator>)
                             }
-                            else return (<Slot key={topic[1]} value={score ? score : 0} category={topic[1]} auto={true} />)
+                            else return (<Slot key={topic[1]} value={score ?? 0} category={topic[1]} auto={true} />)
                         }
                     })) : (<Text color={{ _light: '#1D282E', _dark: '#EEF6F9' }}>Something wrong, perhaps no list?</Text>)
         }

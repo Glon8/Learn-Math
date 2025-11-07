@@ -1,8 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import { getUser, updateUser, updatePosition, updateStatus, updateLanguage, updateShared } from '../util/User.js'
-import { } from '../util/Statics.js'
-import { } from '../util/TopScores.js'
-import { } from '../util/Languages.js'
 
 const BackContext = createContext(null);
 

@@ -5,7 +5,7 @@ import { languageContext } from "../context/LanguagesContext";
 
 function AINote() {
     const { pos } = userContext();
-    const { language } = languageContext();
+    const { language, defPack } = languageContext();
 
     return (<Flex position={'fixed'}
         left={pos ? (pos === 'top' ||
@@ -31,7 +31,7 @@ function AINote() {
             borderColor: '#1D282E/60'
         }}>
         <Text fontWeight={'bold'}>
-            {language?.statics?.aiNote ? language?.statics?.aiNote : 'Images were created by NN'}
+            {language?.statics?.aiNote ?? defPack?.statics?.aiNote}
         </Text>
     </Flex>)
 }

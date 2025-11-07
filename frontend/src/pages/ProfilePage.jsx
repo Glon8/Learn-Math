@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { callToast } from '../components/Toast.jsx'
 
 import { verString, verEmail, verPassword } from '../util/Statics.js'
-import { topicNames } from "../util/Statics.js";
 import { userContext } from '../context/UserContext.jsx'
 import { languageContext } from '../context/LanguagesContext.jsx'
 
@@ -19,7 +18,7 @@ function ProfilePage() {
   const { user, stat, share,
     score, upUser, pos, compare,
     del, upTop, outTop, signUp } = userContext();
-  const { language } = languageContext();
+  const { language, defPack } = languageContext();
 
   const [use_profile_edit, set_profile_edit] = useState(false);
 
@@ -33,7 +32,7 @@ function ProfilePage() {
 
   const [convert, setConvert] = useState(false);
 
-  const [topic, setTopic] = useState(language?.statics?.topics ? language?.statics?.topics : topicNames);
+  const [topic, setTopic] = useState(language?.statics?.topics ?? defPack.statics.topics);
 
   const update = () => {
     if (user.name != name) {
@@ -191,7 +190,7 @@ function ProfilePage() {
   const warningMes = () => callToast('Info:', 'Unable to share your grades! Please make online account to do so! You can check your status in profile or top left corner menu!', '', '', pos);
 
   useEffect(() => {
-    setTopic(language?.statics?.topics ? language?.statics?.topics : topicNames);
+    setTopic(language?.statics?.topics ?? defPack.statics.topics);
   }, [language]);
 
   useEffect(() => {
@@ -216,7 +215,7 @@ function ProfilePage() {
     flexDirection={{ base: 'column', sm: 'column', md: 'column', lg: 'row' }}
     paddingLeft={pos === 'left' ? { base: '3rem', sm: '3rem', md: '3rem', lg: '5rem' } : ''}
     paddingRight={pos === 'right' ? { base: '3rem', sm: '3rem', md: '3rem', lg: '5rem' } : ''}
-    paddingTop={pos === 'top' ? { base: '2.5rem', sm: '2.5rem', md: '2.5rem', lg: '10%' } : { md: '5%' }}
+    paddingTop={!pos || pos === 'top' ? { base: '2.5rem', sm: '2.5rem', md: '2.5rem', lg: '10%' } : { md: '5%' }}
     paddingBottom={pos === 'bottom' ? { base: '2.5rem', sm: '2.5rem', md: '2.5rem', lg: '5rem' } : ''}>
 
     <Flex width={{ base: 'full', sm: '25rem' }}
@@ -240,19 +239,18 @@ function ProfilePage() {
         borderColor: '#1D282E'
       }}>
 
-      <TitleSlot pi_icon={'pi-id-card'} title={language?.profile?.profileTitle ? language?.profile?.profileTitle : 'PROFILE'} />
+      <TitleSlot pi_icon={'pi-id-card'} title={language?.profile?.profileTitle ?? defPack.profile.profileTitle} />
       <Separator />
-      <Slot value={user.name ? user.name :
-        (language?.statics?.error?.noUser ? language?.statics?.error?.noUser : 'User')}
-        category={language?.statics?.user?.name ? language?.statics?.user?.name : 'Name'}
+      <Slot value={user.name ?? (language?.statics?.error?.noUser ?? defPack.statics.error.noUser)}
+        category={language?.statics?.user?.name ?? defPack.statics.user.name}
         edit={use_profile_edit}
         getValue={(thing) => setName(thing)}
       />
       {
         (stat && !!user._id) || !!convert ?
-          <Slot value={user.email ? user.email : null}
+          <Slot value={user.email ?? null}
             placeholder={'-----'}
-            category={language?.statics?.user?.email ? language?.statics?.user?.email : 'Email'}
+            category={language?.statics?.user?.email ?? defPack.statics.user.email}
             edit={(use_profile_edit && stat) || !!convert ? true : false}
             getValue={(thing) => setEmail(thing)}
           /> : ''
@@ -283,9 +281,9 @@ function ProfilePage() {
       }
       {
         (use_profile_edit && stat && !!user._id) || !!convert ?
-          <Slot value={user.secret ? user.secret : ''}
+          <Slot value={user.secret ?? ''}
             placeholder={'-----'}
-            category={language?.statics?.user?.secret ? language?.statics?.user?.secret : 'Secret Question'}
+            category={language?.statics?.user?.secret ?? defPack.statics.user.secret}
             edit={true}
             getValue={(thing) => setSecQues(thing)}
           /> : ''
@@ -293,25 +291,25 @@ function ProfilePage() {
       {
         (use_profile_edit && stat && !!user._id) || !!convert ?
           <Slot placeholder={'-----'}
-            category={language?.statics?.user?.answer ? language?.statics?.user?.answer : 'Secret Answer'}
+            category={language?.statics?.user?.answer ?? defPack.statics.user.answer}
             getValue={(thing) => setSecAns(thing)}
             edit={true}
           /> : ''
       }
-      <Slot value={!stat ? (language?.statics?.user?.statusFalse ? language?.statics?.user?.statusFalse : 'Local') :
-        (language?.statics?.user?.statusTrue ? language?.statics?.user?.statusTrue : 'Online')}
-        category={language?.statics?.user?.status ? language?.statics?.user?.status : 'Status'} />
+      <Slot value={!stat ? (language?.statics?.user?.statusFalse ?? defPack.statics.user.statusFalse) :
+        (language?.statics?.user?.statusTrue ?? defPack.statics.user.statusTrue)}
+        category={language?.statics?.user?.status ?? defPack.statics.user.status} />
       <Slot value={share === 'true' || share === true ?
-        (language?.statics?.user?.sharedTrue ? language?.statics?.user?.sharedTrue : 'Shared') :
-        (language?.statics?.user?.sharedFalse ? language?.statics?.user?.sharedFalse : 'Not Shared')}
-        category={language?.statics?.user?.shared ? language?.statics?.user?.shared : 'Scores'} />
+        (language?.statics?.user?.sharedTrue ?? defPack.statics.user.sharedTrue) :
+        (language?.statics?.user?.sharedFalse ?? defPack.statics.user.sharedFalse)}
+        category={language?.statics?.user?.shared ?? defPack.statics.user.shared} />
       <Separator />
       <Flex gapY={3} flexDirection={"column"} textAlign={'center'}>
         {
           //< MENU throws out a toast!!!! as status is local
         }
         <CheckCard pi_icon={'pi-thumbtack'}
-          title={language?.profile?.edit ? language?.profile?.edit : 'Edit Profile'}
+          title={language?.profile?.edit ?? defPack.profile.edit}
           disabled={user._id != null ? false : true}
           ifChange={() => {
             set_profile_edit(!use_profile_edit);
@@ -321,17 +319,17 @@ function ProfilePage() {
         {
           !!user._id ? (
             share === 'false' || share === false ? (<FlexMenu pi_icon={'pi-book'}
-              title={language?.profile?.share ? language?.profile?.share : 'Share my grades to the top'}
-              inner_title={language?.statics?.confirmation?.question ? language?.statics?.confirmation?.question : 'Are you sure?'}
+              title={language?.profile?.share ?? defPack.profile.share}
+              inner_title={language?.statics?.confirmation?.question ?? language.statics.confirmation.question}
               options={[
-                { value: language?.statics?.confirmation?.false ? language?.statics?.confirmation?.false : 'NO' },
-                { value: language?.statics?.confirmation?.true ? language?.statics?.confirmation?.true : 'YES', click: () => { upTop(); upUser('shared', true); } }]} />) :
+                { value: language?.statics?.confirmation?.false ?? defPack.statics.confirmation.false },
+                { value: language?.statics?.confirmation?.true ?? defPack.statics.confirmation.true, click: () => { upTop(); upUser('shared', true); } }]} />) :
               (<FlexMenu pi_icon={'pi-book'}
-                title={language?.profile?.remove ? language?.profile?.remove : 'Withdraw my scores from the top'}
-                inner_title={language?.statics?.confirmation?.question ? language?.statics?.confirmation?.question : 'Are you sure?'}
+                title={language?.profile?.remove ?? defPack.profile.remove}
+                inner_title={language?.statics?.confirmation?.question ?? defPack.statics.confirmation.question}
                 options={[
-                  { value: language?.statics?.confirmation?.false ? language?.statics?.confirmation?.false : 'NO' },
-                  { value: language?.statics?.confirmation?.true ? language?.statics?.confirmation?.true : 'YES', click: () => { outTop(); upUser('shared', false); } }]} />)
+                  { value: language?.statics?.confirmation?.false ?? defPack.statics.confirmation.false },
+                  { value: language?.statics?.confirmation?.true ?? defPack.statics.confirmation.true, click: () => { outTop(); upUser('shared', false); } }]} />)
           ) :
             (<Button onClick={warningMes}
               disabled={user._id === 0 ? false : true}
@@ -352,23 +350,23 @@ function ProfilePage() {
                 focusRingColor: '#B1B7BA',
                 color: '#EEF6F9'
               }}>
-              <i className="pi pi-book" /><Text>{language?.profile?.share ? language?.profile?.share : 'Share my grades to the top'}</Text>
+              <i className="pi pi-book" /><Text>{language?.profile?.share ?? defPack.profile.share}</Text>
             </Button>)
         }
         {
           user._id === 0 ? (<FlexMenu pi_icon={'pi-cloud-upload'}
             onClick={() => setConvert(true)}
-            title={language?.profile?.convert ? language?.profile?.convert : 'Convert user to online'}
-            inner_title={language?.statics?.confirmation?.question ? language?.statics?.confirmation?.question : 'Are you sure?'}
+            title={language?.profile?.convert ?? defPack.profile.convert}
+            inner_title={language?.statics?.confirmation?.question ?? defPack.statics.confirmation.question}
             options={[
-              { value: language?.statics?.confirmation?.false ? language?.statics?.confirmation?.false : 'NO', click: () => { setConvert(false); console.log('Convert terminated'); } },
-              { value: language?.statics?.confirmation?.true ? language?.statics?.confirmation?.true : 'YES', click: () => { update(); setConvert(false); console.log('Convert applied'); } }]} />) : (
+              { value: language?.statics?.confirmation?.false ?? defPack.statics.confirmation.false, click: () => setConvert(false) },
+              { value: language?.statics?.confirmation?.true ?? defPack.statics.confirmation.true, click: () => { update(); setConvert(false); } }]} />) : (
             !!user._id ? (<FlexMenu pi_icon={'pi-cloud-download'}
-              title={language?.profile?.delete ? language?.profile?.delete : 'Delete user'}
-              inner_title={language?.statics?.confirmation?.question ? language?.statics?.confirmation?.question : 'Are you sure?'}
+              title={language?.profile?.delete ?? defPack.profile.delete}
+              inner_title={language?.statics?.confirmation?.question ?? defPack.statics.confirmation.question}
               options={[
-                { value: language?.statics?.confirmation?.false ? language?.statics?.confirmation?.false : 'NO' },
-                { value: language?.statics?.confirmation?.true ? language?.statics?.confirmation?.true : 'YES', click: () => del() }]} />) : null
+                { value: language?.statics?.confirmation?.false ?? defPack.statics.confirmation.false },
+                { value: language?.statics?.confirmation?.true ?? defPack.statics.confirmation.true, click: () => del() }]} />) : null
           )
         }
 
@@ -378,15 +376,15 @@ function ProfilePage() {
     <GradesMenu display={'flex'}
       title_type={useBreakpointValue({ base: 0, sm: 0, md: 0, lg: 0, xl: 1 })}
       pi_icon={'pi-trophy'}
-      title={language?.profile?.progressTitle ? language?.profile?.progressTitle : 'GRADES'}
+      title={language?.profile?.progressTitle ?? defPack.profile.progressTitle}
       title_info={{
         info_a: {
           pi_icon: 'pi-trophy',
-          title: language?.profile?.progressTitle ? language?.profile?.progressTitle : 'GRADES'
+          title: language?.profile?.progressTitle ?? defPack.profile.progressTitle
         },
         info_b: {
           pi_icon: 'pi-hashtag',
-          title: language?.profile?.elementarySchool ? language?.profile?.elementarySchool : 'Elementary-School'
+          title: language?.profile?.elementarySchool ?? defPack.profile.elementarySchool
         }
       }}
       topic_names={topic}
@@ -400,11 +398,11 @@ function ProfilePage() {
       title_info={{
         info_a: {
           pi_icon: 'pi-trophy',
-          title: language?.profile?.progressTitle ? language?.profile?.progressTitle : 'GRADES'
+          title: language?.profile?.progressTitle ?? defPack.profile.progressTitle
         },
         info_b: {
           pi_icon: 'pi-hashtag',
-          title: language?.profile?.highSchool ? language?.profile?.highSchool : 'High-School'
+          title: language?.profile?.highSchool ?? defPack.profile.highSchool
         }
       }}
       topic_names={topic}

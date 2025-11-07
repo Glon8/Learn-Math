@@ -30,7 +30,7 @@ function NavBut({ display, pi_icon, title, navShort, navSide, onClick }) {
                     <Flex flexDirection={'row'}
                         gap={3}
                         color='#EEF6F9'>
-                        <i className={`pi ${pi_icon ? pi_icon : ''}`} />
+                        <i className={`pi ${pi_icon ?? ''}`} />
                         {
                             navShort ? null :
                                 (<Text textAlign={'center'}>{title}</Text>)

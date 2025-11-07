@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 */
 
 function Slot({ placeholder, value, getValue, category, edit, color, dir, auto, disableDark, maxLength }) {
-    const [useValue, setValue] = useState(value ? value : '');
+    const [useValue, setValue] = useState(value ?? '');
 
     useEffect(() => {
         setValue(value);
@@ -20,17 +20,17 @@ function Slot({ placeholder, value, getValue, category, edit, color, dir, auto, 
     return (<Flex w={'100%'}
         h={'2rem'}
         minW={'17rem'}
-        flexDirection={dir ? dir : 'row'}
+        flexDirection={dir ?? 'row'}
         alignItems={'center'}
         justify={'space-between'}>
 
         <Input width={auto ? '7rem' : '15rem'}
             value={useValue}
-            placeholder={placeholder ? placeholder : ''}
+            placeholder={placeholder ?? ''}
             disabled={edit ? false : true}
             fontWeight={{ _dark: 'bold' }}
-            color={color ? color : ({ _light: '#1D282E', _dark: '#EEF6F9' })}
-            maxLength={maxLength ? maxLength : 16}
+            color={color ?? ({ _light: '#1D282E', _dark: '#EEF6F9' })}
+            maxLength={maxLength ?? 16}
             borderWidth={edit === true ? 1 : 0}
             textAlign={edit ? 'center' : ''}
             fontSize={'xl'}

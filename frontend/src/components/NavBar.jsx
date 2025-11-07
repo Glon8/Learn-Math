@@ -12,7 +12,7 @@ function NavBar() {
     const navigate = useNavigate();
 
     const { pos } = userContext();
-    const { language } = languageContext();
+    const { language, defPack } = languageContext();
 
     const navShort = useBreakpointValue({ base: true, sm: true, md: true, lg: false, xl: false });
 
@@ -24,22 +24,22 @@ function NavBar() {
 
     const navButList = [
         {
-            title: language?.navBar?.hints? language.navBar.hints : 'Hints',
+            title: language?.navBar?.hints ?? defPack.navBar.hints,
             pi_icon: 'pi-question',
             onClick: to_hints,
         },
         {
-            title: language?.navBar?.topScores? language.navBar.topScores : 'Top Scores',
+            title: language?.navBar?.topScores ?? defPack.navBar.topScores,
             pi_icon: 'pi-crown',
             onClick: to_top_scores,
         },
         {
-            title: language?.navBar?.profile? language.navBar.profile : 'Profile',
+            title: language?.navBar?.profile ?? defPack.navBar.profile,
             pi_icon: 'pi-id-card',
             onClick: to_profile,
         },
         {
-            title: language?.navBar?.schools? language.navBar.schools : 'Schools',
+            title: language?.navBar?.schools ?? defPack.navBar.schools,
             pi_icon: 'pi-list-check',
             onClick: to_schools,
         },
@@ -77,7 +77,7 @@ function NavBar() {
             alignItems={'center'}
             gap={3}>
 
-            <NavBut title={language?.navBar?.main? language.navBar.main : 'Learn Math' }
+            <NavBut title={language?.navBar?.main ?? defPack.navBar.main}
                 pi_icon={'pi-sparkles'}
                 navShort={navShort}
                 navSide={pos}
@@ -106,7 +106,7 @@ function NavBar() {
                 w={navShort ? 'auto' :
                     (pos === 'right' || pos === 'left' ? '9rem' : 'auto')}
                 maxW={'20rem'}>
-                <NavMenu  pi_icon={'pi-align-justify'}
+                <NavMenu pi_icon={'pi-align-justify'}
                     navShort={navShort}
                 />
             </Flex>

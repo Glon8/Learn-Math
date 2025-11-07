@@ -11,7 +11,7 @@ import TitleSlot from '../components/TitleSlot.jsx'
 function FinishForm({ newScore, oldScore }) {
     const navigate = useNavigate();
     const { lang } = userContext();
-    const { language } = languageContext();
+    const { language, defPack } = languageContext();
     const { colorMode, toggleColorMode } = useColorMode();
 
     const [useTitle, setTitle] = useState();
@@ -20,24 +20,24 @@ function FinishForm({ newScore, oldScore }) {
     const toSchools = () => { navigate('/schools'); }
 
     const titleVoca = [
-        (language?.ending?.subTitle?.one ? language?.ending?.subTitle?.one : 'Splendid!!'),
-        (language?.ending?.subTitle?.two ? language?.ending?.subTitle?.two : 'Well Done!!'),
-        (language?.ending?.subTitle?.three ? language?.ending?.subTitle?.three : 'Congratulations!!'),
-        (language?.ending?.subTitle?.four ? language?.ending?.subTitle?.four : 'You made it!!')
+        (language?.ending?.subTitle?.one ?? defPack.ending.subTitle.one),
+        (language?.ending?.subTitle?.two ?? defPack.ending.subTitle.two),
+        (language?.ending?.subTitle?.three ?? defPack.ending.subTitle.three),
+        (language?.ending?.subTitle?.four ?? defPack.ending.subTitle.four)
     ];
 
     const negVoca = [
-        (language?.ending?.negVoca?.one ? language?.ending?.negVoca?.one : 'Aaawww.... you could be done better!'),
-        (language?.ending?.negVoca?.two ? language?.ending?.negVoca?.two : 'It isnt great, dont give up! Try again!'),
-        (language?.ending?.negVoca?.three ? language?.ending?.negVoca?.three : 'Focus, you can do better than this!'),
-        (language?.ending?.negVoca?.four ? language?.ending?.negVoca?.four : 'Try to catch the tail! Try over again!')
+        (language?.ending?.negVoca?.one ?? defPack.ending.negVoca.one),
+        (language?.ending?.negVoca?.two ?? defPack.ending.negVoca.two),
+        (language?.ending?.negVoca?.three ?? defPack.ending.negVoca.three),
+        (language?.ending?.negVoca?.four ?? defPack.ending.negVoca.four)
     ];
 
     const posVoca = [
-        (language?.ending?.negVoca?.one ? language?.ending?.posVoca?.one : 'Cool! Nailed it! Try it a bit harder now!'),
-        (language?.ending?.posVoca?.two ? language?.ending?.posVoca?.two : 'You imporoved, or at least didnt loosed the total grade! Well done!'),
-        (language?.ending?.posVoca?.three ? language?.ending?.posVoca?.three : 'Ho! Ho! Look at the grade! Spike difficulty awaits you in settings!'),
-        (language?.ending?.posVoca?.four ? language?.ending?.posVoca?.four : 'Nice! On the next try exercises might be harder!'),
+        (language?.ending?.posVoca?.one ?? defPack.ending.posVoca.one),
+        (language?.ending?.posVoca?.two ?? defPack.ending.posVoca.two),
+        (language?.ending?.posVoca?.three ?? defPack.ending.posVoca.three),
+        (language?.ending?.posVoca?.four ?? defPack.ending.posVoca.four),
     ];
 
     const randomTitle = () => {
@@ -116,7 +116,7 @@ function FinishForm({ newScore, oldScore }) {
                 _dark={{ color: '#EEF6F9' }}>
 
                 <Flex justify={'space-between'}>
-                    <TitleSlot title={language?.ending?.title ? language?.ending?.title : 'Summary'}
+                    <TitleSlot title={language?.ending?.title ?? defPack.ending.title}
                         pi_icon={'pi-verified'} />
                     <Button focusRing={'inside'}
                         onClick={() => { toSchools(); newScore = false; }}
@@ -158,14 +158,14 @@ function FinishForm({ newScore, oldScore }) {
                         direction={lang == 'he' ? 'rtl' : 'ltr'}
                         rounded={'sm'}
                         paddingX={3}
-                        paddingY={1}>{(language?.ending?.prefix ? language?.ending?.prefix : 'Lets see... ') + useEnding}</Text>
+                        paddingY={1}>{(language?.ending?.prefix ?? defPack.ending.prefix) + useEnding}</Text>
 
                 </Flex>
                 <Flex justify={'space-between'}>
                     {
                         // the grades preview ll go here!
                     }
-                    <ScoresPresent title={language?.ending?.curScore ? language?.ending?.curScore : 'Current Score'}
+                    <ScoresPresent title={language?.ending?.curScore ?? defPack.ending.curScore}
                         score={newScore ?? 0}
                         color={newScore != false && newScore != null ?
                             (newScore < oldScore ?
@@ -174,7 +174,7 @@ function FinishForm({ newScore, oldScore }) {
                                     ('') :
                                     ('green'))) :
                             ('red')} />
-                    <ScoresPresent title={language?.ending?.totScore ? language?.ending?.totScore : 'Total Score'}
+                    <ScoresPresent title={language?.ending?.totScore ?? defPack.ending.totScore}
                         score={oldScore.toFixed(2) ?? 0} />
                 </Flex>
             </Flex>

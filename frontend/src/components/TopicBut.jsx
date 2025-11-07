@@ -19,9 +19,9 @@ function TopicBut({ dir, display, pi_icon, title, onClick, subTitle, align, just
 
     return (<Flex display={display ? 'none' : 'flex'}
         w={'full'}
-        flexDirection={dir ? dir : "row"}
-        alignItems={align ? align : 'center'}
-        justify={justify ? justify : 'space-between'}
+        flexDirection={dir ?? "row"}
+        alignItems={align ?? 'center'}
+        justify={justify ?? 'space-between'}
         gapX={3}
         gapY={dir ? 1 : ''}
     >
@@ -49,7 +49,7 @@ function TopicBut({ dir, display, pi_icon, title, onClick, subTitle, align, just
                 alignItems={'center'}
                 gap={3}
                 overflow={'hidden'}>
-                <Flex display={pi_icon ? 'flex' : 'none'}><i className={`pi ${pi_icon ? pi_icon : ''}`} /></Flex>
+                <Flex display={pi_icon ? 'flex' : 'none'}><i className={`pi ${pi_icon ?? ''}`} /></Flex>
                 {title}
             </Flex>
 

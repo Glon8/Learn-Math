@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 function SelectionCheckMenu({ options, default_options, disabled, navSide, title, pi_icon, close, getSwitches }) {
     const [useOpen, setOpen] = useState(close ? close : false);
 
-    const [use_switches, set_switches] = useState(default_options ? default_options : []);
+    const [use_switches, set_switches] = useState(default_options ?? []);
     let applied_switches = [];
 
     // func. to apply multiple inputs as switches
@@ -78,7 +78,7 @@ function SelectionCheckMenu({ options, default_options, disabled, navSide, title
 
                                 return (
                                     <Button key={value}
-                                        disabled={disabled ? disabled : false}
+                                        disabled={disabled ?? false}
                                         onClick={() => update_switches(index, option.onClick)}
                                         _light={{
                                             background: "#8b8da0/20",
