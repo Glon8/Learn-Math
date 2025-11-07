@@ -1,4 +1,3 @@
-import englishPackage from "../languages/englishPackage.js";
 import hebrewPackage  from '../languages/hebrewPackage.js';
 import russianPackage  from '../languages/russianPackage.js';
 
@@ -7,9 +6,6 @@ export const getLang = (req, res) => {
 
     try {
         switch (requestedLang) {
-            case 'en':
-                res.status(200).json({ success: true, message: 'English language loaded!', data: englishPackage });
-                break;
             case 'he':
                 res.status(200).json({ success: true, message: 'Hebrew language loaded!', data: hebrewPackage });
                 break;

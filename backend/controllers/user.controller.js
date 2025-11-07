@@ -1,8 +1,9 @@
 import User from "../models/user.model.js";
 import Score from "../models/score.model.js";
 import Participant from "../models/participant.model.js";
+import Compare from '../models/compare.model.js'
 import { verify, createToken } from "../util/token.util.js";
-import { verifyName, verifyEmail, verifyPassword, verifySecretQuestion, verifySecretAnswer } from '../util/verification.util.js'
+import { verifyName, verifyEmail, verifyPassword, verifySecretQuestion, verifySecretAnswer, verPassword } from '../util/verification.util.js'
 import { validateEmail } from "../util/validation.util.js";
 
 export const getSecret = async (req, res) => {
@@ -131,6 +132,8 @@ export const signUp = async (req, res) => {
 
                             await scoreModel.save();
 
+                            console.log(userId);
+
                             const updatedScore = await Score.findOne({ userId: updatedUser._id });
 
                             // token creation
@@ -180,7 +183,6 @@ export const signUp = async (req, res) => {
 export const upUser = async (req, res) => { // set request
     const token = req.body.token;
     const newUser = req.body.user;
-    const newScore = req.body.score;
 
     //token verification before user update
     const verImage = await verify(token);
@@ -213,22 +215,6 @@ export const upUser = async (req, res) => { // set request
                                 mode: newUser.mode,
                                 language: newUser.language,
                                 navPosition: newUser.navPosition
-                            });
-                            await Score.updateOne({ userId: verImage._id }, {
-                                sum_substract: newScore.sum_substract,
-                                multiply_divide: newScore.multiply_divide,
-                                mixed: newScore.mixed,
-                                power_root: newScore.power_root,
-                                fraction_fractionMixed: newScore.fraction_fractionMixed,
-                                forms_sizes: newScore.forms_sizes,
-                                exam_basic: newScore.exam_basic,
-                                equasions_basic: newScore.equasions_basic,
-                                equations_two_more: newScore.equations_two_more,
-                                verbal_problems: newScore.verbal_problems,
-                                geometry: newScore.geometry,
-                                quadratic_equation: newScore.quadratic_equation,
-                                circles: newScore.circles,
-                                exam_advanced: newScore.exam_advanced
                             });
 
                             //return form back with updated user
@@ -286,6 +272,65 @@ export const delUser = async (req, res) => {
     }
     else {
         console.log('Error in deleting user: expired token!');
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+}
+
+const gradeCount = async (savedAns, answers) => {
+    let averGrade = (100 / savedAns.length); // <======= works with only one dimentional array!!
+
+    // hash check with two dimentional array
+    //const grade = averGrade * (await Promise.all(savedAns.flatMap((row, i) => row.map((v, j) => verPassword(answers[i][j], `${v}`).then(ok => (ok ? 1 : 0)))))).reduce((a, b) => a + b, 0);
+
+    // hash check with one dimentional array
+    const grade = averGrade * (await Promise.all(savedAns.map((v, i) => verPassword(answers[i]?.[0]?.[1], `${v}`) ? 1 : 0))).reduce((a, b) => a + b, 0);
+
+    return grade;
+}
+
+export const ansComp = async (req, res) => {
+    /*
+        db save:
+        {
+            id: ...,
+            userId: ...,
+            ans: [...],
+            timestamps: ...,
+        }
+    */
+    const token = req.body.token;
+    const answers = req.body.answers;
+    const theme = req.body.theme;
+
+    // must to validate the token with users db
+    const user = await verify(token);
+
+    if (!!user._id) { // there is a valid token
+        const savedAns = await Compare.findOne({ userId: user._id });
+
+        if (!!savedAns.ans) { // is there are saved answers for the user
+            // compare received answers with saved ones in db
+            const grade = await gradeCount(savedAns.ans, answers);
+
+            // fetching old score sheet
+            const oldGrade = await Score.findOne({ userId: user._id });
+
+            // calculating the score
+            const finalAns = oldGrade[theme] != 0 && oldGrade[theme] != null ? ((grade + oldGrade[theme]) / 2) : grade;
+
+            // after compare update user score in db
+            await Score.updateOne({ userId: user._id }, { $set: { [theme]: finalAns } });
+
+            // delete saved answers from db
+            await Compare.deleteOne({ userId: user._id });
+        }
+        else { // there is no answers for this user awailable
+            console.log('Error answers compare: no answers was found for that user id!');
+            res.status(500).json({ success: false, message: 'Server error' });
+        }
+    }
+    else { // invalid token
+        console.log('Error answers compare: invalid token!');
         res.status(500).json({ success: false, message: 'Server error' });
     }
 }

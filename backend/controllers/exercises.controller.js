@@ -1,3 +1,7 @@
+import { verify } from "../util/token.util.js";
+import Compare from '../models/compare.model.js';
+import bcrypt from 'bcrypt'
+
 const sumAndSub = async (dif, sett) => {
     const box = {};
 
@@ -1055,20 +1059,78 @@ const exercisePack = async (difficulty, topic, settings) => {
 }
 
 export const exerciseGen = async (req, res) => {
-    let difficulty = req.body.grade;
     const topic = req.body.topic;
     const settings = req.body.settings;
+    const token = req.body.token;
+    let difficulty = req.body.grade;
 
     if (!!topic) {
         if (!difficulty) difficulty = 0;
 
-        const pack = await exercisePack(difficulty, topic, settings);
+        let pack = await exercisePack(difficulty, topic, settings);
+
+        console.log('Exercise creation pre hash:');
+        console.log(pack);
+
+        // hashing answers within a pack
+        pack = await Promise.all(
+            pack.map(async thing => ({
+                ...thing,
+                ans: [await bcrypt.hash(`${thing.ans[0]}`, await bcrypt.genSalt(10))]
+            }))
+        );
+
+        console.log('is online user is ' + !!token);
+
+        if (!!token) { // online user
+            // token validation
+            const user = await verify(token);
+
+            console.log('is valid token is ' + !!user);
+            console.log(user._id);
+
+            if (!!user._id) { // valid token
+                /*
+                db save:
+            {
+                id: ...,
+                userId: ...,
+                ans: [...],
+                timestamps: ...,
+            }
+                */
+
+                // pulling only answers from the pack
+                const ansPack = pack.map(thing => `${thing.ans}`);
+
+                // check of existing answers sheet for the user
+                let compModel = await Compare.findOne({ userId: user._id });
+
+                if (!!compModel) { // there is an a existing sheet
+                    // server updating a copy of the answers in db with users id
+                    compModel.updateOne({ userId: user._id }, { $set: { ans: ansPack } });
+                }
+                else { // there no existing sheet
+                    compModel = new Compare({
+                        userId: user._id,
+                        ans: ansPack,
+                    });
+
+                    // server saving a copy of the answers in db with users id
+                    await compModel.save();
+                }
+            }
+            else { // invalid token
+                console.log('Error answers compare: invalid token!');
+                res.status(500).json({ success: false, message: 'Server error' });
+            }
+        }
 
         try {
             res.status(200).json({ success: true, message: 'Exercises successfully created!', data: pack });
 
             console.log('Exercise creation success!');
-            console.log(pack);
+            //console.log(pack);
         }
         catch (error) {
             console.log('Error in creating exercises: ' + error.message);
