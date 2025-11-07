@@ -12,17 +12,17 @@ function PassSlot({ placeholder, value, visible, getValue, edit, category, dir, 
     }, [value]);
 
     return (<Flex width={'full'}
-        flexDirection={dir ? dir : 'row'}
+        flexDirection={dir ?? 'row'}
         justify={'space-between'}>
 
         <Flex position={'relative'}
             w={auto ? 'auto' : '15rem'}>
 
             <Input type={useVisible ? 'text' : "password"}
-                placeholder={placeholder ? placeholder : ''}
+                placeholder={placeholder ?? ''}
                 disabled={edit ? false : true}
                 value={useValue}
-                maxLength={maxLength ? maxLength : 16}
+                maxLength={maxLength ?? 16}
                 borderWidth={edit === true ? 1 : 0}
                 textAlign={edit ? 'center' : ''}
                 fontSize={'xl'}

@@ -36,23 +36,6 @@ export const emptyLogs = {
     model: null
 }
 
-export const topicNames = {
-    sum_substract: 'sum & substract',
-    multiply_divide: 'multiply & divide',
-    mixed: 'mixed',
-    power_root: 'power & root',
-    fraction_fractionMixed: 'fractions',
-    forms_sizes: 'forms & sizes',
-    exam_basic: 'exam: basic',
-    equasions_basic: 'equasions: basic',
-    equations_two_more: 'equasions: two & more',
-    verbal_problems: 'verbal problems',
-    geometry: 'geometry',
-    quadratic_equation: 'quadratic equation',
-    circles: 'circles',
-    exam_advanced: 'exam: advanced'
-};
-
 export const verString = (string) => {
     if (string != null) {
         if (string.trim() == "") return false;

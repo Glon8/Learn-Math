@@ -7,7 +7,7 @@ import { languageContext } from "../context/LanguagesContext.jsx";
 import CustomFormInput from "./CustomFormInput.jsx";
 
 function CustomForm() {
-    const { language } = languageContext();
+    const { language, defPack } = languageContext();
     const [useClear, setClear] = useState(false);
 
     const colors = [
@@ -31,7 +31,7 @@ function CustomForm() {
             background={{ _dark: '#1D282E/65' }}
             boxShadow={{ _dark: '0 0 5px 2px #EEF6F9' }}
             rounded={{ _dark: 'sm' }}
-            paddingX={3}>{language?.statics?.customForm?.title ? language?.statics?.customForm?.title : 'Custom form: Try yourself!'}</Text>
+            paddingX={3}>{language?.statics?.customForm?.title ?? defPack.statics.customForm.title}</Text>
         <Flex flexDir={'row-reverse'}
             justifyContent={'center'}
             gap={0.5}>
@@ -41,28 +41,28 @@ function CustomForm() {
                 borderColor={'#217074'}
                 borderWidth={2}
                 fontWeight={'bold'}
-                padding={2}>{language?.statics?.customForm?.ones ? language?.statics?.customForm?.ones : 'ones'}</Text>
+                padding={2}>{language?.statics?.customForm?.ones ?? defPack.statics.customForm.ones}</Text>
             <Text color={'#778D45'}
                 backgroundColor={{ _dark: '#1D282E/80' }}
                 border
                 borderColor={'#778D45'}
                 borderWidth={2}
                 fontWeight={'bold'}
-                padding={2}>{language?.statics?.customForm?.tens ? language?.statics?.customForm?.tens : 'tens'}</Text>
+                padding={2}>{language?.statics?.customForm?.tens ?? defPack.statics.customForm.tens}</Text>
             <Text color={'#BD613C'}
                 backgroundColor={{ _dark: '#1D282E/80' }}
                 border
                 borderColor={'#BD613C'}
                 borderWidth={2}
                 fontWeight={'bold'}
-                padding={2}>{language?.statics?.customForm?.hund ? language?.statics?.customForm?.hund : 'hundreeds'}</Text>
+                padding={2}>{language?.statics?.customForm?.hund ?? defPack.statics.customForm.hund}</Text>
             <Text color={'#BBC6C8'}
                 backgroundColor={{ _dark: '#1D282E/80' }}
                 border
                 borderColor={'#BBC6C8'}
                 borderWidth={2}
                 fontWeight={'bold'}
-                padding={2}>{language?.statics?.customForm?.sign ? language?.statics?.customForm?.sign : 'sign'}</Text>
+                padding={2}>{language?.statics?.customForm?.sign ?? defPack.statics.customForm.sign}</Text>
         </Flex>
 
         <Flex gapX={'3'}>
@@ -118,7 +118,7 @@ function CustomForm() {
                     background={{ _dark: '#1D282E/65' }}
                     boxShadow={{ _dark: '0 0 5px 2px #EEF6F9' }}
                     rounded={{ _dark: 'sm' }}
-                    paddingX={3}>{language?.statics?.customForm?.rem ? language?.statics?.customForm?.rem : 'reminder'}</Text>
+                    paddingX={3}>{language?.statics?.customForm?.rem ?? defPack.statics.customForm.rem}</Text>
                 <Separator marginY={{ base: 3, sm: 4 }} />
                 <Text w={'full'}
                     minH={1}
@@ -129,7 +129,7 @@ function CustomForm() {
                     boxShadow={{ _dark: '0 0 5px 2px #EEF6F9' }}
                     rounded={{ _dark: 'sm' }}
                     paddingX={3}
-                    marginBottom={3}>{language?.statics?.customForm?.fstNum ? language?.statics?.customForm?.fstNum : 'first number'}</Text>
+                    marginBottom={3}>{language?.statics?.customForm?.fstNum ?? defPack.statics.customForm.fstNum}</Text>
                 <Text w={'full'}
                     minH={1}
                     color={{ _light: '#1D282E/90', _dark: '#EEF6F9' }}
@@ -138,7 +138,7 @@ function CustomForm() {
                     background={{ _dark: '#1D282E/65' }}
                     boxShadow={{ _dark: '0 0 5px 2px #EEF6F9' }}
                     rounded={{ _dark: 'sm' }}
-                    paddingX={3}>{language?.statics?.customForm?.secNum ? language?.statics?.customForm?.secNum : 'second number'}</Text>
+                    paddingX={3}>{language?.statics?.customForm?.secNum ?? defPack.statics.customForm.secNum}</Text>
                 <Separator marginY={{ base: 3, sm: 4 }} />
                 <Text w={'full'}
                     minH={1}
@@ -148,7 +148,7 @@ function CustomForm() {
                     background={{ _dark: '#1D282E/65' }}
                     boxShadow={{ _dark: '0 0 5px 2px #EEF6F9' }}
                     rounded={{ _dark: 'sm' }}
-                    paddingX={3}>{language?.statics?.customForm?.res ? language?.statics?.customForm?.res : 'result / answer'}</Text>
+                    paddingX={3}>{language?.statics?.customForm?.res ?? defPack.statics.customForm.res}</Text>
 
             </Flex>
 
@@ -166,7 +166,7 @@ function CustomForm() {
                 borderColor: "#1D282E",
                 focusRingColor: '#B1B7BA',
                 color: '#EEF6F9'
-            }}>{language?.statics?.customForm?.but ? language?.statics?.customForm?.but : 'Clear'}</Button>
+            }}>{language?.statics?.customForm?.but ?? defPack.statics.customForm.but}</Button>
     </Flex >);
 }
 

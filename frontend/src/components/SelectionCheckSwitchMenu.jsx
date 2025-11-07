@@ -1,13 +1,11 @@
-import {
-    Flex, Button, Menu, Text, Portal
-} from "@chakra-ui/react"
+import { Flex, Button, Menu, Text, Portal } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useState, useEffect } from "react";
 
 function SelectionCheckSwitchMenu({ title, pi_icon, options, default_option, navSide, close }) {
-    const [useOpen, setOpen] = useState(close ? close : false);
+    const [useOpen, setOpen] = useState(close ?? false);
 
-    const [use_value, set_value] = useState(default_option ? default_option : '');
+    const [use_value, set_value] = useState(default_option ?? '');
 
     useEffect(() => {
         setOpen(close);

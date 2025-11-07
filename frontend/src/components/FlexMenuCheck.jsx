@@ -14,7 +14,7 @@ function FlexMenuCheck({ close, disabled, pi_icon, title, list, list_checked, au
         closeOnSelect={close ? false : true}
         onInteractOutside={autoClose ? null : () => setOpen(false)}>
 
-        <Menu.Trigger asChild disabled={disabled ? disabled : false}>
+        <Menu.Trigger asChild disabled={disabled ?? false}>
 
             <Button onClick={() => setOpen(!useOpen)}
                 flexDirection={'row'}

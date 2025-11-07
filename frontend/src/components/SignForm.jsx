@@ -14,7 +14,7 @@ import PassSlot from './PassSlot.jsx'
 
 function SignForm({ isIn, isUp, close }) {
   const { upUser, signUp, pos, signIn, lang, secret } = userContext();
-  const { language } = languageContext();
+  const { language, defPack } = languageContext();
 
   const [useOffline, setOffline] = useState(false);
   const [useIn, setIn] = useState(isIn ? isIn : false);
@@ -158,26 +158,15 @@ function SignForm({ isIn, isUp, close }) {
         await upUser('password', password);
 
         await signIn(email, password);
-
-        console.log('sign in');
       }
-      else if (!!useReset && useReset == 2) {
+      else if (!!useReset && useReset == 2)
         await signIn(email, password, false, false, secAns);
-
-        console.log('Sign in + password reset');
-      }
     }
     else if (useUp) {
-      if (!useOffline) { // sign up: online
+      if (!useOffline) // sign up: online
         signUp(useOffline, false, name, email, password, secQues, secAns);
-
-        console.log('sign up: online');
-      }
-      else if (useOffline) {  // sign up: offline and online
+      else if (useOffline)  // sign up: offline and online
         await signUp(useOffline, false, name);
-
-        console.log('sign up: offline');
-      }
     }
 
     closeUP();
@@ -247,9 +236,9 @@ function SignForm({ isIn, isUp, close }) {
 
           <TitleSlot pi_icon={useIn ? 'pi-sign-in' : 'pi-user-edit'}
             title={
-              useIn ? (!!useReset ? (language?.sign?.resetTitle ? language?.sign?.resetTitle : 'PASSWORD RESET')
-                : (language?.sign?.inTitle ? language?.sign?.inTitle : 'SIGN IN'))
-                : (language?.sign?.upTitle ? language?.sign?.upTitle : 'SIGN UP')
+              useIn ? (!!useReset ? (language?.sign?.resetTitle ?? defPack.sign.resetTitle)
+                : (language?.sign?.inTitle ?? defPack.sign.inTitle))
+                : (language?.sign?.upTitle ?? defPack.sign.upTitle)
             } />
           <Button focusRing={'inside'}
             onClick={closeUP}
@@ -271,10 +260,7 @@ function SignForm({ isIn, isUp, close }) {
         <Separator marginTop={2} />
         {
           useIn ? null : (<Slot placeholder={'-----'}
-            category={
-              language?.statics?.user?.name ? language?.statics?.user?.name :
-                ('Name')
-            }
+            category={language?.statics?.user?.name ?? defPack.statics.user.name}
             edit={true}
             getValue={(value) => setName(value)}
             value={name}
@@ -290,20 +276,11 @@ function SignForm({ isIn, isUp, close }) {
               rounded={'sm'}
               background={{ _dark: '#464547' }}
               color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
-            >
-              {
-                language?.sign?.offlineExp ? language?.sign?.offlineExp : ('NOTE: To create an offline user email or password are not rquired.' +
-                  'It will be stored in your cookies for a week, if you clear cookies or switch' +
-                  'user, your progress will be gone. To save the progress, you can sign up as an online user.')
-              }
-            </Text>) : null}
+            > {language?.sign?.offlineExp ?? defPack.sign.offlineExp} </Text>) : null}
         {
           !useOffline && (useUp || (useIn && !useReset) || (!!useReset && useIn && useReset === 1)) ?
             (<Slot placeholder={'-----'}
-              category={
-                language?.statics?.user?.email ? language?.statics?.user?.email :
-                  ('Email')
-              }
+              category={language?.statics?.user?.email ?? defPack.statics.user.email}
               edit={true}
               getValue={(value) => setEmail(value)}
               maxLength={32}
@@ -313,10 +290,7 @@ function SignForm({ isIn, isUp, close }) {
         {
           !useOffline && (useUp || useIn && !useReset) ?
             (<PassSlot placeholder={'-----'}
-              category={
-                language?.statics?.user?.password ? language?.statics?.user?.password :
-                  ('Password')
-              }
+              category={language?.statics?.user?.password ?? defPack.statics.user.password}
               edit={true}
               getValue={(value) => setPassword(value)}
               maxLength={24}
@@ -326,10 +300,7 @@ function SignForm({ isIn, isUp, close }) {
         {
           !useOffline && useUp ? (
             <PassSlot placeholder={'-----'}
-              category={
-                language?.statics?.user?.confPassword ? language?.statics?.user?.confPassword :
-                  ('Confirm Password')
-              }
+              category={language?.statics?.user?.confPassword ?? defPack.statics.user.confPassword}
               edit={true}
               getValue={(value) => setConfPass(value)}
               maxLength={24}
@@ -341,17 +312,13 @@ function SignForm({ isIn, isUp, close }) {
             gapY={3}
           >
             <Slot placeholder={'-----'}
-              category={
-                language?.statics?.user?.secret ? language?.statics?.user?.secret :
-                  ('Secret Question')
-              }
+              category={language?.statics?.user?.secret ?? defPack.statics.user.secret}
               edit={!!useReset ? false : true}
               value={
                 !!secQues ? secQues :
                   (!!useReset ? (
-                    language?.sign?.secretPlaceholder ?
-                      language?.sign?.secretPlaceholder :
-                      ('Some secret question')) :
+                    language?.sign?.secretPlaceholder ??
+                    defPack.sign.secretPlaceholder) :
                     secQues)
               }
               getValue={(value) => setSecQues(value)}
@@ -359,9 +326,7 @@ function SignForm({ isIn, isUp, close }) {
             />
             <Slot placeholder={'-----'}
               category={
-                language?.statics?.user?.answer ? language?.statics?.user?.answer :
-                  ('Secret Answer')
-              }
+                language?.statics?.user?.answer ?? defPack.statics.user.answer}
               value={secAns}
               edit={true}
               getValue={(value) => setSecAns(value)}
@@ -370,10 +335,7 @@ function SignForm({ isIn, isUp, close }) {
             {
               !!useReset && useReset == 2 && useIn ?
                 (<PassSlot placeholder={'-----'}
-                  category={
-                    language?.statics?.user?.password ? language?.statics?.user?.password :
-                      ('Password')
-                  }
+                  category={language?.statics?.user?.password ?? defPack.statics.user.password}
                   edit={true}
                   getValue={(value) => setPassword(value)}
                   maxLength={24}
@@ -417,8 +379,6 @@ function SignForm({ isIn, isUp, close }) {
 
                   case 2:
                     signHandle();
-
-                    console.log('Signed in without a password using secrert answer');
                     break;
 
                   default:
@@ -440,19 +400,13 @@ function SignForm({ isIn, isUp, close }) {
             color: '#EEF6F9'
           }}
         >
-          {
-            language?.sign?.send ? language?.sign?.send :
-              ('Send')
-          }
+          {language?.sign?.send ?? defPack.sign.send}
         </Button>
         <Separator />
         {
           useUp ? (<CheckCard ifChange={() => { setOffline(!useOffline) }}
             pi_icon={'pi-thumbtack'}
-            title={
-              language?.sign?.offline ? language?.sign?.offline :
-                ('Is OFFLINE user?')
-            }
+            title={language?.sign?.offline ?? defPack.sign.offline}
           />) : null
         }
         {
@@ -463,23 +417,16 @@ function SignForm({ isIn, isUp, close }) {
               flexDir={lang == 'he' ? 'row-reverse' : 'row'}
               justifyContent={lang == 'he' ? 'start' : ''}
             >
-              {
-                language?.sign?.signUpLabel ? language?.sign?.signUpLabel :
-                  ('Have no accout?')
-              }
+              {language?.sign?.signUpLabel ?? defPack.sign.signUpLabel}
               <Link onClick={() => {
                 setIn(false);
                 setUp(true);
                 setReset(false);
                 setOffline(false);
-                console.log('I need an account')
               }}
                 marginX={1}
               >
-                {
-                  language?.sign?.signUp ? language?.sign?.signUp :
-                    ('SIGN UP!')
-                }
+                {language?.sign?.signUp ?? defPack.sign.signUp}
               </Link>
             </Flex>
             <Flex fontSize={'sm'}
@@ -487,23 +434,16 @@ function SignForm({ isIn, isUp, close }) {
               flexDir={lang == 'he' ? 'row-reverse' : 'row'}
               justifyContent={lang == 'he' ? 'start' : ''}
             >
-              {
-                language?.sign?.forgotPassLabel ? language?.sign?.forgotPassLabel :
-                  ('Forgot password?')
-              }
+              {language?.sign?.forgotPassLabel ?? defPack.sign.forgotPassLabel}
               <Link onClick={() => {
                 setIn(true);
                 setUp(false);
                 setReset(1);
                 setOffline(false);
-                console.log('I need reset password')
               }}
                 marginX={1}
               >
-                {
-                  language?.sign?.forgotPass ? language?.sign?.forgotPass :
-                    ('RESET!')
-                }
+                {language?.sign?.forgotPass ?? defPack.sign.forgotPass}
               </Link>
             </Flex>
 
@@ -512,23 +452,16 @@ function SignForm({ isIn, isUp, close }) {
             flexDir={lang == 'he' ? 'row-reverse' : 'row'}
             justifyContent={lang == 'he' ? 'start' : ''}
           >
-            {
-              language?.sign?.signInLabel ? language?.sign?.signInLabel :
-                ('Get back  to sign-in!')
-            }
+            {language?.sign?.signInLabel ?? defPack.sign.signInLabel}
             <Link onClick={() => {
               setIn(true);
               setUp(false);
               setReset(false);
               setOffline(false);
-              console.log('I need get back to login')
             }}
               marginX={1}
             >
-              {
-                language?.sign?.signIn ? language?.sign?.signIn :
-                  ('SIGN IN')
-              }
+              {language?.sign?.signIn ?? defPack.sign.signIn}
             </Link>
           </Flex>)
         }

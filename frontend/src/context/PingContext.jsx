@@ -14,7 +14,6 @@ export const PingProvider = ({ children }) => {
     const ping = async () => {
         if (!useDelay) {
             setDelay(true); // sealing the enterance
-            console.log('pinged!')
 
             // setting timer for 15 minutes
             setTimeout(() => {
@@ -31,13 +30,9 @@ export const PingProvider = ({ children }) => {
                     try {
                         const res = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/util/ping`);
 
-                        console.log('Success to ping: ' + res.status);
-
                         response.current = true;
                     }
                     catch (error) {
-                        console.log('Failed to ping: ' + error.message);
-
                         response.current = false;
                     }
 

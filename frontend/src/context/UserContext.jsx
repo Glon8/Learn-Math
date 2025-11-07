@@ -1,10 +1,10 @@
-import { createContext, useContext, useState, useEffect, useRef } from 'react'
-import { emptyUser, emptyScore, emptyLogs } from '../util/Statics.js'
-import { useNavigate } from 'react-router-dom'
-import CryptoJS from 'crypto-js'
-import bcrypt from 'bcryptjs'
-import { callToast, callLoadingToast } from '../components/Toast.jsx'
-import axios from 'axios'
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
+import { emptyUser, emptyScore, emptyLogs } from '../util/Statics.js';
+import { useNavigate } from 'react-router-dom';
+import CryptoJS from 'crypto-js';
+import bcrypt from 'bcryptjs';
+import { callToast, callLoadingToast } from '../components/Toast.jsx';
+import axios from 'axios';
 import { pingContext } from './PingContext';
 
 const UserContext = createContext();
@@ -41,6 +41,7 @@ export const UserProvider = ({ children }) => {
   const [useScore, setScore] = useState(false);
   const [useLogs, setLogs] = useState(false);
   const pop = useRef(false);
+  const lock = useRef(true);
 
   const getSecret = async (email) => {
     if (!!email) {
@@ -51,14 +52,10 @@ export const UserProvider = ({ children }) => {
 
         const data = res.data.data;
 
-        if (data.secret) console.log('Password reset: Secret fetched successfully');
-
         return data;
       }
       catch (error) {
-        console.log('Error accured during fetching secret: ' + error.message);
-
-        callToast('Error:', error.message, '', 'error', useUser.navPosition);
+        callToast('Info:', '\u{1F628} Error accured during fetching secret', '', 'info', useUser.navPosition);
       }
     }
   }
@@ -68,7 +65,7 @@ export const UserProvider = ({ children }) => {
       pop.current = true;
 
       callLoadingToast({
-        title: '', desc: 'Server is booting up, please give it a few seconds'
+        title: '', desc: '\u{1F916} Server is booting up, please give it a few seconds...'
       }, 30, useUser.navPosition);
 
       setTimeout(() => { pop.current = false }, 30 * 1000);
@@ -76,20 +73,29 @@ export const UserProvider = ({ children }) => {
   }
 
   const pingSchedule = async () => {
-    await wait(0.35);
-
-    if (!response.current) {
-      await ping();
+    if (lock.current) {
+      lock.current = false;
 
       await wait(0.35);
 
       if (!response.current) {
-        serverBootPop();
+        callToast('Info:', 'Server not responded, please wait! \u{1F605} Pinging again...', '', 'info', useUser.navPosition);
 
-        await wait(30);
+        await ping();
+
+        await wait(0.35);
+
+        if (!response.current) {
+          serverBootPop();
+
+          await wait(30);
+        }
+
+        callToast('Error:', 'Connection failed! \u{1F613} Try again later!', '', 'info', useUser.navPosition);
       }
+
+      lock.current = true;
     }
-    console.log(response.current)
   }
 
   const chatSend = async (userMessage) => {
@@ -120,9 +126,7 @@ export const UserProvider = ({ children }) => {
         callToast('Success', 'Teacher responded on your question!', '', 'success', useUser.navPosition);
       }
       catch (error) {
-        console.log('Error accured during sending user request to ai: ' + error.message);
-
-        callToast('Error:', error.message, '', 'error', useUser.navPosition);
+        callToast('Info:', '\u{1F605} Error accured during sending user request to ai', '', 'info', useUser.navPosition);
       }
     }
     else callToast('Error:', 'User must be at least two characters long!', '', 'error', useUser.navPosition);
@@ -137,13 +141,11 @@ export const UserProvider = ({ children }) => {
 
         if (res.data?.success) callToast('Success:', 'User removed from top list!', '', 'success', useUser.navPosition);
         else {
-          console.log('Error in sign out from top: ' + res?.data?.message);
-          callToast('Error:', res?.data?.message, '', 'error', useUser.navPosition);
+          callToast('Info:', '\u{1F62C} Error in sign out from top', '', 'info', useUser.navPosition);
         }
       }
       catch (error) {
-        console.log('Error in sign out from top: ' + error.message);
-        callToast('Error:', 'Server failed to remove the user from the top list! Try again later!', '', 'error', useUser.navPosition);
+        callToast('Info:', '\u{1F62C} Error in sign out from top', '', 'info', useUser.navPosition);
       }
     }
   }
@@ -155,15 +157,11 @@ export const UserProvider = ({ children }) => {
       try {
         const res = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/top/sign-up`, { token: useToken });
 
-        if (res.data?.success) callToast('Success:', 'User sign up in to top list!', '', 'success', useUser.navPosition);
-        else {
-          console.log('Error in sign up to the top: ' + res?.data?.message);
-          callToast('Error:', res?.data?.message, '', 'error', useUser.navPosition);
-        }
+        if (res.data?.success) callToast('Success:', 'User sign up to top list!', '', 'success', useUser.navPosition);
+        else callToast('Info:', '\u{1F626} Error in sign up to the top', '', 'info', useUser.navPosition);
       }
       catch (error) {
-        console.log('Error in sign out from top: ' + error.message);
-        callToast('Error:', 'Server failed to sign user to the top list! Try again later!', '', 'error', useUser.navPosition);
+        callToast('Info:', '\u{1F626} Error in sign up to the top', '', 'info', useUser.navPosition);
       }
     }
   }
@@ -181,13 +179,11 @@ export const UserProvider = ({ children }) => {
           callToast('Success:', 'User has been deleted!', '', 'success', useUser.navPosition);
         }
         else {
-          console.log('Error in deleting online user: ' + res?.data?.message);
-          callToast('Error:', 'Server failed to delete the user! Try again later!', '', 'error', useUser.navPosition);
+          callToast('Info:', '\u{1F61F} Error in deleting online user', '', 'info', useUser.navPosition);
         }
       }
       catch (error) {
-        console.log('Error in deleting online user: ' + error.message);
-        callToast('Error:', 'Server failed to delete the user! Try again later!', '', 'error', useUser.navPosition);
+        callToast('Info:', '\u{1F61F} Error in deleting online user', '', 'info', useUser.navPosition);
       }
     }
     else callToast('Error:', 'No active user to delete!', '', 'error', useUser.navPosition);
@@ -239,18 +235,15 @@ export const UserProvider = ({ children }) => {
 
           setCookie(1, "learn_math_user", { token: data.token, package: null, key: null, logs: useLogs });
         }
-        else callToast('Error:', res?.data?.message, '', 'error', useUser.navPosition);
+        else callToast('Info:', '\u{1F633} Error during sign up', '', 'info', useUser.navPosition);
       }
       catch (error) {
-        console.log('Error during sign up: ' + error.message);
-        callToast('Error:', error?.message, '', 'error', useUser.navPosition);
+        callToast('Info:', '\u{1F633} Error during sign up', '', 'info', useUser.navPosition);
       }
     }
     else {  // sign up: offline
       await upUser('_id', 0);
       await upUser('name', name);
-
-      console.log('sign up: offline');
     }
   }
 
@@ -303,11 +296,10 @@ export const UserProvider = ({ children }) => {
         if (!token) setCookie(1, "learn_math_user", { token: data.token, package: null, key: null, logs: emptyLogs });
         else setCookie(1, "learn_math_user", { token: token, package: null, key: null, logs: logs });
       }
-      else callToast('Error:', res?.error?.message, '', 'error', useUser.navPosition);
+      else callToast('Info:', '\u{1F615} Error during sign-in', '', 'info', useUser.navPosition);
     }
     catch (error) {
-      console.log('Error during sign-in: ' + error.message);
-      callToast('Error:', error?.message, '', 'error', useUser.navPosition);
+      callToast('Info:', '\u{1F615} Error during sign-in', '', 'info', useUser.navPosition);
     }
   }
 
@@ -349,24 +341,19 @@ export const UserProvider = ({ children }) => {
         const res = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/user/update`, {
           token: useToken,
           user: useUser,
-          score: useScore
         });
 
         setCookie(1, "learn_math_user", { token: useToken, package: false, key: false, logs: useLogs });
-        console.log('update: ' + res?.data?.success + ' message: ' + res?.data?.message);
       }
       catch (error) {
-        console.log('Error during update: ' + error?.message);
-        callToast('Error:', 'Server failed to save the changes, try again later!', '', 'error', useUser.navPosition);
+        callToast('Info:', '\u{1F625} Error during user update', '', 'info', useUser.navPosition);
       }
     }
   }
 
   const fetchUser = () => {
-    const extractedUser = getCookie("learn_math_user"); // cookies pull
-
-    console.log('fetch data print:')
-    console.log(extractedUser);
+    // cookies pull
+    const extractedUser = getCookie("learn_math_user");
 
     if (!!extractedUser && (!!extractedUser.token || !!extractedUser.key)) {
       if (!extractedUser.token && !!extractedUser.key) { // cookies check
@@ -412,17 +399,28 @@ export const UserProvider = ({ children }) => {
 
       setUser(prev => ({ ...prev, [thing]: newValue }));
     }
-
-    console.log("up user: " + thing + ": " + useUser[thing])
   }
 
   const upScore = (thing, newScore) => {
-    if (useScore[thing] === null) setScore(prev => ({ ...prev, [thing]: newScore }));
+    if (!useScore?.[thing]) setScore(prev => ({ ...prev, [thing]: newScore }));
     else {
       // if score isnt empty, then func ll calculate the average and save it.
       const calc = (newScore + useScore[thing]) / 2;
 
       setScore(prev => ({ ...prev, [thing]: calc }));
+    }
+  }
+
+  const repAns = async (ans, token, theme) => {
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/user/ans-rep`, {
+        token: token,
+        answers: ans,
+        theme: theme,
+      });
+    }
+    catch (error) {
+      callToast('Info:', '\u{1F613} Error during answer report', '', 'info', useUser.navPosition);
     }
   }
 
@@ -462,12 +460,7 @@ export const UserProvider = ({ children }) => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if ((!!useToken || (useUser._id === 0 && !useUser.status)) && loaded) {
-        console.log('data update: Updated');
-        updateUser();
-      }
-
-      console.log("data update: It changed");
+      if ((!!useToken || (useUser._id === 0 && !useUser.status)) && loaded) updateUser();
 
       if (!loaded) setLoaded(true);
     }, 500);
@@ -478,6 +471,8 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const fetchData = async () => {
       await ping();
+
+      await pingSchedule();
 
       const extractedUser = await fetchUser();
 
@@ -507,7 +502,8 @@ export const UserProvider = ({ children }) => {
       outTop: signOutfromTop,
       logs: useLogs, send: chatSend,
       pop: serverBootPop, pingSchedule,
-      secret: getSecret
+      secret: getSecret, token: useToken,
+      repAns,
     }}>
     {children}
   </UserContext.Provider>)

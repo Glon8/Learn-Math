@@ -41,9 +41,9 @@ function GradesMenuComparable({ display,
     compare_to_grades,
     compare_to }) {
 
-    const { language } = languageContext();
+    const { language, defPack } = languageContext();
 
-    return (<Flex display={display ? display : 'none'}
+    return (<Flex display={display ?? 'none'}
         height={'fit'}
         width={'25rem'}
         gapY={5}
@@ -65,10 +65,10 @@ function GradesMenuComparable({ display,
             borderColor: '#1D282E',
         }} >
         {
-            title_type === 0 ? (<TitleSlot pi_icon={pi_icon ? pi_icon : ''} title={title ? title : 'Deffault Title'} />) :
+            title_type === 0 ? (<TitleSlot pi_icon={pi_icon ?? ''} title={title ?? 'Deffault Title'} />) :
                 (title_type === 1 && title_info ? (comparable === 2 ?
-                    (<TitleSlot pi_icon={pi_icon ? pi_icon : ''} title={title ? title : 'Deffault Title'} />) :
-                    (<TwoTitlesSlot title_info={title_info ? title_info : ''} />)
+                    (<TitleSlot pi_icon={pi_icon ?? ''} title={title ?? 'Deffault Title'} />) :
+                    (<TwoTitlesSlot title_info={title_info ?? ''} />)
                 ) : null)
         }
         {
@@ -99,7 +99,7 @@ function GradesMenuComparable({ display,
                                 return (
                                     <Separator key={i + topic[1]}
                                         paddingTop={3}>
-                                        <Slot value={score ? score : 0}
+                                        <Slot value={score ?? 0}
                                             placeholder={'0'}
                                             category={topic[1]}
                                             auto={true}
@@ -107,7 +107,7 @@ function GradesMenuComparable({ display,
                                     </Separator>)
                             else return (<Slot key={i + topic[1]}
                                 placeholder={'0'}
-                                value={score ? score : 0}
+                                value={score ?? 0}
                                 category={topic[1]}
                                 auto={true}
                             />)
@@ -117,7 +117,7 @@ function GradesMenuComparable({ display,
                                 return (
                                     <Separator key={i + topic[1]}
                                         paddingTop={3}>
-                                        <Slot value={score ? score : 0}
+                                        <Slot value={score ?? 0}
                                             placeholder={'0'}
                                             category={topic[1]}
                                             color={score > other_score ? 'green' : ''}
@@ -126,7 +126,7 @@ function GradesMenuComparable({ display,
                                     </Separator>)
                             else return (<Slot key={i + topic[1]}
                                 placeholder={'0'}
-                                value={score ? score : 0}
+                                value={score ?? 0}
                                 category={topic[1]}
                                 color={score > other_score ? 'green' : ''}
                                 auto={true}
@@ -136,19 +136,19 @@ function GradesMenuComparable({ display,
                             if (topic[0] === 'equasions_basic')
                                 return (<Separator key={i + topic[1]}
                                     paddingTop={3}>
-                                    <CompareSlot value_a={other_score ? other_score : 0}
-                                        value_b={score ? score : 0}
+                                    <CompareSlot value_a={other_score ?? 0}
+                                        value_b={score ?? 0}
                                         category={topic[1]}
                                     />
                                 </Separator>)
                             else return (<CompareSlot key={i + topic[1]}
-                                value_a={other_score ? other_score : 0}
-                                value_b={score ? score : 0}
+                                value_a={other_score ?? 0}
+                                value_b={score ?? 0}
                                 category={topic[1]}
                             />)
                         }
                     }
-                })) : (<Text color={{ _light: '#1D282E', _dark: '#EEF6F9' }}>{language?.statics?.error?.listMissing ? language?.statics?.error?.listMissing : 'Something missing... maybe a list.'}</Text>)
+                })) : (<Text color={{ _light: '#1D282E', _dark: '#EEF6F9' }}>{language?.statics?.error?.listMissing ?? defPack.statics.error.listMissing}</Text>)
         }
     </Flex>)
 }

@@ -23,14 +23,10 @@ export const TopScoresProvider = ({ children }) => {
                 setUsers(data.users.reverse());
                 setScores(data.scores);
             }
-            else {
-                console.log('Error in loading top: ' + res?.data?.message);
-                callToast('Error:', res?.data?.message, '', 'error', pos);
-            }
+            else callToast('Info:', '\u{1F625} Error in loading top', '', 'info', pos);
         }
         catch (error) {
-            console.log('Error in loading top: ' + error.message);
-            callToast('Error:', 'Server Failed to load the top list!\r\nPlease try again later!', '', 'error', pos);
+            callToast('Info:', '\u{1F625} Error in loading top', '', 'info', pos);
         }
     }
 
