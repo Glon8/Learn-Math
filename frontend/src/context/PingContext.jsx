@@ -5,6 +5,7 @@ const PingContext = createContext();
 
 export const PingProvider = ({ children }) => {
     const [useDelay, setDelay] = useState(false);
+    const [useRes, setRes] = useState(false);
 
     const response = useRef(false);
     const attemptRef = useRef(null);
@@ -36,17 +37,18 @@ export const PingProvider = ({ children }) => {
                         response.current = false;
                     }
 
+                    setRes(response.current != useRes);
+
                     resolve();
                 });
             }, (1 * 1000));
-
         }
     }
 
     return (<PingContext.Provider
         value={{
             ping, response,
-            wait
+            wait, useRes
         }}>
         {children}
     </PingContext.Provider>);

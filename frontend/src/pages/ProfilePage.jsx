@@ -183,7 +183,7 @@ function ProfilePage() {
         }
       }
 
-      if (!!convert) signUp(false, true, name, email, newPass, secQues, secAns, score);
+      if (!!convert) signUp(false, name, email, newPass, secQues, secAns);
     }
   }
 

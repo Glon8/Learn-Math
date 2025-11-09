@@ -4,7 +4,7 @@ import { userContext } from "../context/UserContext";
 import { languageContext } from "../context/LanguagesContext";
 
 function TextArea() {
-    const { logs, send } = userContext();
+    const { logs, send, lang } = userContext();
     const { language, defPack } = languageContext();
 
     const [useValue, setValue] = useState('');
@@ -16,9 +16,10 @@ function TextArea() {
         setHolder(language?.hints?.placeholder ?? defPack.hints.placeholder);
     }, [logs?.user, language]);
 
-    return (<Field.Root>
+    return (<Field.Root dir={lang == 'he' ? 'rtl' : 'ltr'}>
         <Textarea disabled={useDisable ? true : false}
             value={useValue}
+            dir={lang == 'he' ? 'rtl' : 'ltr'}
             onChange={(el) => setValue(el.target.value)}
             onKeyDown={(el) => {
                 if (el.key === 'Enter' && !el.shiftKey) {
@@ -31,6 +32,7 @@ function TextArea() {
                 }
             }}
             minH={'5rem'}
+            _placeholder={lang == 'he' ? { textAlign: "right", direction: "rtl" } : { textAlign: "left", direction: "ltr" }}
             placeholder={useHolder}
             autoresize
             maxH={'10rem'}

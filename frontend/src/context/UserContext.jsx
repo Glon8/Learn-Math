@@ -43,6 +43,8 @@ export const UserProvider = ({ children }) => {
   const pop = useRef(false);
   const lock = useRef(true);
 
+  const [useErrTran, setErrTran] = useState({});
+
   const getSecret = async (email) => {
     if (!!email) {
       await pingSchedule();
@@ -89,9 +91,15 @@ export const UserProvider = ({ children }) => {
           serverBootPop();
 
           await wait(30);
-        }
 
-        callToast('Error:', 'Connection failed! \u{1F613} Try again later!', '', 'info', useUser.navPosition);
+          await ping();
+
+          await wait(0.35);
+
+          if (!response.current) callToast('Error:', 'Connection failed! \u{1F613} Try again later!', '', 'info', useUser.navPosition);
+          else callToast('', 'Connection restored!', '', 'success', useUser.navPosition);
+        }
+        else callToast('', 'Connection restored!', '', 'success', useUser.navPosition);
       }
 
       lock.current = true;
@@ -193,7 +201,7 @@ export const UserProvider = ({ children }) => {
     return bcrypt.compare(thing, useUser.password);
   }
 
-  const signUp = async (offline, save, name, email, password, secQues, secAns, score) => {
+  const signUp = async (offline, name, email, password, secQues, secAns) => {
     if (!offline) { // sign up: online
       password = await encrypt(password);
       secAns = await encrypt(secAns);
@@ -213,7 +221,9 @@ export const UserProvider = ({ children }) => {
         navPosition: useUser.navPosition
       }
 
-      if (!!save && !!score) score._id = null;
+      const eScore = emptyScore;
+
+      eScore.userId = null;
 
       await pingSchedule();
 
@@ -221,7 +231,7 @@ export const UserProvider = ({ children }) => {
       try {
         const res = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/user/sign-up`, {
           user: newUser,
-          score: !!save ? score : useScore
+          score: eScore,
         });
 
         if (res.data?.success) {
@@ -503,7 +513,7 @@ export const UserProvider = ({ children }) => {
       logs: useLogs, send: chatSend,
       pop: serverBootPop, pingSchedule,
       secret: getSecret, token: useToken,
-      repAns,
+      repAns, setErrTran
     }}>
     {children}
   </UserContext.Provider>)

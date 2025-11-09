@@ -20,12 +20,12 @@ export const callToast = (title, desc, trigger, type, pos) => {
             title: title,
             description: desc,
             trigger: trigger,
-            type: (type ? type : "info"),
+            type: (type ?? "info"),
         }) :
         toasterBottom.create({
             title: title,
             description: desc,
             trigger: trigger,
-            type: (type ? type : "info"),
+            type: (type ?? "info"),
         });
 }

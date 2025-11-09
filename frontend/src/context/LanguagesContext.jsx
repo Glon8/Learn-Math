@@ -8,7 +8,7 @@ import axios from 'axios';
 const LanguageContext = createContext();
 
 export const LanguagesProvider = ({ children }) => {
-    const { lang, pingSchedule, pos, } = userContext();
+    const { lang, pingSchedule, pos, setErrTran } = userContext();
 
     const [useLanguage, setLanguage] = useState(null);
 
@@ -32,20 +32,17 @@ export const LanguagesProvider = ({ children }) => {
 
                     setLanguage(data);
 
+                    //setErrTran(data.);
+
                     return;
                 }
                 catch (error) {
-                    callToast('Info:', '\u{1F631} Failed to load language', '', 'info', pos);
+                    callToast('Info:', useLanguage?.statics?.error?.langFetchErr ?? defaultPackage.statics.error.langFetchErr, '', 'info', pos);
 
                     return;
                 }
             }
         }
-        /*else { // <================== This part no needed, all hard coded translations must be linked to local default package through: localContext > default
-            setLanguage(defaultPackage);
-
-            callToast('Info:', '\u{1F601} Loaded default language', '', 'info', pos);
-        }*/
     }
 
 

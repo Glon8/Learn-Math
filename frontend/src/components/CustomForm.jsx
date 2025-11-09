@@ -17,6 +17,7 @@ function CustomForm() {
     ];
 
     return (<Flex alignItems={'center'}
+        w={'100%'}
         boxShadow={'sm'}
         rounded={'sm'}
         paddingX={3}

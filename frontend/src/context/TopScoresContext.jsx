@@ -2,11 +2,13 @@ import axios from 'axios';
 import { createContext, useContext, useState, useEffect } from 'react'
 import { callToast } from '../components/Toast';
 import { userContext } from './UserContext';
+import { languageContext } from './LanguagesContext';
 
 const TopScoresContext = createContext();
 
 export const TopScoresProvider = ({ children }) => {
     const { pos, pingSchedule } = userContext();
+    const { language, defPack } = languageContext();
 
     const [useUsers, setUsers] = useState(false);
     const [useScores, setScores] = useState(false);
@@ -23,10 +25,10 @@ export const TopScoresProvider = ({ children }) => {
                 setUsers(data.users.reverse());
                 setScores(data.scores);
             }
-            else callToast('Info:', '\u{1F625} Error in loading top', '', 'info', pos);
+            else callToast('Info:', language?.topScores?.fetchingErr ?? defPack.topScores.fetchingErr, '', 'info', pos);
         }
         catch (error) {
-            callToast('Info:', '\u{1F625} Error in loading top', '', 'info', pos);
+            callToast('Info:', language?.topScores?.fetchingErr ?? defPack.topScores.fetchingErr, '', 'info', pos);
         }
     }
 
