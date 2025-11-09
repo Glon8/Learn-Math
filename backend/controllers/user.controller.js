@@ -132,8 +132,6 @@ export const signUp = async (req, res) => {
 
                             await scoreModel.save();
 
-                            console.log(userId);
-
                             const updatedScore = await Score.findOne({ userId: updatedUser._id });
 
                             // token creation
