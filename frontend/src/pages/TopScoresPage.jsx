@@ -12,6 +12,7 @@ import FlexMenu from "../components/FlexMenu.jsx";
 import GradesMenuComparable from "../components/GradesMenuComparable.jsx";
 import TopScoresSlot from "../components/TopScoresSlot.jsx";
 import { callToast } from "../components/Toast.jsx";
+import LoadingBanner from "../components/LoadindBanner.jsx";
 
 function ScorePage() {
   const { user, score, pos,
@@ -68,8 +69,7 @@ function ScorePage() {
         <Separator marginTop={3} />
         {
           !users || users.length <= 0 || !scores || scores.length <= 0 ?
-            (<Text color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
-            >{language?.topScores?.empty ?? defPack.topScores.empty}</Text>) :
+            (<LoadingBanner text={language?.topScores?.topLoading ?? defPack.topScores.topLoading} toggle={true} />) :
             (users.map((useri, i) => {
               return (<Flex key={i}>
                 <Flex display={{ base: 'flex', sm: 'flex', md: 'flex', lg: 'none', xl: 'none' }}

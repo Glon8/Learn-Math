@@ -47,7 +47,8 @@ const defaultPackage = {
         share: 'Share my grades',
         remove: 'Remove me from top list',
         compare: 'Compare with my grades',
-        empty: 'Whoops! Something went wrong or no users shared their scores.'
+        topLoading: 'Loading top list, please wait. Check for the pop up notes for updates.',
+        fetchingErr: '\u{1F625} Error in loading top',
     },
     schools: {
         schoolsTopicTitle: 'SCHOOLS TOPICS',
@@ -71,18 +72,22 @@ const defaultPackage = {
         schoolsTopicTitle: 'SCHOOLS TOPICS',
         elementarySchool: 'Elementary-School',
         highSchool: 'High-School',
-        teach: 'Discuss With Teach!',
-        placeholder: 'Ask teach!',
+        teach: 'Discuss With Teach',
+        placeholder: 'Ask the teach',
         limitation: 'Max 350 characters',
         user: 'User:',
         teacher: 'Teacher:',
-        teacherWelcome: 'Its a chat with virtual teach! Ask it freely about math topics and exercises struggle!',
+        teacherWelcome: 'Its a chat with virtual teach, ask it freely about math topics and exercises struggle.',
         teacherWait: 'Await for teacher to respond, please...',
+        teacherLoading: 'Loading... please wait, cannot reach digital teacher for now. Check for the pop up notes for updates.',
     },
     exercise: {
         title: 'Exercise',
         explanation: 'Solve exercises to recieve a grade! (Max grade is 100)',
         done: 'Done',
+        exerciseLoading: 'Loading exercises, please wait. Check for the pop up notes for updates.',
+        offlineInfo: 'Dear user, note, that unable to save your progress for the future, because you are not logged in!',
+        fetchingErr: '\u{1F627} Error in fetching exercises',
     },
     sign: {
         inTitle: 'SIGN IN',
@@ -130,8 +135,8 @@ const defaultPackage = {
         error: {
             noUser: 'User',
             listMissing: 'Something missing... maybe a list.',
-            exerciseMissing: 'Oooopps... its seems like something wrong, try to reconnect to internet or refresh the page.',
             shortDescMissing: 'Missing subtitle',
+            langFetchErr: '\u{1F631} Error in fetching language',
         },
         confirmation: {
             question: 'Are you sure?',
@@ -306,10 +311,10 @@ const defaultPackage = {
                 desc8: 'Division is the opposite of multiplication and usually involves fractions (fractions will be covered as a '
                     + 'separate topic). The best way to divide numbers is by long division. In long division, we start from the '
                     + 'biggest weight in the dividend. Let’s see how it works:',
-                desc9: 'Divider — the number we divide by.',
-                desc10: 'Dividend — the number that is being divided.',
-                desc11: 'Quotient — the whole number that shows how many times the divider fits into the dividend.',
-                desc12: 'Remainder — the number that shows what is left over or the fraction after the division.',
+                subTitle5: 'Divider — the number we divide by.',
+                subTitle6: 'Dividend — the number that is being divided.',
+                subTitle7: 'Quotient — the whole number that shows how many times the divider fits into the dividend.',
+                subTitle8: 'Remainder — the number that shows what is left over or the fraction after the division.',
                 lk2: {
                     '1': 'Full answer: quotient',
                     '2': 'reminder',
@@ -317,7 +322,7 @@ const defaultPackage = {
                 },
                 desc13: 'Important rule: you cannot divide by 0! This means the divider can never be 0.',
                 desc14: 'In this topic, we won’t cover fractions, so there’s no need to focus on the remainder or the divider. '
-                    + 'Example: let’s say we multiplied 5 by 20, like this:',
+                    + 'Example: let’s say we multiplied 5 by 24, like this:',
                 lk3: {
                     '1': 'added weight to tens:',
                 },
@@ -331,7 +336,7 @@ const defaultPackage = {
                     '6': 'the next is ones',
                 },
                 desc16: 'That’s all for division in this topic. A deeper explanation will be covered in the fractions topic!',
-                subTitle5: 'Try to divide this:',
+                subTitle9: 'Try to divide this:',
             },
             mixed: {
                 subTitle: 'Order Of Operations:',
@@ -339,12 +344,10 @@ const defaultPackage = {
                     + 'so we know in which order to perform mathematical operations. For example, how would you solve this one?',
                 desc2: 'You might just start casually from the left, and that’s it, but that would not be correct. In math, there is a '
                     + 'specific order for operations, and it looks like this:',
-                lk: {
-                    '1': 'Parentheses/Brackets',
-                    '2': 'Exponents/Powers And Roots',
-                    '3': 'Multiplication And Division',
-                    '4': 'Sum And Substract',
-                },
+                subTitle2: '1: Parentheses/Brackets\r\n' +
+                    '2: Exponents/Powers And Roots\r\n' +
+                    '3: Multiplication And Division\r\n' +
+                    '4: Sum And Substract',
                 desc3: 'If we try to solve it without any rules, going from left to right, we would get this, which is WRONG:',
                 desc4: 'It’s WRONG because the order is not followed. First, we do the multiplication, and then the addition, like this:',
                 desc5: 'This is the CORRECT one. Now look how the answer changed from 22 to 17 because we followed the '

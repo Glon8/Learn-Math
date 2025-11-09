@@ -164,9 +164,9 @@ function SignForm({ isIn, isUp, close }) {
     }
     else if (useUp) {
       if (!useOffline) // sign up: online
-        signUp(useOffline, false, name, email, password, secQues, secAns);
+        signUp(useOffline, name, email, password, secQues, secAns);
       else if (useOffline)  // sign up: offline and online
-        await signUp(useOffline, false, name);
+        await signUp(useOffline, name);
     }
 
     closeUP();

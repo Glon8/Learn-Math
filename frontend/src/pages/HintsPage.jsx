@@ -7,7 +7,9 @@ import 'katex/dist/katex.min.css'
 
 import { userContext } from "../context/UserContext";
 import { languageContext } from "../context/LanguagesContext.jsx";
+import { pingContext } from "../context/PingContext.jsx";
 
+import LoadingBanner from "../components/LoadindBanner.jsx";
 import CustomForm from "../components/CustomForm.jsx";
 import TwoTitlesSlot from "../components/TwoTitlesSlot";
 import TopicBut from "../components/TopicBut";
@@ -16,24 +18,186 @@ import TextArea from "../components/TextArea";
 import { useEffect } from "react";
 
 function HintsPage() {
-  const { pos, logs } = userContext();
+  const { pos, logs, lang } = userContext();
   const { language, defPack } = languageContext();
+  const { useRes } = pingContext();
 
   const [useSchool, setSchool] = useState(true);
   const [useTop, setTop] = useState('sum_substract');
 
   const [topic, setTopic] = useState(language?.statics?.topics ?? defPack.statics.topics);
 
-  const mixedText = (message) => {
-    const part = message.split(/(\$[^$]*\$)/g);
+  const cleanGeminiText = (raw) => {
+    let text = raw;
 
-    return part.map((part, i) => {
-      if (part.startsWith('$') && part.endsWith('$')) {
-        const math = part.slice(1, -1);
+    // Remove lone dollar signs that aren't closing anything
+    const count = (text.match(/\$/g) || []).length;
+    if (count % 2 !== 0) text = text.replace(/\$/g, ""); // odd count → remove all
 
-        return <InlineMath key={i} math={math} />
+    // Normalize multiple newlines and spacing
+    text = text.replace(/\r?\n{2,}/g, "\n\n");
+    text = text.replace(/[ \t]+/g, " ");
+
+    text = text.replace(/\$([0-9]+)\n([0-9]+)\$/g, "\$$1$2\$");
+
+    return text.trim();
+  };
+
+  // Faces & emotions
+  const emojiMap = {
+    ":smile:": "😄",
+    ":grin:": "😁",
+    ":laugh:": "😂",
+    ":joy:": "🤣",
+    ":wink:": "😉",
+    ":blush:": "😊",
+    ":relaxed:": "☺️",
+    ":heart_eyes:": "😍",
+    ":kissing_heart:": "😘",
+    ":thinking:": "🤔",
+    ":neutral_face:": "😐",
+    ":expressionless:": "😑",
+    ":unamused:": "😒",
+    ":sweat:": "😓",
+    ":cry:": "😢",
+    ":sob:": "😭",
+    ":angry:": "😠",
+    ":rage:": "😡",
+    ":fearful:": "😨",
+    ":flushed:": "😳",
+    ":scream:": "😱",
+    ":sleeping:": "😴",
+    ":zzz:": "💤",
+
+    // Gestures & hands
+    ":thumbsup:": "👍",
+    ":thumbsdown:": "👎",
+    ":ok_hand:": "👌",
+    ":clap:": "👏",
+    ":wave:": "👋",
+    ":raised_hand:": "✋",
+    ":pray:": "🙏",
+    ":muscle:": "💪",
+    ":point_up:": "☝️",
+    ":point_down:": "👇",
+    ":point_left:": "👈",
+    ":point_right:": "👉",
+
+    // Hearts & love
+    ":heart:": "❤️",
+    ":broken_heart:": "💔",
+    ":yellow_heart:": "💛",
+    ":green_heart:": "💚",
+    ":blue_heart:": "💙",
+    ":purple_heart:": "💜",
+    ":sparkling_heart:": "💖",
+
+    // Symbols
+    ":star:": "⭐",
+    ":star2:": "🌟",
+    ":fire:": "🔥",
+    ":check:": "✅",
+    ":cross:": "❌",
+    ":warning:": "⚠️",
+    ":question:": "❓",
+    ":exclamation:": "❗",
+
+    // Objects
+    ":book:": "📖",
+    ":pencil:": "✏️",
+    ":computer:": "💻",
+    ":iphone:": "📱",
+    ":lightbulb:": "💡",
+    ":calendar:": "📅",
+    ":alarm_clock:": "⏰",
+    ":moneybag:": "💰",
+
+    // Food & drink
+    ":apple:": "🍎",
+    ":banana:": "🍌",
+    ":pizza:": "🍕",
+    ":burger:": "🍔",
+    ":coffee:": "☕",
+    ":tea:": "🍵",
+    ":cake:": "🍰",
+
+    // Nature & animals
+    ":sun:": "☀️",
+    ":cloud:": "☁️",
+    ":rainbow:": "🌈",
+    ":moon:": "🌙",
+    ":starry_night:": "🌌",
+    ":dog:": "🐶",
+    ":cat:": "🐱",
+    ":mouse:": "🐭",
+    ":lion:": "🦁",
+    ":tiger:": "🐯",
+    ":unicorn:": "🦄",
+
+    // Math / logic
+    ":plus:": "+",
+    ":minus:": "-",
+    ":times:": "×",
+    ":divide:": "÷",
+    ":equals:": "=",
+    ":percent:": "%",
+    ":infinity:": "∞",
+    ":pi:": "π",
+    ":sqrt:": "√",
+    ":theta:": "θ",
+    ":sigma:": "Σ",
+
+    // Misc
+    ":rocket:": "🚀",
+    ":trophy:": "🏆",
+    ":medal:": "🏅",
+    ":bell:": "🔔",
+    ":mag:": "🔍",
+    ":scroll:": "📜",
+    ":key:": "🔑",
+    ":lock:": "🔒",
+    ":unlock:": "🔓"
+  };
+
+  const parseHighlights = (text) => {
+    const parts = text.split(/(\[\[[^\]]+\]\])/g);
+    return parts.map((p, i) => {
+      if (p.startsWith("[[") && p.endsWith("]]")) {
+        const content = p.slice(2, -2);
+        return (
+          <Text
+            key={i}
+            backgroundColor={'yellow'}
+            fontWeight={'bold'}
+          >
+            {content}
+          </Text>
+        );
       }
-      return <ReactMarkDown key={i}>{part}</ReactMarkDown>
+
+      // replace emojis
+      let replaced = p.replace(/:\w+:/g, (match) => emojiMap[match] || match);
+      return <ReactMarkDown key={i}>{replaced}</ReactMarkDown>;
+    });
+  };
+
+  const mixedText = (message) => {
+    const cleaned = cleanGeminiText(message);
+
+    const parts = cleaned.split(/(\$\$[^$]*\$\$|\$[^$]*\$)/g);
+
+    return parts.map((part, i) => {
+      if (part.startsWith("$$") && part.endsWith("$$")) {
+        const math = part.slice(2, -2);
+        return <BlockMath key={i} math={math} />;
+      }
+
+      if (part.startsWith("$") && part.endsWith("$")) {
+        const math = part.slice(1, -1);
+        return <InlineMath key={i} math={math} />;
+      }
+
+      return parseHighlights(part);
     });
   }
 
@@ -119,10 +283,10 @@ function HintsPage() {
       { type: 3 },
       { type: 1, body: language?.statics?.longDesc?.multiply_divide?.subTitle4 ?? defPack.statics.longDesc.multiply_divide.subTitle4 },
       { type: 2, body: language?.statics?.longDesc?.multiply_divide?.desc8 ?? defPack.statics.longDesc.multiply_divide.desc8 },
-      { type: 2, body: language?.statics?.longDesc?.multiply_divide?.desc9 ?? defPack.statics.longDesc.multiply_divide.desc9 },
-      { type: 2, body: language?.statics?.longDesc?.multiply_divide?.desc10 ?? defPack.statics.longDesc.multiply_divide.desc10 },
-      { type: 2, body: language?.statics?.longDesc?.multiply_divide?.desc11 ?? defPack.statics.longDesc.multiply_divide.desc11 },
-      { type: 2, body: language?.statics?.longDesc?.multiply_divide?.desc12 ?? defPack.statics.longDesc.multiply_divide.desc12 },
+      { type: 1, body: language?.statics?.longDesc?.multiply_divide?.subTitle5 ?? defPack.statics.longDesc.multiply_divide.subTitle5 },
+      { type: 1, body: language?.statics?.longDesc?.multiply_divide?.subTitle6 ?? defPack.statics.longDesc.multiply_divide.subTitle6 },
+      { type: 1, body: language?.statics?.longDesc?.multiply_divide?.subTitle7 ?? defPack.statics.longDesc.multiply_divide.subTitle7 },
+      { type: 1, body: language?.statics?.longDesc?.multiply_divide?.subTitle8 ?? defPack.statics.longDesc.multiply_divide.subTitle8 },
       {
         type: 4,
         body: String.raw`\text{${language?.statics?.longDesc?.multiply_divide?.lk2?.['1'] ?? defPack.statics.longDesc.multiply_divide.lk2['1']}}
@@ -164,7 +328,7 @@ function HintsPage() {
     \end{array}`,
       },
       { type: 2, body: language?.statics?.longDesc?.multiply_divide?.desc16 ?? defPack.statics.longDesc.multiply_divide.desc16 },
-      { type: 1, body: language?.statics?.longDesc?.multiply_divide?.subTitle5 ?? defPack.statics.longDesc.multiply_divide.subTitle5 },
+      { type: 1, body: language?.statics?.longDesc?.multiply_divide?.subTitle9 ?? defPack.statics.longDesc.multiply_divide.subTitle9 },
       { type: 4, body: String.raw`248\text{ : }8 = ?` },
       { type: 3 },
     ],
@@ -174,15 +338,7 @@ function HintsPage() {
       { type: 2, body: language?.statics?.longDesc?.mixed?.desc ?? defPack.statics.longDesc.mixed.desc },
       { type: 4, body: String.raw`5 + 6 \text{ x } 2 = ?` },
       { type: 2, body: language?.statics?.longDesc?.mixed?.desc2 ?? defPack.statics.longDesc.mixed.desc2 },
-      {
-        type: 4,
-        body: String.raw`\begin{array}{l}
-      1.\text{ ${language?.statics?.longDesc?.mixed?.lk?.['1'] ?? defPack.statics.longDesc.mixed.lk['1']} } \\
-      2.\text{ ${language?.statics?.longDesc?.mixed?.lk?.['2'] ?? defPack.statics.longDesc.mixed.lk['2']} } \\
-      3.\text{ ${language?.statics?.longDesc?.mixed?.lk?.['3'] ?? defPack.statics.longDesc.mixed.lk['3']} } \\
-      4.\text{ ${language?.statics?.longDesc?.mixed?.lk?.['4'] ?? defPack.statics.longDesc.mixed.lk['4']} }
-    \end{array}`,
-      },
+      { type: 1, body: language?.statics?.longDesc?.mixed?.subTitle2 ?? defPack.statics.longDesc.mixed.subTitle2 },
       { type: 2, body: language?.statics?.longDesc?.mixed?.desc3 ?? defPack.statics.longDesc.mixed.desc3 },
       { type: 4, body: String.raw`\begin{array}{l} 5 + 6 = 11 \\ 11\text{ x }2 = 22 \end{array}` },
       { type: 2, body: language?.statics?.longDesc?.mixed?.desc4 ?? defPack.statics.longDesc.mixed.desc4 },
@@ -282,8 +438,7 @@ function HintsPage() {
     ],
     exam_basic: [
       { type: 0 },
-      { type: 1, body: '' },
-      { type: 2, body: '' },
+      { type: 2, body: language?.statics?.longDesc?.exam_basic ?? defPack.statics.longDesc.exam_basic },
     ],
     equasions_basic: [
       { type: 0 },
@@ -317,8 +472,7 @@ function HintsPage() {
     ],
     exam_advanced: [
       { type: 0 },
-      { type: 1, body: '' },
-      { type: 2, body: '' },
+      { type: 2, body: language?.statics?.longDesc?.exam_advanced ?? defPack.statics.longDesc.exam_advanced },
     ],
   };
 
@@ -419,43 +573,58 @@ function HintsPage() {
             h={'fit'}
             gapY={3}>
             {
-              useTop == 'teach' ? (!!logs?.user ? (
-                <Flex color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
-                  flexDirection={'column'}
-                  gapY={3}>
+              useTop == 'teach' ? (useRes ?
+                (!!logs?.user ? (
+                  <Flex color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
+                    flexDirection={'column'}
+                    gapY={3}>
 
-                  <Flex flexDirection={'column'}
-                    gapX={2}
+                    <Flex flexDirection={'column'}
+                      gapX={2}
+                      boxShadow={'sm'}
+                      rounded={'sm'}
+                      paddingX={3}
+                      paddingY={1}>
+
+                      <Text fontWeight={'medium'}
+                        direction={lang == 'he' ? 'rtl' : 'ltr'}
+                      >{language?.hints?.user ?? defPack.hints.user}</Text>
+                      <Flex dir={lang == 'he' ? 'rtl' : 'ltr'}>
+                        <ReactMarkDown>
+                          {logs.user}
+                        </ReactMarkDown>
+                      </Flex>
+
+                    </Flex>
+                    <Flex flexDirection={'column'}
+                      gapX={2}
+                      boxShadow={'sm'}
+                      rounded={'sm'}
+                      paddingX={3}
+                      paddingY={1}>
+
+                      <Text fontWeight={'medium'}
+                        direction={lang == 'he' ? 'rtl' : 'ltr'}
+                      >{language?.hints?.teacher ?? defPack.hints.teacher}</Text>
+                      <Flex flexDir={'column'}
+                        dir={lang == 'he' ? 'rtl' : 'ltr'}
+                      >{mixedText(logs.model)}</Flex>
+
+                    </Flex>
+
+                  </Flex>) :
+                  (<Text color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
+                    h={'fit'}
                     boxShadow={'sm'}
                     rounded={'sm'}
                     paddingX={3}
-                    paddingY={1}>
-
-                    <Text fontWeight={'medium'}>{language?.hints?.user ?? defPack.hints.user}</Text>
-                    <ReactMarkDown>{logs.user}</ReactMarkDown>
-
-                  </Flex>
-                  <Flex flexDirection={'column'}
-                    gapX={2}
-                    boxShadow={'sm'}
-                    rounded={'sm'}
-                    paddingX={3}
-                    paddingY={1}>
-
-                    <Text fontWeight={'medium'}>{language?.hints?.teacher ?? defPack.hints.teacher}</Text>
-                    <Flex flexDir={'column'}>{mixedText(logs.model)}</Flex>
-
-                  </Flex>
-
-                </Flex>) :
-                (<Text color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
-                  h={'fit'}
-                  boxShadow={'sm'}
-                  rounded={'sm'}
-                  paddingX={3}
-                  paddingY={1}>
-                  {language?.hints?.teacherWelcome ?? defPack.hints.teacherWelcome}
-                </Text>)
+                    paddingY={1}
+                    direction={lang == 'he' ? 'rtl' : 'ltr'}>
+                    {language?.hints?.teacherWelcome ?? defPack.hints.teacherWelcome}
+                  </Text>)
+                ) : (<Flex justifyContent={'center'}>
+                  <LoadingBanner text={language?.hints?.teacherLoading ?? defPack.hints.teacherLoading} toggle={true} />
+                </Flex>)
               ) :
                 (hintsVoca[useTop].map((thing, ind) => {
                   if (thing.length != 0 && (!!thing.type || !thing?.type && thing?.type == 0)) {
@@ -472,6 +641,8 @@ function HintsPage() {
                         boxShadow={{ _dark: '0 0 5px 2px #EEF6F9' }}
                         rounded={{ _dark: 'sm' }}
                         paddingX={3}
+                        direction={lang == 'he' ? 'rtl' : 'ltr'}
+                        whiteSpace="pre-line"
                       >
                         {topic[useTop].toUpperCase()}
                       </Text>)
@@ -480,12 +651,14 @@ function HintsPage() {
                         h={'fit'}
                         color={{ _light: '#1D282E/90', _dark: '#EEF6F9' }}
                         fontWeight={'medium'}
-                        textAlign={'left'}
+                        textAlign={lang == 'he' ? 'right' : 'left'}
                         marginBottom={1}
                         background={{ _dark: '#1D282E/65' }}
                         boxShadow={{ _dark: '0 0 5px 2px #EEF6F9' }}
                         rounded={{ _dark: 'sm' }}
                         paddingX={3}
+                        direction={lang == 'he' ? 'rtl' : 'ltr'}
+                        whiteSpace="pre-line"
                       >
                         {thing.body}
                       </Text>)
@@ -497,14 +670,19 @@ function HintsPage() {
                         paddingY={1}
                         h={'fit'}
                         color={{ _light: '#1D282E/90', _dark: '#EEF6F9' }}
-                        textAlign={'left'}
+                        textAlign={lang == 'he' ? 'right' : 'left'}
                         marginBottom={3}
+                        direction={lang == 'he' ? 'rtl' : 'ltr'}
                       >
                         {thing.body}
                       </Text>)
-                    else if (thing.type == 3) return (<CustomForm />) // Custom form
+                    else if (thing.type == 3) // Custom form
+                      return (<Flex key={ind} justifyContent={'center'} >
+                        <CustomForm />
+                      </Flex>)
                     else if (thing.type == 4) // LaTeX and KaTeX form
-                      return (<Flex justifyContent={'center'}
+                      return (<Flex key={ind}
+                        justifyContent={'center'}
                         boxShadow={'sm'}
                         rounded={'sm'}
                         paddingX={3}
@@ -514,7 +692,8 @@ function HintsPage() {
                     else if (thing.type == 5) { // GEOGEBRA
                     }
                   }
-                  else return <Text h={'fit'}
+                  else return <Text key={ind}
+                    h={'fit'}
                     color={{ _light: '#1D282E/90', _dark: '#EEF6F9' }}
                     fontWeight={'medium'}
                     fontSize={'lg'}
@@ -526,7 +705,7 @@ function HintsPage() {
             }
           </Flex>
           {
-            useTop == 'teach' ? (<TextArea />) : null
+            useTop == 'teach' && !!useRes ? (<TextArea />) : null
           }
         </Flex>
         <Flex flexDirection={"column"} gapY={3} hideBelow={'lg'}>

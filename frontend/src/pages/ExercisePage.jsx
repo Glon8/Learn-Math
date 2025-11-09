@@ -11,6 +11,7 @@ import { callToast } from '../components/Toast.jsx'
 import TwoTitlesSlot from '../components/TwoTitlesSlot.jsx'
 import ExerciseForm from "../components/ExerciseForm.jsx";
 import FinishForm from "../components/FinishForm.jsx";
+import LoadingBanner from "../components/LoadindBanner.jsx";
 
 function ExercisePage() {
     const location = useLocation();
@@ -21,9 +22,11 @@ function ExercisePage() {
 
     const [useGrade, setGrade] = useState(0);
     const [useExercise, setExercise] = useState([]);
+    const [exeLang, setExeLang] = useState({});
+    const [topicsLang, setTopicsLang] = useState('');
+
     const appendScore = useRef(false);
     const oldGrade = useRef(score?.[exerciseId] ?? 0);
-
     const avrGrade = useRef(0);
 
     const [useScores, setScores] = useState([]);
@@ -38,7 +41,7 @@ function ExercisePage() {
         if (!!token) repAns(useScores, token, exerciseId);
 
         // note for unregistered users
-        if (user._id === null) callToast('Info:', 'Dear user, note, that unable to save your progress for the future, because you are not logged in!', '', '', pos);
+        if (user._id === null) callToast('Info:', exeLang.offlineInfo, '', 'info', pos);
     }
 
     const fetchExercises = async (topic, grade, settings, theToken) => {
@@ -52,7 +55,7 @@ function ExercisePage() {
             setExercise(data);
         }
         catch (error) {
-            console.log('Error in fetching exercises');
+            callToast('Info:', language?.exercise?.fetchingErr ?? defPack.exercise.fetchingErr, '', 'info', pos);
         }
     }
 
@@ -67,7 +70,7 @@ function ExercisePage() {
         useExercise.forEach((thing) => {
             const length = thing.ans.length
             questionsList.push(length);
-            console.log(questionsList[questionsList.length - 1])
+            //console.log(questionsList[questionsList.length - 1])
         });
 
         for (let i = 0; i < questionsList.length; i++) {
@@ -101,6 +104,11 @@ function ExercisePage() {
 
         fetch();
     }, [useExercise])
+
+    useEffect(() => {
+        setExeLang(language?.exercise ?? defPack.exercise);
+        setTopicsLang(language?.statics?.topics?.[exerciseId] ?? exerciseWritten);
+    }, [language]);
 
     useEffect(() => {
         const fetch = async () => {
@@ -144,8 +152,8 @@ function ExercisePage() {
             <TwoTitlesSlot title_info={exerciseCheckList() ? {
                 title_a: {
                     pi_icon: 'pi-hashtag',
-                    title: `${language?.exercise?.title ?? defPack.exercise.title} 
-    ${language?.statics?.topics?.[exerciseId] ?? exerciseWritten}`
+                    title: `${exeLang.title} 
+    ${topicsLang}`
                 },
                 title_b: {
                     pi_icon: !!set[0] ? 'pi-verified' : null,
@@ -154,8 +162,8 @@ function ExercisePage() {
             } : {
                 title_a: {
                     pi_icon: 'pi-hashtag',
-                    title: `${language?.exercise?.title ?? defPack.exercise.title} 
-    ${language?.statics?.topics?.[exerciseId] ?? exerciseWritten}`
+                    title: `${exeLang.title} 
+    ${topicsLang}`
                 }
             }} />
             {
@@ -164,7 +172,7 @@ function ExercisePage() {
                         <Text textAlign={'center'}
                             fontWeight={'medium'}
                         >
-                            {language?.exercise?.explanation ?? defPack.exercise.explanation}
+                            {exeLang.explanation}
                         </Text>
                     </Separator>) : null
             }
@@ -194,17 +202,7 @@ function ExercisePage() {
                                 }}
                             />)
                         })
-                    ) : (<Flex gapX={3}>
-
-                        <i className="pi pi-wrench" />
-                        <Text>
-                            {
-                                language?.statics?.error?.exerciseMissing ??
-                                defPack.statics.error.exerciseMissing
-                            }
-                        </Text>
-
-                    </Flex>)
+                    ) : (<LoadingBanner text={exeLang.exerciseLoading} toggle={true} />)
                 }
             </Flex>
             {
@@ -223,7 +221,7 @@ function ExercisePage() {
                             borderColor: "#1D282E",
                             focusRingColor: '#B1B7BA',
                             color: '#EEF6F9'
-                        }} >{language?.exercise?.done ?? defPack.exercise.done}
+                        }} >{exeLang.done}
                     </Button>) : null
             }
 
