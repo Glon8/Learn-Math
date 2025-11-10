@@ -5,7 +5,7 @@ import TitleSlot from "../components/TitleSlot";
 import TwoTitlesSlot from "../components/TwoTitlesSlot";
 import Slot from "../components/Slot";
 
-function GradesMenu({ display, title_type, pi_icon, title, title_info, topic_names, my_scores, size, part }) {
+function GradesMenu({ display, title_type, pi_icon, title, title_info, topic_names, fst_scores, size, part }) {
     return (<Flex display={display ?? 'none'}
         h={'fit'}
         width={{ base: 'full', sm: '25rem' }}
@@ -36,32 +36,31 @@ function GradesMenu({ display, title_type, pi_icon, title, title_info, topic_nam
         <Separator />
         {
             topic_names ?
-                (Object.entries(topic_names)
-                    .map((topic, index) => {
-                        const score = my_scores?.[topic[0]] ?? 0;
+                (Object.entries(topic_names).map(([topicKey, topicValue], index) => {
+                    const score = Math.trunc(fst_scores?.[topicKey]) ?? 0;
 
-                        if (size === 0) {
-                            if (part === 0) {
-                                if (index < 7) {
-                                    return (<Slot key={topic[1]} value={score ?? 0} category={topic[1]} auto={true} />)
-                                }
-                            }
-                            else {
-                                if (index >= 7) {
-                                    return (<Slot key={topic[1]} value={score ?? 0} category={topic[1]} auto={true} />)
-                                }
+                    if (size === 0) {
+                        if (part === 0) {
+                            if (index < 7) {
+                                return (<Slot key={topicValue} value={score ?? 0} category={topicValue} auto={true} />)
                             }
                         }
-                        else if (size === 1) {
-                            if (index === 7) {
-                                return (<Separator key={topic[1]}
-                                    paddingTop={3}>
-                                    <Slot key={score} value={score ?? 0} category={topic[1]} auto={true} />
-                                </Separator>)
+                        else {
+                            if (index >= 7) {
+                                return (<Slot key={topicValue} value={score ?? 0} category={topicValue} auto={true} />)
                             }
-                            else return (<Slot key={topic[1]} value={score ?? 0} category={topic[1]} auto={true} />)
                         }
-                    })) : (<Text color={{ _light: '#1D282E', _dark: '#EEF6F9' }}>Something wrong, perhaps no list?</Text>)
+                    }
+                    else if (size === 1) {
+                        if (index === 7) {
+                            return (<Separator key={topicValue}
+                                paddingTop={3}>
+                                <Slot key={score} value={score ?? 0} category={topicValue} auto={true} />
+                            </Separator>)
+                        }
+                        else return (<Slot key={topicValue} value={score ?? 0} category={topicValue} auto={true} />)
+                    }
+                })) : (<Text color={{ _light: '#1D282E', _dark: '#EEF6F9' }}>Something wrong, perhaps no list?</Text>)
         }
     </Flex>)
 }

@@ -388,7 +388,7 @@ function ProfilePage() {
         }
       }}
       topic_names={topic}
-      my_scores={score}
+      fst_scores={score}
       size={useBreakpointValue({ base: 1, sm: 1, md: 1, lg: 1, xl: 0 })}
       part={0}
     />
@@ -406,7 +406,7 @@ function ProfilePage() {
         }
       }}
       topic_names={topic}
-      my_scores={score}
+      fst_scores={score}
       size={0}
       part={1}
     />

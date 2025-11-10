@@ -36,10 +36,10 @@ function GradesMenuComparable({ display,
     title,
     title_info,
     topic_names,
-    my_scores,
+    fst_scores,
     comparable,
-    compare_to_grades,
-    compare_to }) {
+    sec_scores,
+    sec_user }) {
 
     const { language, defPack } = languageContext();
 
@@ -72,11 +72,11 @@ function GradesMenuComparable({ display,
                 ) : null)
         }
         {
-            comparable === 2 && my_scores && title_info ?
+            comparable === 2 && fst_scores && title_info ?
                 (<TwoTitlesSlot title_info={{
                     title_a: {
                         pi_icon: '',
-                        title: compare_to
+                        title: sec_user
                     },
                     title_b: {
                         pi_icon: '',
@@ -88,10 +88,10 @@ function GradesMenuComparable({ display,
         }
         <Separator />
         {
-            topic_names && my_scores ?
+            topic_names && fst_scores ?
                 (Object.entries(topic_names).map((topic, i) => {
-                    const score = my_scores[topic[0]];
-                    const other_score = compare_to_grades ? compare_to_grades[topic[0]] : null;
+                    const score = Math.trunc(fst_scores[topic[0]]);
+                    const other_score = Math.trunc(sec_scores?.[topic[0]]) ?? null;
 
                     switch (comparable) {
                         case 0: {
