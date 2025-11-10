@@ -195,6 +195,8 @@ export const getTop = async (get, res) => {
             scores: scores
         }
 
+        console.log(box)
+
         res.status(200).json({ success: true, message: 'Top list has been loaded!', data: box });
     }
     catch (error) {
