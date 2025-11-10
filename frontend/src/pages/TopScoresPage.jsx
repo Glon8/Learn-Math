@@ -33,6 +33,20 @@ function ScorePage() {
     setTopic(language?.statics?.topics ?? defPack.statics.topics);
   }, [language]);
 
+  useEffect(() => {
+    const fetch = async () => {
+      const timer = setTimeout(() => {
+        const id = scores[0]?.userId;
+
+        setToCompare(!!users && users.length > 0 ? users.find(item => item._id === id) : {});
+      }, 150);
+
+      return () => clearTimeout(timer);
+    }
+
+    fetch();
+  }, [users, scores]);
+
   return (<Flex gap={5} w={'100%'}
     paddingLeft={pos === 'left' ? { base: '3rem', sm: '3rem', md: '3rem', lg: '5rem' } : ''}
     paddingRight={pos === 'right' ? { base: '3rem', sm: '3rem', md: '3rem', lg: '5rem' } : ''}
@@ -70,23 +84,25 @@ function ScorePage() {
         {
           !users || users.length <= 0 || !scores || scores.length <= 0 ?
             (<LoadingBanner text={language?.topScores?.topLoading ?? defPack.topScores.topLoading} toggle={true} />) :
-            (users.map((useri, i) => {
+            (scores.map((cScore, i) => {
+              const cUser = users.find(item => item._id === cScore.userId);
+
               return (<Flex key={i}>
                 <Flex display={{ base: 'flex', sm: 'flex', md: 'flex', lg: 'none', xl: 'none' }}
                   w={'full'}>
 
                   <TopScoresSlot i={i}
-                    user={useri}
-                    user_scores_list={scores ?? []}
+                    fst_user={cUser.name}
+                    fst_scores={cScore ?? {}}
                     topic_names={topic}
                     use_compare={use_compare}
-                    my_user={user}
-                    my_scores={score}
+                    sec_user={user}
+                    sec_scores={score}
                   />
 
                 </Flex>
                 <Flex display={{ base: 'none', sm: 'none', md: 'none', lg: 'flex', xl: 'flex' }}>
-                  <Button onClick={() => setToCompare(i)}
+                  <Button onClick={() => setToCompare(cUser)}
                     _light={{
                       backgroundColor: '#8b8da0/20',
                       borderColor: '#B1B7BA/10',
@@ -105,17 +121,10 @@ function ScorePage() {
                       <Flex flexDirection={'row'} gap={3}>
                         <Text>{1 + i}</Text>
                         <i className="pi pi-trophy" />
-                        <Text textAlign={'center'}>{useri.name}</Text>
+                        <Text textAlign={'center'}>{cUser.name}</Text>
                       </Flex>
                       <Text>
-                        {
-                          scores.map((score) => {
-                            if (useri._id === score.userId) {
-                              if (!score['averageScore'] || score['averageScore'] === 0) return 0;
-                              else return (`${score['averageScore'].toFixed(2)}`);
-                            }
-                          })
-                        }
+                        {!cScore.averageScore || cScore.averageScore === 0 ? 0 : cScore.averageScore.toFixed(2)}
                       </Text>
 
                     </Flex>
@@ -186,17 +195,14 @@ function ScorePage() {
             },
             title_b: {
               pi_icon: '',
-              title: !!(user.name) ? user.name :
-                (language?.statics?.error?.noUser ?? defPack.statics.error.noUser)
+              title: user.name ?? (language?.statics?.error?.noUser ?? defPack.statics.error.noUser)
             }
-          }
-          }
+          }}
+          fst_scores={score}
           topic_names={topic}
-          my_scores={score}
           comparable={use_compare ? 1 : 0}
-          compare_to_grades={scores[useToCompare]}
-          compare_to={!!(users[useToCompare].name) ? users[useToCompare].name :
-            (language?.statics?.error?.noUser ?? defPack.statics.error.noUser)}
+          sec_scores={scores.find(item => item.userId === useToCompare._id)}
+          sec_user={useToCompare.name ?? (language?.statics?.error?.noUser ?? defPack.statics.error.noUser)}
         />)
     }
     {
@@ -212,17 +218,14 @@ function ScorePage() {
             },
             title_b: {
               pi_icon: '',
-              title: !!(users[useToCompare].name) ? users[useToCompare].name :
-                (language?.statics?.error?.noUser ?? defPack.statics.error.noUser)
+              title: useToCompare.name ?? (language?.statics?.error?.noUser ?? defPack.statics.error.noUser)
             }
-          }
-          }
+          }}
+          fst_scores={scores.find(item => item.userId === useToCompare._id)}
           topic_names={topic}
-          my_scores={scores[useToCompare]}
           comparable={to_compare}
-          compare_to_grades={score}
-          compare_to={!!(user.name) ? user.name :
-            (language?.statics?.error?.noUser ?? defPack.statics.error.noUser)}
+          sec_scores={score}
+          sec_user={user.name ?? (language?.statics?.error?.noUser ?? defPack.statics.error.noUser)}
         />)
     }
 

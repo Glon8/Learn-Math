@@ -1,8 +1,8 @@
 import { Flex, Text } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 
-function TwoTitlesSlot({ title_info, boldness, disableDark, color, fontSize }) {
-    return (<Flex width={'1xs'}
+function TwoTitlesSlot({ width, title_info, boldness, disableDark, color, fontSize }) {
+    return (<Flex width={width ?? '1xs'}
         paddingX={3}
         flexDirection={'row'}
         justify={'space-between'}
