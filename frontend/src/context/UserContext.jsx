@@ -68,7 +68,7 @@ export const UserProvider = ({ children }) => {
 
       callLoadingToast({
         title: '', desc: '\u{1F916} Server is booting up, please give it a few seconds...'
-      }, 30, useUser.navPosition);
+      }, 90, useUser.navPosition);
 
       setTimeout(() => { pop.current = false }, 30 * 1000);
     }
@@ -88,9 +88,11 @@ export const UserProvider = ({ children }) => {
         await wait(0.35);
 
         if (!response.current) {
+          callToast('Info:', <>Hi! The free Render plan I’m using may take up to <b>90 seconds</b> to wake up &#x1F616;, please be patient.</>, '', 'info', useUser.navPosition);
+
           serverBootPop();
 
-          await wait(30);
+          await wait(90);
 
           await ping();
 
