@@ -4,10 +4,10 @@ import { useColorMode } from "./ui/color-mode.jsx";
 import { userContext } from "../context/UserContext";
 
 import AINote from './AINote.jsx'
-import Girl from '../images/ChatGPTHighSchoolGirl.png'
-import SittingGirl from '../images/ChatGPTHighSchoolGirlSitting.png'
-import Boy from '../images/ChatGPTHighSchoolBoy.png'
-import ReadingBoy from '../images/ChatGPTHighSchoolBoyReading.png'
+import Girl from '../images/ChatGPTHighSchoolGirl.webp'
+import SittingGirl from '../images/ChatGPTHighSchoolGirlSitting.webp'
+import Boy from '../images/ChatGPTHighSchoolBoy.webp'
+import ReadingBoy from '../images/ChatGPTHighSchoolBoyReading.webp'
 
 function BackGroundImage() {
 
