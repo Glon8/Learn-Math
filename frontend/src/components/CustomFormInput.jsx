@@ -1,7 +1,7 @@
 import { Input } from "@chakra-ui/react"
 import { useEffect, useState } from "react";
 
-function CustomFormInput({ key, color, clear, holder }) {
+function CustomFormInput({ color, clear, holder }) {
     const [useValue, setValue] = useState('');
 
     useEffect(() => {
@@ -9,7 +9,6 @@ function CustomFormInput({ key, color, clear, holder }) {
     }, [clear]);
 
     return (<Input w={1}
-        key={key}
         textAlign={'center'}
         maxLength={1}
         placeholder={holder ?? 0}

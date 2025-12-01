@@ -36,6 +36,121 @@ export const emptyLogs = {
     model: null
 }
 
+export const emojiMap = {
+    ":smile:": "😄",
+    ":grin:": "😁",
+    ":laugh:": "😂",
+    ":joy:": "🤣",
+    ":wink:": "😉",
+    ":blush:": "😊",
+    ":relaxed:": "☺️",
+    ":heart_eyes:": "😍",
+    ":kissing_heart:": "😘",
+    ":thinking:": "🤔",
+    ":neutral_face:": "😐",
+    ":expressionless:": "😑",
+    ":unamused:": "😒",
+    ":sweat:": "😓",
+    ":cry:": "😢",
+    ":sob:": "😭",
+    ":angry:": "😠",
+    ":rage:": "😡",
+    ":fearful:": "😨",
+    ":flushed:": "😳",
+    ":scream:": "😱",
+    ":sleeping:": "😴",
+    ":zzz:": "💤",
+
+    // Gestures & hands
+    ":thumbsup:": "👍",
+    ":thumbsdown:": "👎",
+    ":ok_hand:": "👌",
+    ":clap:": "👏",
+    ":wave:": "👋",
+    ":raised_hand:": "✋",
+    ":pray:": "🙏",
+    ":muscle:": "💪",
+    ":point_up:": "☝️",
+    ":point_down:": "👇",
+    ":point_left:": "👈",
+    ":point_right:": "👉",
+
+    // Hearts & love
+    ":heart:": "❤️",
+    ":broken_heart:": "💔",
+    ":yellow_heart:": "💛",
+    ":green_heart:": "💚",
+    ":blue_heart:": "💙",
+    ":purple_heart:": "💜",
+    ":sparkling_heart:": "💖",
+
+    // Symbols
+    ":star:": "⭐",
+    ":star2:": "🌟",
+    ":fire:": "🔥",
+    ":check:": "✅",
+    ":cross:": "❌",
+    ":warning:": "⚠️",
+    ":question:": "❓",
+    ":exclamation:": "❗",
+
+    // Objects
+    ":book:": "📖",
+    ":pencil:": "✏️",
+    ":computer:": "💻",
+    ":iphone:": "📱",
+    ":lightbulb:": "💡",
+    ":calendar:": "📅",
+    ":alarm_clock:": "⏰",
+    ":moneybag:": "💰",
+
+    // Food & drink
+    ":apple:": "🍎",
+    ":banana:": "🍌",
+    ":pizza:": "🍕",
+    ":burger:": "🍔",
+    ":coffee:": "☕",
+    ":tea:": "🍵",
+    ":cake:": "🍰",
+
+    // Nature & animals
+    ":sun:": "☀️",
+    ":cloud:": "☁️",
+    ":rainbow:": "🌈",
+    ":moon:": "🌙",
+    ":starry_night:": "🌌",
+    ":dog:": "🐶",
+    ":cat:": "🐱",
+    ":mouse:": "🐭",
+    ":lion:": "🦁",
+    ":tiger:": "🐯",
+    ":unicorn:": "🦄",
+
+    // Math / logic
+    ":plus:": "+",
+    ":minus:": "-",
+    ":times:": "×",
+    ":divide:": "÷",
+    ":equals:": "=",
+    ":percent:": "%",
+    ":infinity:": "∞",
+    ":pi:": "π",
+    ":sqrt:": "√",
+    ":theta:": "θ",
+    ":sigma:": "Σ",
+
+    // Misc
+    ":rocket:": "🚀",
+    ":trophy:": "🏆",
+    ":medal:": "🏅",
+    ":bell:": "🔔",
+    ":mag:": "🔍",
+    ":scroll:": "📜",
+    ":key:": "🔑",
+    ":lock:": "🔒",
+    ":unlock:": "🔓"
+  };
+
 export const verString = (string) => {
     if (string != null) {
         if (string.trim() == "") return false;

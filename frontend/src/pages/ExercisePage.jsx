@@ -1,4 +1,4 @@
-import { Flex, Stack, Text, Separator, Button } from "@chakra-ui/react"
+import { Flex, Text, Separator, Button } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useLocation } from "react-router-dom";
 import { useState, useRef, useEffect } from 'react'
@@ -8,10 +8,12 @@ import axios from "axios";
 
 import { callToast } from '../components/Toast.jsx'
 
-import TwoTitlesSlot from '../components/TwoTitlesSlot.jsx'
-import ExerciseForm from "../components/ExerciseForm.jsx";
-import FinishForm from "../components/FinishForm.jsx";
+import TwoTitlesSlot from '../components/slots/TwoTitlesSlot.jsx'
+import ExerciseForm from "../components/forms/ExerciseForm.jsx";
+import FinishForm from "../components/forms/FinishForm.jsx";
 import LoadingBanner from "../components/LoadindBanner.jsx";
+import PagesBase from "../components/forms/sub/PagesBase.jsx";
+import PagesBaseStack from "../components/forms/sub/PagesBaseStack.jsx";
 
 function ExercisePage() {
     const location = useLocation();
@@ -118,37 +120,12 @@ function ExercisePage() {
         fetch();
     }, []);
 
-    return (<Flex alignItems={'center'}
-        flexDirection={"column"}
-        paddingLeft={pos === 'left' ? { base: '3rem', sm: '3rem', md: '3rem', lg: '5rem' } : ''}
-        paddingRight={pos === 'right' ? { base: '3rem', sm: '3rem', md: '3rem', lg: '5rem' } : ''}
-        paddingTop={!pos || pos === 'top' ? { base: '2.5rem', sm: '2.5rem', md: '2.5rem', lg: '10%' } : { md: '5%' }}
-        paddingBottom={pos === 'bottom' ? { base: '2.5rem', sm: '2.5rem', md: '2.5rem', lg: '5rem' } : ''}
-    >
+    return (<PagesBase alignItems={'center'}>
 
-        <Stack border
-            w={{ base: "100%", sm: 'fit' }}
-            borderWidth={1}
-            paddingX={5}
-            paddingY={7}
-            rounded={'xl'}
+        <PagesBaseStack w={{ base: "100%", sm: 'fit' }}
             marginX={2}
             marginBottom={5}
-            gap={3}
-            h={'fit'}
-            maxW={'65rem'}
-            _light={{
-                boxShadow: 'lg',
-                backgroundColor: 'white',
-                borderColor: '#B1B7BA',
-                color: '#1D282E'
-            }}
-            _dark={{
-                boxShadow: '0 0 2rem 0.5rem rgb(238, 246, 249)',
-                background: '#8b8da0',
-                borderColor: '#1D282E',
-                color: '#EEF6F9'
-            }}>
+            maxW={'65rem'}>
             <TwoTitlesSlot title_info={exerciseCheckList() ? {
                 title_a: {
                     pi_icon: 'pi-hashtag',
@@ -225,11 +202,11 @@ function ExercisePage() {
                     </Button>) : null
             }
 
-        </Stack>
+        </PagesBaseStack>
         {
             appendScore.current != null && appendScore.current != false ? <FinishForm newScore={appendScore.current} oldScore={oldGrade.current} /> : null
         }
-    </Flex >)
+    </PagesBase >)
 }
 
 export default ExercisePage

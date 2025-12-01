@@ -5,8 +5,8 @@ import { useNavigate } from 'react-router-dom'
 import { userContext } from "../context/UserContext.jsx";
 import { languageContext } from "../context/LanguagesContext.jsx";
 
-import NavMenu from './NavMenu.jsx';
-import NavBut from "./NavBut.jsx";
+import NavMenu from './menus/NavMenu.jsx';
+import NavBut from "./buttons/NavBut.jsx";
 
 function NavBar() {
     const navigate = useNavigate();
@@ -106,9 +106,7 @@ function NavBar() {
                 w={navShort ? 'auto' :
                     (pos === 'right' || pos === 'left' ? '9rem' : 'auto')}
                 maxW={'20rem'}>
-                <NavMenu pi_icon={'pi-align-justify'}
-                    navShort={navShort}
-                />
+                <NavMenu navShort={navShort} />
             </Flex>
 
         </Flex>

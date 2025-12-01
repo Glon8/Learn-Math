@@ -6,26 +6,47 @@ import { userContext } from "../context/UserContext.jsx";
 import { topScoresContext } from "../context/TopScoresContext.jsx";
 import { languageContext } from "../context/LanguagesContext.jsx";
 
-import TitleSlot from '../components/TitleSlot.jsx'
+import TitleSlot from '../components/slots/TitleSlot.jsx'
 import CheckCard from "../components/CheckCard.jsx";
-import FlexMenu from "../components/FlexMenu.jsx";
-import GradesMenuComparable from "../components/GradesMenuComparable.jsx";
-import TopScoresSlot from "../components/TopScoresSlot.jsx";
+import GradesMenuComparable from "../components/menus/GradesMenuComparable.jsx";
+import TopScoresSlot from "../components/slots/TopScoresSlot.jsx";
 import { callToast } from "../components/Toast.jsx";
 import LoadingBanner from "../components/LoadindBanner.jsx";
+import ProfileValidReq from "../components/menus/sub/ProfileValidReq.jsx";
+import ShareWarning from "../components/buttons/ShareWarning.jsx";
+import PagesBase from "../components/forms/sub/PagesBase.jsx";
+import PagesBaseStack from "../components/forms/sub/PagesBaseStack.jsx";
 
 function ScorePage() {
-  const { user, score, pos,
-    share, upTop, outTop,
-    upUser } = userContext();
+  const { user, score, pos, share } = userContext();
   const { users, scores } = topScoresContext();
   const { language, defPack } = languageContext();
 
   const [topic, setTopic] = useState(language?.statics?.topics ?? defPack.statics.topics);
   const [use_compare, set_compare] = useState(false);
-  const [useToCompare, setToCompare] = useState(0);
+  const [other_user, set_other_user] = useState({});
+  const [other_grades, set_other_grades] = useState({});
 
   const to_compare = useBreakpointValue({ sm: 0, md: 0, lg: (use_compare ? 2 : 0), xl: (use_compare ? 1 : 0) });
+
+  const compareMenus = [
+    {
+      'display': { base: 'none', sm: 'none', md: 'none', lg: 'none', xl: 'flex' },
+      'title': user.name ?? (language?.statics?.error?.noUser ?? defPack.statics.error.noUser),
+      'fst_scores': score,
+      'comparable': use_compare ? 1 : 0,
+      'sec_scores': other_grades,
+      'sec_user': other_user.name ?? (language?.statics?.error?.noUser ?? defPack.statics.error.noUser),
+    },
+    {
+      'display': { base: 'none', sm: 'none', md: 'none', lg: 'flex', xl: 'flex' },
+      'title': other_user.name ?? (language?.statics?.error?.noUser ?? defPack.statics.error.noUser),
+      'fst_scores': other_grades,
+      'comparable': to_compare,
+      'sec_scores': score,
+      'sec_user': user.name ?? (language?.statics?.error?.noUser ?? defPack.statics.error.noUser),
+    },
+  ];
 
   const warningMes = () => callToast('Info:', 'Unable to share your grades! Please make online account to do so! You can check your status in profile or top left corner menu!', '', '', pos);
 
@@ -34,49 +55,24 @@ function ScorePage() {
   }, [language]);
 
   useEffect(() => {
-    const fetch = async () => {
-      const timer = setTimeout(() => {
-        const id = scores[0]?.userId;
+    set_other_grades(!!scores && scores.length > 0 ? scores.find(item => item.userId === other_user._id) : {});
+  }, [other_user]);
 
-        setToCompare(!!users && users.length > 0 ? users.find(item => item._id === id) : {});
-      }, 150);
+  useEffect(() => {
+    if (!!scores && !!users) {
+      const id = scores[0]?.userId;
 
-      return () => clearTimeout(timer);
+      set_other_user(!!users && users.length > 0 ? users.find(item => item._id === id) : {});
     }
-
-    fetch();
   }, [users, scores]);
 
-  return (<Flex gap={5} w={'100%'}
-    paddingLeft={pos === 'left' ? { base: '3rem', sm: '3rem', md: '3rem', lg: '5rem' } : ''}
-    paddingRight={pos === 'right' ? { base: '3rem', sm: '3rem', md: '3rem', lg: '5rem' } : ''}
-    paddingTop={!pos || pos === 'top' ? { base: '2.5rem', sm: '2.5rem', md: '2.5rem', lg: '10%' } : { md: '5%' }}
-    paddingBottom={pos === 'bottom' ? { base: '2.5rem', sm: '2.5rem', md: '2.5rem', lg: '5rem' } : ''}
-    flexDirection={{ sm: 'column', md: 'row' }}
+  return (<PagesBase gap={5} md={{ flexDirection: 'row' }}
     alignItems={{ sm: 'center', md: '' }}
     justifyContent={{ sm: '', md: 'center' }}>
 
-    <Stack height={'fit'}
-      paddingX={5}
-      paddingY={7}
-      gap={3}
-      alignSelf={{ base: 'center', sm: 'center', md: 'start' }}
+    <PagesBaseStack alignSelf={{ base: 'center', sm: 'center', md: 'start' }}
       justifyItems={'center'}
-      rounded={'xl'}
-      border
-      borderWidth={1}
-      w={{ base: 'full', sm: '25rem' }}
-      _light={{
-        boxShadow: 'lg',
-        backgroundColor: 'white',
-        borderColor: '#B1B7BA'
-      }}
-      _dark={{
-        boxShadow: '0 0 2rem 0.5rem rgb(238, 246, 249)',
-        background: '#8b8da0',
-        borderColor: '#1D282E',
-      }}
-    >
+      w={{ base: 'full', sm: '25rem' }} >
 
       <Stack>
         <TitleSlot pi_icon={'pi-crown'} title={language?.topScores?.topScoresTitle ?? defPack.topScores.topScoresTitle} />
@@ -102,7 +98,7 @@ function ScorePage() {
 
                 </Flex>
                 <Flex display={{ base: 'none', sm: 'none', md: 'none', lg: 'flex', xl: 'flex' }}>
-                  <Button onClick={() => setToCompare(cUser)}
+                  <Button onClick={() => set_other_user(cUser)}
                     _light={{
                       backgroundColor: '#8b8da0/20',
                       borderColor: '#B1B7BA/10',
@@ -142,94 +138,43 @@ function ScorePage() {
             <CheckCard pi_icon={'pi-thumbtack'} title={language?.topScores?.compare ?? defPack.topScores.compare} ifChange={() => set_compare(!use_compare)} />
             {
               !!user._id ? (
-                share === 'false' || share === false ? (<FlexMenu pi_icon={'pi-book'}
-                  title={language?.topScores?.share ?? defPack.topScores.share}
-                  inner_title={language?.statics?.confirmation?.question ?? defPack.statics.confirmation.question}
-                  options={[
-                    { value: language?.statics?.confirmation?.false ?? defPack.statics.confirmation.false },
-                    { value: language?.statics?.confirmation?.true ?? defPack.statics.confirmation.true, click: () => { upTop(); upUser('shared', true); } }]} />) :
-                  (<FlexMenu pi_icon={'pi-book'}
-                    title={language?.topScores?.remove ?? defPack.topScores.remove}
-                    inner_title={language?.statics?.confirmation?.question ?? defPack.statics.confirmation.question}
-                    options={[
-                      { value: language?.statics?.confirmation?.false ?? defPack.statics.confirmation.false },
-                      { value: language?.statics?.confirmation?.true ?? defPack.statics.confirmation.true, click: () => { outTop(); upUser('shared', false); } }]} />)
-              ) :
-                (<Button onClick={warningMes}
-                  disabled={user._id === 0 ? false : true}
-                  width={'full'}
-                  flexDirection={'row'}
-                  gap={3}
-                  color={'black'}
-                  focusRing={'inside'}
-                  _light={{
-                    backgroundColor: '#8b8da0/20',
-                    borderColor: '#B1B7BA/10',
-                    focusRingColor: '#B1B7BA/20',
-                    color: '#1D282E/90'
-                  }}
-                  _dark={{
-                    background: "#1D282E",
-                    borderColor: "#1D282E",
-                    focusRingColor: '#B1B7BA',
-                    color: '#EEF6F9'
-                  }}>
-                  <i className="pi pi-book" /><Text>{language?.topScores?.share ?? defPack.topScores.share}</Text>
-                </Button>)
-
+                share === 'false' || share === false ?
+                  (<ProfileValidReq type={'share'} />) :
+                  (<ProfileValidReq type={'remove'} />)
+              ) : (<ShareWarning warningMes={warningMes} user={user} value={language?.topScores?.share ?? defPack.topScores.share} />)
             }
 
           </Flex>)
       }
-    </Stack>
+    </PagesBaseStack>
     {
       !users || users.length <= 0 || !scores || scores.length <= 0 ? null :
-        (<GradesMenuComparable display={{ base: 'none', sm: 'none', md: 'none', lg: 'none', xl: 'flex' }}
-          title_type={1}
-          pi_icon={'pi-trophy'}
-          title={language?.topScores?.progressTitle ?? defPack.topScores.progressTitle}
-          title_info={{
-            title_a: {
-              pi_icon: 'pi-trophy',
-              title: language?.topScores?.progressTitle ?? defPack.topScores.progressTitle
-            },
-            title_b: {
-              pi_icon: '',
-              title: user.name ?? (language?.statics?.error?.noUser ?? defPack.statics.error.noUser)
-            }
-          }}
-          fst_scores={score}
-          topic_names={topic}
-          comparable={use_compare ? 1 : 0}
-          sec_scores={scores.find(item => item.userId === useToCompare._id)}
-          sec_user={useToCompare.name ?? (language?.statics?.error?.noUser ?? defPack.statics.error.noUser)}
-        />)
-    }
-    {
-      !users || users.length <= 0 || !scores || scores.length <= 0 ? null :
-        (<GradesMenuComparable display={{ base: 'none', sm: 'none', md: 'none', lg: 'flex', xl: 'flex' }}
-          title_type={1}
-          pi_icon={'pi-trophy'}
-          title={language?.topScores?.progressTitle ?? defPack.topScores.progressTitle}
-          title_info={{
-            title_a: {
-              pi_icon: 'pi-trophy',
-              title: language?.topScores?.progressTitle ?? defPack.topScores.progressTitle
-            },
-            title_b: {
-              pi_icon: '',
-              title: useToCompare.name ?? (language?.statics?.error?.noUser ?? defPack.statics.error.noUser)
-            }
-          }}
-          fst_scores={scores.find(item => item.userId === useToCompare._id)}
-          topic_names={topic}
-          comparable={to_compare}
-          sec_scores={score}
-          sec_user={user.name ?? (language?.statics?.error?.noUser ?? defPack.statics.error.noUser)}
-        />)
+        (compareMenus.map((thing, ind) => {
+          return (<GradesMenuComparable display={thing.display}
+            key={'gmc' + ind}
+            title_type={1}
+            pi_icon={'pi-trophy'}
+            title={language?.topScores?.progressTitle ?? defPack.topScores.progressTitle}
+            title_info={{
+              title_a: {
+                pi_icon: 'pi-trophy',
+                title: language?.topScores?.progressTitle ?? defPack.topScores.progressTitle
+              },
+              title_b: {
+                pi_icon: '',
+                title: thing.title
+              }
+            }}
+            fst_scores={thing.fst_scores}
+            topic_names={topic}
+            comparable={thing.comparable}
+            sec_scores={thing.sec_scores}
+            sec_user={thing.sec_user}
+          />)
+        }))
     }
 
-  </Flex>)
+  </PagesBase>)
 }
 
 export default ScorePage

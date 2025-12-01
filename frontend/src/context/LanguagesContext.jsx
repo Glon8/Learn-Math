@@ -17,10 +17,6 @@ export const LanguagesProvider = ({ children }) => {
     const fetchLang = async (thing) => {
         await pingSchedule();
 
-        // download package from the server and apply
-        // ll be fetched as user is loaded
-        // ll use users language, or use default "empty" user language - english.
-
         if (!!thing) {
             // deffault language
             if (thing == 'en') setLanguage(defaultPackage);
@@ -45,11 +41,9 @@ export const LanguagesProvider = ({ children }) => {
         }
     }
 
-
     useEffect(() => {
         const fetch = async () => {
             const timer = setTimeout(() => fetchLang(lang), 100);
-
             return () => clearTimeout(timer);
         }
 
