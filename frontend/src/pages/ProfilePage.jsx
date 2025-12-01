@@ -1,4 +1,4 @@
-import { Flex, Text, Separator, useBreakpointValue, Button } from "@chakra-ui/react"
+import { Flex, Separator, useBreakpointValue } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useState, useEffect } from "react";
 import { callToast } from '../components/Toast.jsx'
@@ -7,17 +7,19 @@ import { verString, verEmail, verPassword } from '../util/Statics.js'
 import { userContext } from '../context/UserContext.jsx'
 import { languageContext } from '../context/LanguagesContext.jsx'
 
-import TitleSlot from "../components/TitleSlot";
-import Slot from "../components/Slot";
+import TitleSlot from "../components/slots/TitleSlot";
+import Slot from "../components/slots/Slot.jsx";
 import CheckCard from '../components/CheckCard.jsx'
-import FlexMenu from "../components/FlexMenu.jsx";
-import GradesMenu from "../components/GradesMenu.jsx";
-import PassSlot from "../components/PassSlot.jsx";
+import GradesMenu from "../components/menus/GradesMenu.jsx";
+import ShareWarning from '../components/buttons/ShareWarning.jsx'
+import ProfilePassive from "../components/slots/sub/ProfilePassive.jsx";
+import ProfileValidReq from "../components/menus/sub/ProfileValidReq.jsx";
+import PagesBase from "../components/forms/sub/PagesBase.jsx";
+import PagesBaseStack from "../components/forms/sub/PagesBaseStack.jsx";
 
 function ProfilePage() {
-  const { user, stat, share,
-    score, upUser, pos, compare,
-    del, upTop, outTop, signUp } = userContext();
+  const { user, stat, share, score,
+    upUser, pos, compare, signUp } = userContext();
   const { language, defPack } = languageContext();
 
   const [use_profile_edit, set_profile_edit] = useState(false);
@@ -33,6 +35,52 @@ function ProfilePage() {
   const [convert, setConvert] = useState(false);
 
   const [topic, setTopic] = useState(language?.statics?.topics ?? defPack.statics.topics);
+
+  const signUpList = [
+    {
+      'category': 'New Password',
+      'getValue': (thing) => setNewPass(thing),
+      'type': 'password',
+      'value': '',
+    },
+    {
+      'category': 'Confirm Password',
+      'getValue': (thing) => setConfPass(thing),
+      'type': 'password',
+      'value': '',
+    },
+    {
+      'category': language?.statics?.user?.secret ?? defPack.statics.user.secret,
+      'getValue': (thing) => setSecQues(thing),
+      'type': '',
+      'value': user.secret ?? '',
+    },
+    {
+      'category': language?.statics?.user?.answer ?? defPack.statics.user.answer,
+      'getValue': (thing) => setSecAns(thing),
+      'type': '',
+      'value': '',
+    },
+  ];
+
+  const compareMenus = [
+    {
+      'display': 'flex',
+      'title_type': useBreakpointValue({ base: 0, sm: 0, md: 0, lg: 0, xl: 1 }),
+      'pi_icon': 'pi-trophy',
+      'title': language?.profile?.progressTitle ?? defPack.profile.progressTitle,
+      'size': useBreakpointValue({ base: 1, sm: 1, md: 1, lg: 1, xl: 0 }),
+      'part': 0,
+    },
+    {
+      'display': { base: 'none', sm: 'none', md: 'none', lg: 'none', xl: 'flex' },
+      'title_type': 1,
+      'pi_icon': '',
+      'title': null,
+      'size': 0,
+      'part': 1,
+    },
+  ];
 
   const update = () => {
     if (user.name != name) {
@@ -208,36 +256,14 @@ function ProfilePage() {
     }
   }, [use_profile_edit]);
 
-  return (<Flex gap={5} w={'100%'}
-    h={useBreakpointValue({ lg: 'auto', xl: '100vh' })}
+  return (<PagesBase gap={5} h={useBreakpointValue({ lg: 'auto', xl: '100vh' })}
     justifyContent={'center'}
     alignItems={useBreakpointValue({ base: 'center', sm: 'center', md: 'center', lg: 'top' })}
-    flexDirection={{ base: 'column', sm: 'column', md: 'column', lg: 'row' }}
-    paddingLeft={pos === 'left' ? { base: '3rem', sm: '3rem', md: '3rem', lg: '5rem' } : ''}
-    paddingRight={pos === 'right' ? { base: '3rem', sm: '3rem', md: '3rem', lg: '5rem' } : ''}
-    paddingTop={!pos || pos === 'top' ? { base: '2.5rem', sm: '2.5rem', md: '2.5rem', lg: '10%' } : { md: '5%' }}
-    paddingBottom={pos === 'bottom' ? { base: '2.5rem', sm: '2.5rem', md: '2.5rem', lg: '5rem' } : ''}>
+    lg={{ flexDirection: 'row' }}>
 
-    <Flex width={{ base: 'full', sm: '25rem' }}
-      gapY={5}
-      paddingX={5}
-      paddingY={7}
+    <PagesBaseStack width={{ base: 'full', sm: '25rem' }}
       alignSelf={'top'}
-      h={'fit'}
-      flexDirection={"column"}
-      rounded={"xl"}
-      borderWidth={1}
-      textAlign={'center'}
-      _light={{
-        boxShadow: 'lg',
-        backgroundColor: 'white',
-        borderColor: '#B1B7BA'
-      }}
-      _dark={{
-        boxShadow: '0 0 2rem 0.5rem rgb(238, 246, 249)',
-        background: '#8b8da0',
-        borderColor: '#1D282E'
-      }}>
+      textAlign={'center'}>
 
       <TitleSlot pi_icon={'pi-id-card'} title={language?.profile?.profileTitle ?? defPack.profile.profileTitle} />
       <Separator />
@@ -247,62 +273,37 @@ function ProfilePage() {
         getValue={(thing) => setName(thing)}
       />
       {
-        (stat && !!user._id) || !!convert ?
-          <Slot value={user.email ?? null}
+        ((stat && !!user._id) || !!convert) &&
+        <Slot value={user.email ?? null}
+          placeholder={'-----'}
+          category={language?.statics?.user?.email ?? defPack.statics.user.email}
+          edit={(use_profile_edit && stat) || !!convert ? true : false}
+          getValue={(thing) => setEmail(thing)} />
+      }
+      {
+        (use_profile_edit && stat && !!user._id) &&
+        <Slot placeholder={'-----'}
+          category={'Current Password'}
+          edit={true}
+          getValue={(thing) => setPassword(thing)}
+          type="password" />
+      }
+
+      {
+        ((use_profile_edit && stat && !!user._id) || !!convert) &&
+        signUpList.map((thing, ind) => {
+          return (<Slot key={'s-u' + ind}
             placeholder={'-----'}
-            category={language?.statics?.user?.email ?? defPack.statics.user.email}
-            edit={(use_profile_edit && stat) || !!convert ? true : false}
-            getValue={(thing) => setEmail(thing)}
-          /> : ''
-      }
-      {
-        use_profile_edit && stat && !!user._id ?
-          <PassSlot placeholder={'-----'}
-            category={'Current Password'}
+            category={thing.category}
             edit={true}
-            getValue={(thing) => setPassword(thing)}
-          /> : ''
+            getValue={thing.getValue}
+            type={thing.type}
+            value={thing.value}
+          />)
+        })
       }
-      {
-        (use_profile_edit && stat && !!user._id) || !!convert ?
-          <PassSlot placeholder={'-----'}
-            category={'New Password'}
-            edit={true}
-            getValue={(thing) => setNewPass(thing)}
-          /> : ''
-      }
-      {
-        (use_profile_edit && stat && !!user._id) || !!convert ?
-          <PassSlot placeholder={'-----'}
-            category={'Confirm Password'}
-            edit={true}
-            getValue={(thing) => setConfPass(thing)}
-          /> : ''
-      }
-      {
-        (use_profile_edit && stat && !!user._id) || !!convert ?
-          <Slot value={user.secret ?? ''}
-            placeholder={'-----'}
-            category={language?.statics?.user?.secret ?? defPack.statics.user.secret}
-            edit={true}
-            getValue={(thing) => setSecQues(thing)}
-          /> : ''
-      }
-      {
-        (use_profile_edit && stat && !!user._id) || !!convert ?
-          <Slot placeholder={'-----'}
-            category={language?.statics?.user?.answer ?? defPack.statics.user.answer}
-            getValue={(thing) => setSecAns(thing)}
-            edit={true}
-          /> : ''
-      }
-      <Slot value={!stat ? (language?.statics?.user?.statusFalse ?? defPack.statics.user.statusFalse) :
-        (language?.statics?.user?.statusTrue ?? defPack.statics.user.statusTrue)}
-        category={language?.statics?.user?.status ?? defPack.statics.user.status} />
-      <Slot value={share === 'true' || share === true ?
-        (language?.statics?.user?.sharedTrue ?? defPack.statics.user.sharedTrue) :
-        (language?.statics?.user?.sharedFalse ?? defPack.statics.user.sharedFalse)}
-        category={language?.statics?.user?.shared ?? defPack.statics.user.shared} />
+      <ProfilePassive type={'status'} />
+      <ProfilePassive type={'shared'} />
       <Separator />
       <Flex gapY={3} flexDirection={"column"} textAlign={'center'}>
         {
@@ -318,100 +319,45 @@ function ProfilePage() {
           }} />
         {
           !!user._id ? (
-            share === 'false' || share === false ? (<FlexMenu pi_icon={'pi-book'}
-              title={language?.profile?.share ?? defPack.profile.share}
-              inner_title={language?.statics?.confirmation?.question ?? language.statics.confirmation.question}
-              options={[
-                { value: language?.statics?.confirmation?.false ?? defPack.statics.confirmation.false },
-                { value: language?.statics?.confirmation?.true ?? defPack.statics.confirmation.true, click: () => { upTop(); upUser('shared', true); } }]} />) :
-              (<FlexMenu pi_icon={'pi-book'}
-                title={language?.profile?.remove ?? defPack.profile.remove}
-                inner_title={language?.statics?.confirmation?.question ?? defPack.statics.confirmation.question}
-                options={[
-                  { value: language?.statics?.confirmation?.false ?? defPack.statics.confirmation.false },
-                  { value: language?.statics?.confirmation?.true ?? defPack.statics.confirmation.true, click: () => { outTop(); upUser('shared', false); } }]} />)
-          ) :
-            (<Button onClick={warningMes}
-              disabled={user._id === 0 ? false : true}
-              width={'full'}
-              flexDirection={'row'}
-              gap={3}
-              color={'black'}
-              focusRing={'inside'}
-              _light={{
-                backgroundColor: '#8b8da0/20',
-                borderColor: '#B1B7BA/10',
-                focusRingColor: '#B1B7BA/20',
-                color: '#1D282E/90'
-              }}
-              _dark={{
-                background: "#1D282E",
-                borderColor: "#1D282E",
-                focusRingColor: '#B1B7BA',
-                color: '#EEF6F9'
-              }}>
-              <i className="pi pi-book" /><Text>{language?.profile?.share ?? defPack.profile.share}</Text>
-            </Button>)
+            !share ? (<ProfileValidReq type='share' />) :
+              (<ProfileValidReq type='remove' />)
+          ) : (<ShareWarning warningMes={warningMes} user={user} value={language?.profile?.share ?? defPack.profile.share} />)
         }
         {
-          user._id === 0 ? (<FlexMenu pi_icon={'pi-cloud-upload'}
-            onClick={() => setConvert(true)}
-            title={language?.profile?.convert ?? defPack.profile.convert}
-            inner_title={language?.statics?.confirmation?.question ?? defPack.statics.confirmation.question}
-            options={[
-              { value: language?.statics?.confirmation?.false ?? defPack.statics.confirmation.false, click: () => setConvert(false) },
-              { value: language?.statics?.confirmation?.true ?? defPack.statics.confirmation.true, click: () => { update(); setConvert(false); } }]} />) : (
-            !!user._id ? (<FlexMenu pi_icon={'pi-cloud-download'}
-              title={language?.profile?.delete ?? defPack.profile.delete}
-              inner_title={language?.statics?.confirmation?.question ?? defPack.statics.confirmation.question}
-              options={[
-                { value: language?.statics?.confirmation?.false ?? defPack.statics.confirmation.false },
-                { value: language?.statics?.confirmation?.true ?? defPack.statics.confirmation.true, click: () => del() }]} />) : null
+          user._id === 0 ? (<ProfileValidReq type='convert' update={() => update()} convert={(val) => setConvert(val)} />) : (
+            !!user._id && (<ProfileValidReq type='delete' />)
           )
         }
 
       </Flex>
 
-    </Flex>
-    <GradesMenu display={'flex'}
-      title_type={useBreakpointValue({ base: 0, sm: 0, md: 0, lg: 0, xl: 1 })}
-      pi_icon={'pi-trophy'}
-      title={language?.profile?.progressTitle ?? defPack.profile.progressTitle}
-      title_info={{
-        info_a: {
-          pi_icon: 'pi-trophy',
-          title: language?.profile?.progressTitle ?? defPack.profile.progressTitle
-        },
-        info_b: {
-          pi_icon: 'pi-hashtag',
-          title: language?.profile?.elementarySchool ?? defPack.profile.elementarySchool
-        }
-      }}
-      topic_names={topic}
-      fst_scores={score}
-      size={useBreakpointValue({ base: 1, sm: 1, md: 1, lg: 1, xl: 0 })}
-      part={0}
-    />
+    </PagesBaseStack>
+    {
+      compareMenus.map((thing, ind) => {
+        return (<GradesMenu key={'gm' + ind}
+          display={thing.display}
+          title_type={thing.title_type}
+          pi_icon={thing.pi_icon}
+          title={thing.title}
+          title_info={{
+            info_a: {
+              pi_icon: 'pi-trophy',
+              title: language?.profile?.progressTitle ?? defPack.profile.progressTitle
+            },
+            info_b: {
+              pi_icon: 'pi-hashtag',
+              title: language?.profile?.elementarySchool ?? defPack.profile.elementarySchool
+            }
+          }}
+          topic_names={topic}
+          fst_scores={score}
+          size={thing.size}
+          part={thing.part}
+        />)
+      })
+    }
 
-    <GradesMenu display={{ base: 'none', sm: 'none', md: 'none', lg: 'none', xl: 'flex' }}
-      title_type={1}
-      title_info={{
-        info_a: {
-          pi_icon: 'pi-trophy',
-          title: language?.profile?.progressTitle ?? defPack.profile.progressTitle
-        },
-        info_b: {
-          pi_icon: 'pi-hashtag',
-          title: language?.profile?.highSchool ?? defPack.profile.highSchool
-        }
-      }}
-      topic_names={topic}
-      fst_scores={score}
-      size={0}
-      part={1}
-    />
-
-  </Flex>)
+  </PagesBase>)
 }
 
 export default ProfilePage

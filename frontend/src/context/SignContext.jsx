@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from 'react'
 
-import SignForm from '../components/SignForm';
+import SignForm from '../components/forms/SignForm';
 
 const SignContext = createContext();
 

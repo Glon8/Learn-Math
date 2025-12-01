@@ -1,4 +1,4 @@
-import { Flex, Text, Separator, Stack } from "@chakra-ui/react"
+import { Flex, Text, Separator } from "@chakra-ui/react"
 import "primeicons/primeicons.css";
 import { useState } from "react";
 import ReactMarkDown from 'react-markdown'
@@ -10,15 +10,20 @@ import { languageContext } from "../context/LanguagesContext.jsx";
 import { pingContext } from "../context/PingContext.jsx";
 
 import LoadingBanner from "../components/LoadindBanner.jsx";
-import CustomForm from "../components/CustomForm.jsx";
-import TwoTitlesSlot from "../components/TwoTitlesSlot";
-import TopicBut from "../components/TopicBut";
+import CustomForm from "../components/forms/CustomForm.jsx";
+import TwoTitlesSlot from "../components/slots/TwoTitlesSlot";
+import TopicBut from "../components/buttons/TopicBut.jsx";
 import Spin from "../components/Spin";
 import TextArea from "../components/TextArea";
 import { useEffect } from "react";
+import { emojiMap } from '../util/Statics.js'
+import HintsDescription from "../components/tabs/HintsDescription.jsx";
+import HintLogs from "../components/forms/sub/HintLogs.jsx";
+import PagesBase from "../components/forms/sub/PagesBase.jsx";
+import PagesBaseStack from "../components/forms/sub/PagesBaseStack.jsx";
 
 function HintsPage() {
-  const { pos, logs, lang } = userContext();
+  const { logs } = userContext();
   const { language, defPack } = languageContext();
   const { useRes } = pingContext();
 
@@ -27,189 +32,6 @@ function HintsPage() {
 
   const [topic, setTopic] = useState(language?.statics?.topics ?? defPack.statics.topics);
 
-  const cleanGeminiText = (raw) => {
-    let text = raw;
-
-    // Remove lone dollar signs that aren't closing anything
-    const count = (text.match(/\$/g) || []).length;
-    if (count % 2 !== 0) text = text.replace(/\$/g, ""); // odd count → remove all
-
-    // Normalize multiple newlines and spacing
-    text = text.replace(/\r?\n{2,}/g, "\n\n");
-    text = text.replace(/[ \t]+/g, " ");
-
-    text = text.replace(/\$([0-9]+)\n([0-9]+)\$/g, "\$$1$2\$");
-
-    return text.trim();
-  };
-
-  // Faces & emotions
-  const emojiMap = {
-    ":smile:": "😄",
-    ":grin:": "😁",
-    ":laugh:": "😂",
-    ":joy:": "🤣",
-    ":wink:": "😉",
-    ":blush:": "😊",
-    ":relaxed:": "☺️",
-    ":heart_eyes:": "😍",
-    ":kissing_heart:": "😘",
-    ":thinking:": "🤔",
-    ":neutral_face:": "😐",
-    ":expressionless:": "😑",
-    ":unamused:": "😒",
-    ":sweat:": "😓",
-    ":cry:": "😢",
-    ":sob:": "😭",
-    ":angry:": "😠",
-    ":rage:": "😡",
-    ":fearful:": "😨",
-    ":flushed:": "😳",
-    ":scream:": "😱",
-    ":sleeping:": "😴",
-    ":zzz:": "💤",
-
-    // Gestures & hands
-    ":thumbsup:": "👍",
-    ":thumbsdown:": "👎",
-    ":ok_hand:": "👌",
-    ":clap:": "👏",
-    ":wave:": "👋",
-    ":raised_hand:": "✋",
-    ":pray:": "🙏",
-    ":muscle:": "💪",
-    ":point_up:": "☝️",
-    ":point_down:": "👇",
-    ":point_left:": "👈",
-    ":point_right:": "👉",
-
-    // Hearts & love
-    ":heart:": "❤️",
-    ":broken_heart:": "💔",
-    ":yellow_heart:": "💛",
-    ":green_heart:": "💚",
-    ":blue_heart:": "💙",
-    ":purple_heart:": "💜",
-    ":sparkling_heart:": "💖",
-
-    // Symbols
-    ":star:": "⭐",
-    ":star2:": "🌟",
-    ":fire:": "🔥",
-    ":check:": "✅",
-    ":cross:": "❌",
-    ":warning:": "⚠️",
-    ":question:": "❓",
-    ":exclamation:": "❗",
-
-    // Objects
-    ":book:": "📖",
-    ":pencil:": "✏️",
-    ":computer:": "💻",
-    ":iphone:": "📱",
-    ":lightbulb:": "💡",
-    ":calendar:": "📅",
-    ":alarm_clock:": "⏰",
-    ":moneybag:": "💰",
-
-    // Food & drink
-    ":apple:": "🍎",
-    ":banana:": "🍌",
-    ":pizza:": "🍕",
-    ":burger:": "🍔",
-    ":coffee:": "☕",
-    ":tea:": "🍵",
-    ":cake:": "🍰",
-
-    // Nature & animals
-    ":sun:": "☀️",
-    ":cloud:": "☁️",
-    ":rainbow:": "🌈",
-    ":moon:": "🌙",
-    ":starry_night:": "🌌",
-    ":dog:": "🐶",
-    ":cat:": "🐱",
-    ":mouse:": "🐭",
-    ":lion:": "🦁",
-    ":tiger:": "🐯",
-    ":unicorn:": "🦄",
-
-    // Math / logic
-    ":plus:": "+",
-    ":minus:": "-",
-    ":times:": "×",
-    ":divide:": "÷",
-    ":equals:": "=",
-    ":percent:": "%",
-    ":infinity:": "∞",
-    ":pi:": "π",
-    ":sqrt:": "√",
-    ":theta:": "θ",
-    ":sigma:": "Σ",
-
-    // Misc
-    ":rocket:": "🚀",
-    ":trophy:": "🏆",
-    ":medal:": "🏅",
-    ":bell:": "🔔",
-    ":mag:": "🔍",
-    ":scroll:": "📜",
-    ":key:": "🔑",
-    ":lock:": "🔒",
-    ":unlock:": "🔓"
-  };
-
-  const parseHighlights = (text) => {
-    const parts = text.split(/(\[\[[^\]]+\]\])/g);
-    return parts.map((p, i) => {
-      if (p.startsWith("[[") && p.endsWith("]]")) {
-        const content = p.slice(2, -2);
-        return (
-          <Text
-            key={i}
-            backgroundColor={'yellow'}
-            fontWeight={'bold'}
-          >
-            {content}
-          </Text>
-        );
-      }
-
-      // replace emojis
-      let replaced = p.replace(/:\w+:/g, (match) => emojiMap[match] || match);
-      return <ReactMarkDown key={i}>{replaced}</ReactMarkDown>;
-    });
-  };
-
-  const mixedText = (message) => {
-    const cleaned = cleanGeminiText(message);
-
-    const parts = cleaned.split(/(\$\$[^$]*\$\$|\$[^$]*\$)/g);
-
-    return parts.map((part, i) => {
-      if (part.startsWith("$$") && part.endsWith("$$")) {
-        const math = part.slice(2, -2);
-        return <BlockMath key={i} math={math} />;
-      }
-
-      if (part.startsWith("$") && part.endsWith("$")) {
-        const math = part.slice(1, -1);
-        return <InlineMath key={i} math={math} />;
-      }
-
-      return parseHighlights(part);
-    });
-  }
-
-  /*
-  hints vocabulary ll have 6 types of data:
-  0. main title { type: 0 },
-  1. sub title { type: 1, body: '' },
-  2. description { type: 2, body: '' },
-  3. exercise form { type: 3 },
-  4. example Latex/Katex { type: 4, body: String.raw`` },
-  5. example Geogebra
-  */
   const hintsVoca = {
     sum_substract: [
       { type: 0 },
@@ -476,37 +298,82 @@ function HintsPage() {
     ],
   };
 
+  const cleanGeminiText = (raw) => {
+    let text = raw;
+
+    // Remove lone dollar signs that aren't closing anything
+    const count = (text.match(/\$/g) || []).length;
+    if (count % 2 !== 0) text = text.replace(/\$/g, ""); // odd count → remove all
+
+    // Normalize multiple newlines and spacing
+    text = text.replace(/\r?\n{2,}/g, "\n\n");
+    text = text.replace(/[ \t]+/g, " ");
+
+    text = text.replace(/\$([0-9]+)\n([0-9]+)\$/g, "\$$1$2\$");
+
+    return text.trim();
+  };
+
+  const parseHighlights = (text) => {
+    const parts = text.split(/(\[\[[^\]]+\]\])/g);
+    return parts.map((p, i) => {
+      if (p.startsWith("[[") && p.endsWith("]]")) {
+        const content = p.slice(2, -2);
+        return (
+          <Text
+            key={i}
+            backgroundColor={'yellow'}
+            fontWeight={'bold'}
+          >
+            {content}
+          </Text>
+        );
+      }
+
+      // replace emojis
+      let replaced = p.replace(/:\w+:/g, (match) => emojiMap[match] || match);
+      return <ReactMarkDown key={i}>{replaced}</ReactMarkDown>;
+    });
+  };
+
+  const mixedText = (message) => {
+    const cleaned = cleanGeminiText(message);
+
+    const parts = cleaned.split(/(\$\$[^$]*\$\$|\$[^$]*\$)/g);
+
+    return parts.map((part, i) => {
+      if (part.startsWith("$$") && part.endsWith("$$")) {
+        const math = part.slice(2, -2);
+        return <BlockMath key={i} math={math} />;
+      }
+
+      if (part.startsWith("$") && part.endsWith("$")) {
+        const math = part.slice(1, -1);
+        return <InlineMath key={i} math={math} />;
+      }
+
+      return parseHighlights(part);
+    });
+  }
+
+  /*
+  hints vocabulary ll have 6 types of data:
+  0. main title { type: 0 },
+  1. sub title { type: 1, body: '' },
+  2. description { type: 2, body: '' },
+  3. exercise form { type: 3 },
+  4. example Latex/Katex { type: 4, body: String.raw`` },
+  5. example Geogebra
+  */
+
   useEffect(() => {
     setTopic(language?.statics?.topics ?? defPack.statics.topics);
   }, [language]);
 
-  return (<Flex alignItems={'center'}
-    flexDirection={"column"}
-    w={'100%'}
-    paddingLeft={pos === 'left' ? { base: '3rem', sm: '3rem', md: '3rem', lg: '5rem' } : ''}
-    paddingRight={pos === 'right' ? { base: '3rem', sm: '3rem', md: '3rem', lg: '5rem' } : ''}
-    paddingTop={!pos || pos === 'top' ? { base: '2.5rem', sm: '2.5rem', md: '2.5rem', lg: '10%' } : { md: '5%' }}
-    paddingBottom={pos === 'bottom' ? { base: '2.5rem', sm: '2.5rem', md: '2.5rem', lg: '5rem' } : ''}>
+  return (<PagesBase alignItems={'center'} >
 
-    <Stack border
-      borderWidth={1}
-      paddingX={5}
-      paddingY={7}
-      rounded={'xl'}
-      width={{ base: "100%", sm: '80%' }}
-      h={'fit'}
-      gap={3}
-      maxW={'65rem'}
-      _light={{
-        boxShadow: 'lg',
-        background: 'white',
-        borderColor: '#B1B7BA'
-      }}
-      _dark={{
-        boxShadow: '0 0 2rem 0.5rem rgb(238, 246, 249)',
-        background: '#8b8da0',
-        borderColor: '#1D282E',
-      }}>
+    <PagesBaseStack width={{ base: "100%", sm: '80%' }}
+      maxW={'65rem'}>
 
       <TwoTitlesSlot title_info={{
         title_a: {
@@ -579,49 +446,11 @@ function HintsPage() {
                     flexDirection={'column'}
                     gapY={3}>
 
-                    <Flex flexDirection={'column'}
-                      gapX={2}
-                      boxShadow={'sm'}
-                      rounded={'sm'}
-                      paddingX={3}
-                      paddingY={1}>
-
-                      <Text fontWeight={'medium'}
-                        direction={lang == 'he' ? 'rtl' : 'ltr'}
-                      >{language?.hints?.user ?? defPack.hints.user}</Text>
-                      <Flex dir={lang == 'he' ? 'rtl' : 'ltr'}>
-                        <ReactMarkDown>
-                          {logs.user}
-                        </ReactMarkDown>
-                      </Flex>
-
-                    </Flex>
-                    <Flex flexDirection={'column'}
-                      gapX={2}
-                      boxShadow={'sm'}
-                      rounded={'sm'}
-                      paddingX={3}
-                      paddingY={1}>
-
-                      <Text fontWeight={'medium'}
-                        direction={lang == 'he' ? 'rtl' : 'ltr'}
-                      >{language?.hints?.teacher ?? defPack.hints.teacher}</Text>
-                      <Flex flexDir={'column'}
-                        dir={lang == 'he' ? 'rtl' : 'ltr'}
-                      >{mixedText(logs.model)}</Flex>
-
-                    </Flex>
+                    <HintLogs innerBody={<ReactMarkDown>{logs.user}</ReactMarkDown>} type={'user'} />
+                    <HintLogs innerBody={mixedText(logs.model)} type={'teacher'} />
 
                   </Flex>) :
-                  (<Text color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
-                    h={'fit'}
-                    boxShadow={'sm'}
-                    rounded={'sm'}
-                    paddingX={3}
-                    paddingY={1}
-                    direction={lang == 'he' ? 'rtl' : 'ltr'}>
-                    {language?.hints?.teacherWelcome ?? defPack.hints.teacherWelcome}
-                  </Text>)
+                  (<HintLogs type={'teacher welcome'} />)
                 ) : (<Flex justifyContent={'center'}>
                   <LoadingBanner text={language?.hints?.teacherLoading ?? defPack.hints.teacherLoading} toggle={true} />
                 </Flex>)
@@ -629,53 +458,11 @@ function HintsPage() {
                 (hintsVoca[useTop].map((thing, ind) => {
                   if (thing.length != 0 && (!!thing.type || !thing?.type && thing?.type == 0)) {
                     if (thing.type == 0) // Matin title
-                      return (<Text key={ind}
-                        hideBelow={'lg'}
-                        h={'fit'}
-                        color={{ _light: '#1D282E/90', _dark: '#EEF6F9' }}
-                        fontWeight={'bold'}
-                        fontSize={'xl'}
-                        textAlign={'center'}
-                        marginBottom={3}
-                        background={{ _dark: '#1D282E/65' }}
-                        boxShadow={{ _dark: '0 0 5px 2px #EEF6F9' }}
-                        rounded={{ _dark: 'sm' }}
-                        paddingX={3}
-                        direction={lang == 'he' ? 'rtl' : 'ltr'}
-                        whiteSpace="pre-line"
-                      >
-                        {topic[useTop].toUpperCase()}
-                      </Text>)
+                      return (<HintsDescription key={ind} body={topic[useTop].toUpperCase()} type={'main title'} />)
                     else if (thing.type == 1) // Sub title
-                      return (<Text key={ind}
-                        h={'fit'}
-                        color={{ _light: '#1D282E/90', _dark: '#EEF6F9' }}
-                        fontWeight={'medium'}
-                        textAlign={lang == 'he' ? 'right' : 'left'}
-                        marginBottom={1}
-                        background={{ _dark: '#1D282E/65' }}
-                        boxShadow={{ _dark: '0 0 5px 2px #EEF6F9' }}
-                        rounded={{ _dark: 'sm' }}
-                        paddingX={3}
-                        direction={lang == 'he' ? 'rtl' : 'ltr'}
-                        whiteSpace="pre-line"
-                      >
-                        {thing.body}
-                      </Text>)
+                      return (<HintsDescription key={ind} body={thing.body} type={'sub title'} />)
                     else if (thing.type == 2) // Description
-                      return (<Text key={ind}
-                        boxShadow={'sm'}
-                        rounded={'sm'}
-                        paddingX={3}
-                        paddingY={1}
-                        h={'fit'}
-                        color={{ _light: '#1D282E/90', _dark: '#EEF6F9' }}
-                        textAlign={lang == 'he' ? 'right' : 'left'}
-                        marginBottom={3}
-                        direction={lang == 'he' ? 'rtl' : 'ltr'}
-                      >
-                        {thing.body}
-                      </Text>)
+                      return (<HintsDescription key={ind} body={thing.body} type={'description'} />)
                     else if (thing.type == 3) // Custom form
                       return (<Flex key={ind} justifyContent={'center'} >
                         <CustomForm />
@@ -711,8 +498,7 @@ function HintsPage() {
         <Flex flexDirection={"column"} gapY={3} hideBelow={'lg'}>
 
           <Separator />
-          <TopicBut
-            pi_icon={'pi-question'}
+          <TopicBut pi_icon={'pi-question'}
             title={language?.hints?.placeholder ?? defPack.hints.placeholder}
             onClick={() => setTop('teach')}
             showSub={true}
@@ -740,9 +526,9 @@ function HintsPage() {
 
       </Flex>
 
-    </Stack >
+    </PagesBaseStack >
 
-  </Flex >)
+  </PagesBase >)
 }
 
 export default HintsPage
