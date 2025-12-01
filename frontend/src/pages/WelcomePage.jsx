@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { userContext } from "../context/UserContext";
 
 import AINote from '../components/AINote.jsx'
-import WelcomeImage from '../images/ChatGPTLearnMathEnterenceLogo.png';
+import WelcomeImage from '../images/ChatGPTLearnMathEnterenceLogo.webp';
 
 function WelcomePage() {
     const navigate = useNavigate();
