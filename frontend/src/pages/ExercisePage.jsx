@@ -61,9 +61,7 @@ function ExercisePage() {
         }
     }
 
-    const exerciseCheckList = () => {
-        return !!useExercise && useExercise.length !== 0
-    }
+    const exerciseCheckList = () => { return !!useExercise && useExercise.length !== 0 }
 
     const averageGrade = async () => {
         let questionsList = [];

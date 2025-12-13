@@ -14,7 +14,7 @@ function NavBar() {
     const { pos } = userContext();
     const { language, defPack } = languageContext();
 
-    const navShort = useBreakpointValue({ base: true, sm: true, md: true, lg: false, xl: false });
+    const navShort = useBreakpointValue({ base: true, sm: true, md: true, lg: false, xl: false }, { fallback: 'base' });
 
     const to_main = () => { navigate('/'); }
     const to_profile = () => { navigate('/profile') }
@@ -49,11 +49,11 @@ function NavBar() {
         borderStartWidth={pos === 'right' ? 2 : 0}
         borderEndWidth={pos === 'left' ? 2 : 0}
         borderTopWidth={pos === 'bottom' ? 2 : 0}
-        borderBottomWidth={pos === 'top' ? 2 : 0}
-        borderColor={'blackAlpha.500'}
+        borderBottomWidth={!pos || pos === 'top' ? 2 : 0}
+        borderColor={'#1D282E'}
         position={'fixed'}
-        width={pos === 'left' || pos === 'right' ? { base: 15, sm: 15, md: 15, lg: 20, xl: 20 } : '100%'}
-        height={pos === 'left' || pos === 'right' ? '100%' : { base: 15, sm: 15, md: 15, lg: 20, xl: 20 }}
+        width={pos === 'left' || pos === 'right' ? { base: 15, sm: 15, md: 15, lg: 20, xl: 20 } : '100vw'}
+        height={pos === 'left' || pos === 'right' ? '100vh' : { base: 15, sm: 15, md: 15, lg: 20, xl: 20 }}
         flexDir={pos === 'left' || pos === 'right' ? 'column-reverse' : 'row'}
         padding={3}
         right={pos === 'right' ? 0 : 'auto'}
@@ -61,12 +61,8 @@ function NavBar() {
         top={pos === 'top' ? 0 : 'auto'}
         bottom={pos === 'bottom' ? 0 : 'auto'}
         justify={'space-between'}
-        backgroundColor={'rgb(166, 166, 166)'}
+        backgroundColor={'#A0835C'}
         zIndex={5}
-        _light={{
-            background: '#A0835C',
-            borderColor: '#1D282E'
-        }}
         _dark={{
             background: '#50423d',
             borderColor: '#8d7361'

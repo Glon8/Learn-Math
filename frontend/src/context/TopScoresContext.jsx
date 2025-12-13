@@ -19,13 +19,10 @@ export const TopScoresProvider = ({ children }) => {
         try {
             const res = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/top/get`);
 
-            if (res?.data?.success) {
-                const data = res.data.data;
+            const data = res.data.data;
 
-                setUsers(data.users.reverse());
-                setScores(data.scores);
-            }
-            else callToast('Info:', language?.topScores?.fetchingErr ?? defPack.topScores.fetchingErr, '', 'info', pos);
+            setUsers(data.users.reverse());
+            setScores(data.scores);
         }
         catch (error) {
             callToast('Info:', language?.topScores?.fetchingErr ?? defPack.topScores.fetchingErr, '', 'info', pos);

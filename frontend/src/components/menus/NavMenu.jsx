@@ -133,10 +133,10 @@ function NavMenu({ close, autoClose, navShort }) {
                 focusRingColor='#B1B7BA'
                 color='#EEF6F9'
             >
+
                 <i className={`pi pi-align-justify`} />
-                {
-                    navShort ? null : <Text>{language?.navMenu?.trigger ?? defPack.navMenu.trigger}</Text>
-                }
+                <Text lgDown={{ display: 'none' }}>{language?.navMenu?.trigger ?? defPack.navMenu.trigger}</Text>
+
             </Button>
 
         </Menu.Trigger>
