@@ -42,12 +42,9 @@ export const LanguagesProvider = ({ children }) => {
     }
 
     useEffect(() => {
-        const fetch = async () => {
-            const timer = setTimeout(() => fetchLang(lang), 100);
-            return () => clearTimeout(timer);
-        }
+        const fetch = async () => { return await fetchLang(lang); }
 
-        fetch();
+        if (!!lang) fetch();
     }, [lang]);
 
     return (<LanguageContext.Provider

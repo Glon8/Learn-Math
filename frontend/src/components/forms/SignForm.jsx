@@ -1,4 +1,3 @@
-"use client"
 import { Button, Flex, Separator, Text, Link } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import { userContext } from "../../context/UserContext.jsx"
@@ -10,6 +9,7 @@ import { verString, verEmail, verPassword } from '../../util/Statics.js'
 import Slot from '../slots/Slot.jsx'
 import TitleSlot from '../slots/TitleSlot.jsx'
 import CheckCard from '../CheckCard.jsx'
+import SignFormLink from "./sub/SignFormLink.jsx"
 
 function SignForm({ isIn, isUp, close }) {
   const { upUser, signUp, pos, signIn, lang, secret } = userContext();
@@ -26,6 +26,62 @@ function SignForm({ isIn, isUp, close }) {
   const [confPass, setConfPass] = useState(null);
   const [secQues, setSecQues] = useState(null);
   const [secAns, setSecAns] = useState(null);
+
+  const comInputsList = [
+    {
+      req: !useIn,
+      category: 'name',
+      value: name,
+      getValue: (value) => setName(value),
+      maxLength: '',
+    },
+    {
+      req: useOffline && useUp,
+      value: language?.sign?.offlineExp ?? defPack.sign.offlineExp,
+    },
+    {
+      req: !useOffline && (useUp || (useIn && !useReset) || (!!useReset && useIn && useReset === 1)),
+      category: 'email',
+      value: email,
+      getValue: (value) => setEmail(value),
+      maxLength: 32,
+    },
+    {
+      req: !useOffline && (useUp || (useIn && !useReset)),
+      category: 'password',
+      value: password,
+      getValue: (value) => setPassword(value),
+      type: "password",
+    },
+    {
+      req: !useOffline && useUp,
+      category: 'confPassword',
+      getValue: (value) => setConfPass(value),
+      type: "password",
+    },
+  ];
+
+  const advResetInputsList = [
+    {
+      category: 'secret',
+      value: !!secQues ? secQues : (!!useReset ? (language?.sign?.secretPlaceholder ?? defPack.sign.secretPlaceholder) : secQues),
+      getValue: (value) => setSecQues(value),
+      edit: (!useReset ? true : false),
+    },
+    {
+      category: 'answer',
+      value: secAns,
+      getValue: (value) => setSecAns(value),
+    },
+    {
+      req: !!useReset && useReset == 2 && useIn,
+      category: 'password',
+      value: password,
+      getValue: (value) => setPassword(value),
+      type: "password",
+      maxLength: 24,
+    },
+  ];
 
   const closeUP = () => {
     close();
@@ -258,94 +314,27 @@ function SignForm({ isIn, isUp, close }) {
         </Flex>
         <Separator marginTop={2} />
         {
-          useIn ? null : (<Slot placeholder={'-----'}
-            category={language?.statics?.user?.name ?? defPack.statics.user.name}
-            edit={true}
-            getValue={(value) => setName(value)}
-            value={name}
-          />)
+          comInputsList.map((item, ind) => {
+            if (!item.req) return null;
+            if (ind !== 1) return (<Slot key={'cil' + ind} placeholder="-----"
+              category={item.category ? language?.statics?.user?.[item.category] ?? defPack.statics.user?.[item.category] : ''}
+              value={item.value ?? ''} getValue={item.getValue} edit type={item.type ?? ''} maxLength={item.maxLength ?? 24} />)
+            else return (<Text key={'cil' + ind} textAlign={'center'} fontSize={'sm'} paddingX={3} paddingY={1}
+              boxShadow={'sm'} rounded={'sm'} background={{ _dark: '#464547' }} color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
+            > {item.value} </Text>)
+          })
         }
         {
-          useOffline && useUp ? (
-            <Text textAlign={'center'}
-              fontSize={'sm'}
-              paddingX={3}
-              paddingY={1}
-              boxShadow={'sm'}
-              rounded={'sm'}
-              background={{ _dark: '#464547' }}
-              color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
-            > {language?.sign?.offlineExp ?? defPack.sign.offlineExp} </Text>) : null}
-        {
-          !useOffline && (useUp || (useIn && !useReset) || (!!useReset && useIn && useReset === 1)) ?
-            (<Slot placeholder={'-----'}
-              category={language?.statics?.user?.email ?? defPack.statics.user.email}
-              edit={true}
-              getValue={(value) => setEmail(value)}
-              maxLength={32}
-              value={email}
-            />) : null
+          !useOffline && (useUp || useIn && !!useReset && useReset === 2) &&
+          (<Flex flexDirection={'column'} gapY={3}>
+            {advResetInputsList.map((item, ind) => {
+              if (item.req === true || item.req === undefined)
+                return (<Slot key={'aril' + ind} placeholder="-----"
+                  category={item.category ? language?.statics?.user?.[item.category] ?? defPack.statics.user?.[item.category] : ''} value={item.value ?? ''}
+                  getValue={item.getValue} edit={item.edit ?? true} type={item.type ?? ''} maxLength={item.maxLength ?? 32} />)
+            })}
+          </Flex>)
         }
-        {
-          !useOffline && (useUp || useIn && !useReset) ?
-            (<Slot type="password"
-              placeholder={'-----'}
-              category={language?.statics?.user?.password ?? defPack.statics.user.password}
-              edit={true}
-              getValue={(value) => setPassword(value)}
-              maxLength={24}
-              value={password}
-            />) : null
-        }
-        {
-          !useOffline && useUp ? (
-            <Slot placeholder={'-----'}
-              category={language?.statics?.user?.confPassword ?? defPack.statics.user.confPassword}
-              edit={true}
-              getValue={(value) => setConfPass(value)}
-              maxLength={24}
-              value={null}
-              type="password"
-            />) : null
-        }
-        {
-          !useOffline && (useUp || useIn && !!useReset && useReset === 2) ? 
-          (<Flex flexDirection={'column'} gapY={3} >
-            <Slot placeholder={'-----'}
-              category={language?.statics?.user?.secret ?? defPack.statics.user.secret}
-              edit={!!useReset ? false : true}
-              value={
-                !!secQues ? secQues :
-                  (!!useReset ? (
-                    language?.sign?.secretPlaceholder ??
-                    defPack.sign.secretPlaceholder) :
-                    secQues)
-              }
-              getValue={(value) => setSecQues(value)}
-              maxLength={32}
-            />
-            <Slot placeholder={'-----'}
-              category={
-                language?.statics?.user?.answer ?? defPack.statics.user.answer}
-              value={secAns}
-              edit={true}
-              getValue={(value) => setSecAns(value)}
-              maxLength={32}
-            />
-            {
-              !!useReset && useReset == 2 && useIn ?
-                (<Slot placeholder={'-----'}
-                  category={language?.statics?.user?.password ?? defPack.statics.user.password}
-                  edit={true}
-                  getValue={(value) => setPassword(value)}
-                  maxLength={24}
-                  value={password}
-                  type="password"
-                />) : null
-            }
-          </Flex>) : null
-        }
-
       </Flex>
       <Flex w={'full'}
         flexDirection={'column'}
@@ -357,37 +346,25 @@ function SignForm({ isIn, isUp, close }) {
 
             if (!useReset) {
               if (flag && useOffline && useUp) callToast('Success', 'Local user created!', '', 'success', pos);
-
               if (flag) signHandle();
             }
             else {
               if (flag && !!useIn) {
-                switch (useReset) {
-                  case 1:
-                    const getQuestion = async () => {
-                      const res = await secret(email);
+                if (useReset === 1) {
+                  const getQuestion = async () => {
+                    const res = await secret(email);
 
-                      if (!res) callToast('Error', 'No matching user! Check the email you wrote!', '', 'error', pos);
-                      else {
-                        setSecQues(res?.secret);
+                    if (!res) callToast('Error', 'No matching user! Check the email you wrote!', '', 'error', pos);
+                    else { setSecQues(res?.secret); setReset(2); }
+                  }
 
-                        setReset(2);
-                      }
-                    }
-
-                    getQuestion();
-                    break;
-
-                  case 2:
-                    signHandle();
-                    break;
-
-                  default:
-                    break;
+                  getQuestion();
                 }
+                if (useReset === 2) signHandle();
               }
             }
-          }}
+          }
+          }
           _light={{
             background: "#8b8da0/20",
             borderColor: "#B1B7BA/10",
@@ -405,66 +382,15 @@ function SignForm({ isIn, isUp, close }) {
         </Button>
         <Separator />
         {
-          useUp ? (<CheckCard ifChange={() => { setOffline(!useOffline) }}
-            pi_icon={'pi-thumbtack'}
-            title={language?.sign?.offline ?? defPack.sign.offline}
-          />) : null
+          useUp && (<CheckCard ifChange={() => { setOffline(!useOffline) }} pi_icon={'pi-thumbtack'} title={language?.sign?.offline ?? defPack.sign.offline} />)
         }
         {
           useIn && !useReset ? (<Flex flexDir={'column'}>
 
-            <Flex fontSize={'sm'}
-              color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
-              flexDir={lang == 'he' ? 'row-reverse' : 'row'}
-              justifyContent={lang == 'he' ? 'start' : ''}
-            >
-              {language?.sign?.signUpLabel ?? defPack.sign.signUpLabel}
-              <Link onClick={() => {
-                setIn(false);
-                setUp(true);
-                setReset(false);
-                setOffline(false);
-              }}
-                marginX={1}
-              >
-                {language?.sign?.signUp ?? defPack.sign.signUp}
-              </Link>
-            </Flex>
-            <Flex fontSize={'sm'}
-              color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
-              flexDir={lang == 'he' ? 'row-reverse' : 'row'}
-              justifyContent={lang == 'he' ? 'start' : ''}
-            >
-              {language?.sign?.forgotPassLabel ?? defPack.sign.forgotPassLabel}
-              <Link onClick={() => {
-                setIn(true);
-                setUp(false);
-                setReset(1);
-                setOffline(false);
-              }}
-                marginX={1}
-              >
-                {language?.sign?.forgotPass ?? defPack.sign.forgotPass}
-              </Link>
-            </Flex>
+            <SignFormLink label={'signUpLabel'} value={'signUp'} onClick={() => { setIn(false); setUp(true); setReset(false); setOffline(false); }} />
+            <SignFormLink label={'forgotPassLabel'} value={'forgotPass'} onClick={() => { setIn(true); setUp(false); setReset(1); setOffline(false); }} />
 
-          </Flex>) : (<Flex fontSize={'sm'}
-            color={{ _light: '#1D282E', _dark: '#EEF6F9' }}
-            flexDir={lang == 'he' ? 'row-reverse' : 'row'}
-            justifyContent={lang == 'he' ? 'start' : ''}
-          >
-            {language?.sign?.signInLabel ?? defPack.sign.signInLabel}
-            <Link onClick={() => {
-              setIn(true);
-              setUp(false);
-              setReset(false);
-              setOffline(false);
-            }}
-              marginX={1}
-            >
-              {language?.sign?.signIn ?? defPack.sign.signIn}
-            </Link>
-          </Flex>)
+          </Flex>) : (<SignFormLink label={'signInLabel'} value={'signIn'} onClick={() => { setIn(true); setUp(false); setReset(false); setOffline(false); }} />)
         }
       </Flex>
 

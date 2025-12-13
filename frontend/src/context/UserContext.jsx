@@ -40,6 +40,7 @@ export const UserProvider = ({ children }) => {
   const [useUser, setUser] = useState(false);
   const [useScore, setScore] = useState(false);
   const [useLogs, setLogs] = useState(false);
+
   const pop = useRef(false);
   const lock = useRef(true);
 
@@ -78,33 +79,35 @@ export const UserProvider = ({ children }) => {
     if (lock.current) {
       lock.current = false;
 
-      await wait(0.35);
-
       if (!response.current) {
-        callToast('Info:', 'Server not responded, please wait! \u{1F605} Pinging again...', '', 'info', useUser.navPosition);
-
-        await ping();
-
         await wait(0.35);
 
         if (!response.current) {
-          callToast('Info:', <>Hi! The free Render plan I’m using may take up to <b>90 seconds</b> to wake up &#x1F616;, please be patient.</>, '', 'info', useUser.navPosition);
-
-          serverBootPop();
-
-          await wait(90);
+          callToast('Info:', 'Server not responded, please wait! \u{1F605} Pinging again...', '', 'info', useUser.navPosition);
 
           await ping();
 
           await wait(0.35);
 
-          if (!response.current) callToast('Error:', 'Connection failed! \u{1F613} Try again later!', '', 'info', useUser.navPosition);
+          if (!response.current) {
+            callToast('Info:', <>Hi! The free Render plan I’m using may take up to <b>90 seconds</b> to wake up &#x1F616;, please be patient.</>, '', 'info', useUser.navPosition);
+
+            serverBootPop();
+
+            await wait(90);
+
+            await ping();
+
+            await wait(0.35);
+
+            if (!response.current) callToast('Error:', 'Connection failed! \u{1F613} Try again later!', '', 'info', useUser.navPosition);
+            else callToast('', 'Connection restored!', '', 'success', useUser.navPosition);
+          }
           else callToast('', 'Connection restored!', '', 'success', useUser.navPosition);
         }
-        else callToast('', 'Connection restored!', '', 'success', useUser.navPosition);
-      }
 
-      lock.current = true;
+        lock.current = true;
+      }
     }
   }
 
@@ -256,6 +259,8 @@ export const UserProvider = ({ children }) => {
     else {  // sign up: offline
       await upUser('_id', 0);
       await upUser('name', name);
+
+      await updateUser();
     }
   }
 
@@ -266,7 +271,7 @@ export const UserProvider = ({ children }) => {
       let res;
 
       if (!!email && !!password && !answer) {
-        password = await encrypt(password);
+        //password = await encrypt(password);
 
         res = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/user/sign-in`, {
           token: false,
@@ -284,7 +289,7 @@ export const UserProvider = ({ children }) => {
         });
       else if (!!email && !!password && !!answer) {
         password = await encrypt(password);
-        answer = await encrypt(answer);
+        //answer = await encrypt(answer);
 
         res = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/user/sign-in`, {
           token: false,
@@ -346,7 +351,7 @@ export const UserProvider = ({ children }) => {
 
       setCookie(1, "learn_math_user", message);
     }
-    else { // update user in the db
+    else if (!!useToken && !!useUser._id) { // update user in the db
       await pingSchedule();
 
       try {
@@ -471,18 +476,14 @@ export const UserProvider = ({ children }) => {
   }
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if ((!!useToken || (useUser._id === 0 && !useUser.status)) && loaded) updateUser();
+    if ((!!useToken || (useUser._id === 0 && !useUser.status)) && loaded) updateUser();
 
-      if (!loaded) setLoaded(true);
-    }, 500);
-
-    return () => clearTimeout(timer);
+    if (!loaded) setLoaded(true);
   }, [useToken, useUser, useScore, useLogs]);
 
   useEffect(() => {
     const fetchData = async () => {
-      await ping();
+      ping();
 
       await pingSchedule();
 

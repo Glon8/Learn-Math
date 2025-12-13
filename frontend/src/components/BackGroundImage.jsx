@@ -22,37 +22,26 @@ function BackGroundImage() {
         paddingTop={pos === 'top' ? '5rem' : ''}
         paddingBottom={pos === 'bottom' ? '5rem' : ''}
         zIndex={-5}
-        _light={{
-            bg: '#EEF6F9'
-        }}
-        _dark={{
-            bg: '#c9bbae'
-        }}>
+        backgroundColor={'#EEF6F9'}
+        _dark={{ bg: '#c9bbae' }}>
 
-        <Flex h={'auto'}
-            maxW={'25rem'}
+        <Flex maxW={'25rem'}
             position={'fixed'}
             left={pos === 'left' ? '4rem' : -1}
             bottom={pos === 'bottom' ? '5rem' : 0}
-            display={{ base: 'none', sm: 'none', md: 'none', lg: 'none', xl: 'flex' }}
-        >
-            <Image maxH={'70%'}
-                src={!!colorMode ? (colorMode === 'light' ? Girl : ReadingBoy) : Girl}
-                alt="welcome-image" />
+            display={{ base: 'none', sm: 'none', md: 'none', lg: 'none', xl: 'flex' }} >
+            <Image maxH={'70%'} alt="welcome-image"
+                src={!!colorMode ? (colorMode === 'light' ? Girl : ReadingBoy) : Girl} />
         </Flex>
-        <Flex h={'auto'}
-            maxW={{ _light: '25rem', _dark: '18rem' }}
+        <Flex maxW={{ _light: '25rem', _dark: '18rem' }}
             position={'fixed'}
             bottom={pos === 'bottom' ? '5rem' : 0}
             right={pos === 'right' ? '4rem' : -1}
             display={{ base: 'none', sm: 'none', md: 'none', lg: 'none', xl: 'flex' }}>
-            <Image maxH={'70%'}
-                src={!!colorMode ? (colorMode === 'light' ? Boy : SittingGirl) : Boy}
-                alt="welcome-image" />
+            <Image maxH={'70%'} alt="welcome-image"
+                src={!!colorMode ? (colorMode === 'light' ? Boy : SittingGirl) : Boy} />
         </Flex>
-        <Flex display={{ base: 'none', sm: 'none', md: 'none', lg: 'none', xl: 'flex' }}>
-            <AINote />
-        </Flex>
+        <AINote type={'bg'} />
 
     </Flex>)
 }

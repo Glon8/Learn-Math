@@ -4,45 +4,47 @@ import axios from 'axios';
 const PingContext = createContext();
 
 export const PingProvider = ({ children }) => {
-    const [useDelay, setDelay] = useState(false);
     const [useRes, setRes] = useState(false);
 
     const response = useRef(false);
-    const attemptRef = useRef(null);
+    const isDelayed = useRef(false);
+    const isPinging = useRef(false);
 
     const wait = (s) => new Promise(res => setTimeout(res, s * 1000));
 
     const ping = async () => {
-        if (!useDelay) {
-            setDelay(true); // sealing the enterance
+        // check if there active ping or timer
+        if (!!isPinging.current || !!isDelayed.current) return;
 
+        // sealing the enterance - by ping
+        isPinging.current = true;
+
+        //ping to server
+        try {
+            const res = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/util/ping`);
+
+            response.current = true;
+        }
+        catch (error) {
+            response.current = false;
+        }
+
+        setRes(response.current != useRes);
+
+        // set timer only if ping is succeed
+        if (!!response.current) {
             // setting timer for 15 minutes
             setTimeout(() => {
-                setDelay(false);
+                isDelayed.current = false;
                 response.current = false;
             }, (15 * 60 * 1000));
 
-            // if there a few requests at once, it ll run only one ping and one timer, for the last one.
-            if (attemptRef.current)
-                clearTimeout(attemptRef.current);
-
-            await new Promise((resolve) => {
-                attemptRef.current = setTimeout(async () => {
-                    try {
-                        const res = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/util/ping`);
-
-                        response.current = true;
-                    }
-                    catch (error) {
-                        response.current = false;
-                    }
-
-                    setRes(response.current != useRes);
-
-                    resolve();
-                });
-            }, (1 * 1000));
+            // sealing the enterance - by timer
+            isDelayed.current = true;
         }
+
+        // release the pinging lock
+        isPinging.current = false;
     }
 
     return (<PingContext.Provider

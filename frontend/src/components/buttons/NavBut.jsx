@@ -14,8 +14,7 @@ function NavBut({ display, pi_icon, title, navShort, navSide, onClick }) {
     >
         <Button focusRing={'inside'}
             onClick={onClick}
-            width={navShort ? 'auto' :
-                (navSide === 'right' || navSide === 'left' ? '9rem' : 'auto')}
+            width={navShort || !(navSide === 'right' || navSide === 'left') ? 'auto' : '9rem'}
             background="#1D282E"
             borderColor="#1D282E"
             focusRingColor='#B1B7BA'>
@@ -23,11 +22,10 @@ function NavBut({ display, pi_icon, title, navShort, navSide, onClick }) {
             <Flex flexDirection={'row'}
                 gap={3}
                 color='#EEF6F9'>
-                <i className={`pi ${pi_icon ?? ''}`} />
-                {
-                    navShort ? null :
-                        (<Text textAlign={'center'}>{title}</Text>)
-                }
+
+                <i className={'pi ' + (pi_icon ?? '')} />
+                <Text lgDown={{ display: 'none' }} textAlign={'center'}>{title}</Text>
+
             </Flex>
 
         </Button>
