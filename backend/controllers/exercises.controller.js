@@ -2,1143 +2,499 @@ import { verify } from "../util/token.util.js";
 import Compare from '../models/compare.model.js';
 import bcrypt from 'bcrypt'
 
+const serverError = (res, msg) => res.status(500).json({ success: false, message: msg ?? 'Server error' });
+const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+const randCho = (val) => Math.floor(Math.random() * (val));
+
 const sumAndSub = async (dif, sett) => {
-    const box = {};
-
-    const setTypo = !!sett?.[3] ? sett?.[3] : false;
-    const difSpike = !!sett?.[4] ? sett?.[4] : false; // overwriting the difficulty according to users settings (true - on, false - off)
-    const typo = setTypo ? 1 : Math.floor(Math.random() * 2); // the way exercise is shown to the user (0 - string, 1 - LaTeX)
-
-    let quota; // max value allowed
-    let threeValues; // amount numbers in the exercise (0 - two, 1 - three)
-    let fSign; // first sign (0 - minus, 1 - plus)
-    let sSign; // second sign (0 - minus, 1 - plus)
-
-    if (!difSpike) {
-        if (dif < 40) {
-            quota = 99;
-            threeValues = 0;
-            fSign = Math.floor(Math.random() * 2);
-        }
-        else if (dif >= 40 && dif < 75) {
-            quota = 999;
-            threeValues = !setTypo ? Math.floor(Math.random() * 2) : 0;
-            fSign = Math.floor(Math.random() * 2);
-
-            if (threeValues == 1) sSign = Math.floor(Math.random() * 2);
-        }
-        else if (dif >= 75) {
-            quota = 9999;
-            threeValues = !setTypo ? Math.floor(Math.random() * 2) : 0;
-            fSign = Math.floor(Math.random() * 2);
-
-            if (threeValues == 1) sSign = Math.floor(Math.random() * 2);
-        }
-    }
-    else {
-        quota = 999999;
-        threeValues = !setTypo ? Math.floor(Math.random() * 2) : 0;
-        fSign = Math.floor(Math.random() * 2);
-
-        if (threeValues == 1) sSign = Math.floor(Math.random() * 2)
-    }
-
-    const exercise = []; // array that ll include all the EXERCISES
-    const answer = []; // array that ll include all the ANSWERS
+    // < user settings (true = on, false = off)
+    const setTypo = sett?.[3] ?? false; // < display overwrite
+    const difSpike = sett?.[4] ?? false; // < difficulty spike
+    const typo = setTypo ? 1 : randCho(2); // how exercise is displayed (0 = string, 1 = LaTeX)
+    let threeValues = (dif >= 40 && !setTypo) ? randCho(2) : 0; // amount of values used (0 = two numbers, 1 = three numbers)
+    let fSign = randCho(2); // first sign (0 = minus, 1 = plus)
+    let sSign = ((dif >= 40 || difSpike) && threeValues == 1) ? randCho(2) : null; // second sign (0 = minus, 1 = plus)
+    let quota; // difficulty quota
+    if (difSpike) quota = 999999; // dificulty spike - on
+    else if (dif < 40) quota = 99; // stage 1
+    else if (dif >= 40 && dif < 75) quota = 999; // stage 2
+    else quota = 9999; // stage 3
+    const exercise = [], answer = [];
     const minQuota = Math.floor(quota * 0.1);
-
+    // values for generation
+    let first, second, third, op, ans, message;
     if (threeValues == 0) { // two values fork
         if (fSign == 0) {
-            const first = Math.floor(Math.random() * (quota - Math.floor(quota * 0.55) + 1)) + Math.floor(quota * 0.55);
-            const second = Math.floor(Math.random() * ((quota - first) + 1 - minQuota)) + minQuota;
-
-            exercise.push({
-                type: typo, message: (typo === 0 ? (`${first} - ${second} = ?`) :
-                    (String.raw`\begin{array}{r} -\;${first} \\ \underline{${second}} \\ \end{array}`))
-            });
-
-            answer.push(first - second);
+            const firstMin = Math.floor(quota * 0.55);
+            first = randInt(firstMin, quota);
+            second = randInt(minQuota, (quota - first));
+            op = '-';
+            ans = first - second;
         }
         else {
-            const first = Math.floor(Math.random() * (Math.floor(quota * 0.6) + 1 - minQuota)) + minQuota;
-            const second = Math.floor(Math.random() * (quota - first + 1 - minQuota)) + minQuota;
-
-            exercise.push({
-                type: typo, message: (typo === 0 ? (`${first} + ${second} = ?`) :
-                    (String.raw`\begin{array}{r} +\;${first} \\ \underline{${second}} \\ \end{array}`))
-            });
-
-            answer.push(first + second);
+            const firstMax = Math.floor(quota * 0.6);
+            first = randInt(minQuota, firstMax);
+            second = randInt(minQuota, (quota - first));
+            op = '+';
+            ans = first + second;
         }
+        exercise.push({
+            type: typo, message: (typo === 0 ? (`${first} ${op} ${second} = ?`) :
+                (String.raw`\begin{array}{r} \text{${op}}\;${first} \\ \underline{${second}} \\ \end{array}`))
+        });
+        answer.push(ans);
     }
     else { // three values fork
-        if (fSign == 1 && sSign == 1) {
-            const first = Math.floor(Math.random() * (Math.floor(quota * 0.45) - minQuota + 1)) + minQuota;
-            const second = Math.floor(Math.random() * (Math.floor(quota * 0.75) - first - minQuota + 1)) + minQuota;
-            const third = Math.floor(Math.random() * (quota - first - second - minQuota + 1)) + minQuota;
-
-            exercise.push({ type: 0, message: `${first} + ${second} + ${third}= ?` });
-
-            answer.push(first + second + third);
+        if (fSign == 1 && sSign == 1) { // case 1: + +
+            first = randInt(minQuota, Math.floor(quota * 0.45));
+            second = randInt(minQuota, (Math.floor(quota * 0.75) - first));
+            third = randInt(minQuota, (quota - first - second));
+            message = `${first} + ${second} + ${third} = ?`;
+            ans = first + second + third;
         }
-        else if (fSign == 1 && sSign == 0 || fSign == 0 && sSign == 1) {
-            const first = Math.floor(Math.random() * (Math.floor(quota * 0.45) - minQuota + 1)) + minQuota;
-            const second = Math.floor(Math.random() * (quota - first - minQuota + 1)) + minQuota;
-            const third = Math.floor(Math.random() * (first + second - Math.floor((first + second) * 0.1) + 1)) + Math.floor((first + second) * 0.1);
-
-            if (fSign == 1 && sSign == 0) {
-                exercise.push({ type: 0, message: `${first} + ${second} - ${third}= ?` });
-
-                answer.push(first + second - third);
+        else if (fSign == 1 && sSign == 0 || fSign == 0 && sSign == 1) { // case 2: + - or - +
+            first = randInt(minQuota, Math.floor(quota * 0.45));
+            second = randInt(minQuota, quota - first);
+            const sum12 = first + second;
+            third = randInt(Math.floor(sum12 * 0.1), sum12);
+            if (fSign == 1 && sSign == 0) { // + -
+                message = `${first} + ${second} - ${third}= ?`;
+                ans = first + second - third;
             }
-            else if (fSign == 0 && sSign == 1) {
-                exercise.push({ type: 0, message: `${first} - ${third} + ${second}= ?` });
-
-                answer.push(first - third + second);
+            else if (fSign == 0 && sSign == 1) { // - +
+                message = `${first} - ${third} + ${second}= ?`;
+                ans = first - third + second;
             }
         }
-        else {
-            const first = Math.floor(Math.random() * (quota - Math.floor(quota * 0.55) + 1)) + Math.floor(quota * 0.55);
-            const second = Math.floor(Math.random() * (Math.floor(first * 0.75) - minQuota + 1)) + minQuota;
-            const third = Math.floor(Math.random() * (first - second + 1));
-
-            exercise.push({ type: 0, message: `${first} - ${second} - ${third}= ?` });
-
-            answer.push(first - second - third);
+        else { // case 3: - -
+            first = randInt(Math.floor(quota * 0.55), quota);
+            second = randInt(minQuota, Math.floor(first * 0.75));
+            third = randInt(0, (first - second));
+            message = `${first} - ${second} - ${third}= ?`;
+            ans = first - second - third;
         }
+        exercise.push({ type: 0, message });
+        answer.push(ans);
     }
-
-    box['exe'] = exercise;
-    box['ans'] = answer;
-    box['desc'] = false;
-
-    return box;
-}
-
-const sumAndSubTest = async (sett) => {
-    let pack = [];
-
-    const difficultyCheck = [39, 39, 39, 74, 74, 74, 74, 100, 100, 100];
-
-    difficultyCheck.forEach(async (diff) => {
-        const box = await sumAndSub(diff, sett);
-
-        pack.push(box);
-    });
-
-    console.log(pack)
-
-    return pack;
+    return { exe: exercise, ans: answer, desc: false };
 }
 
 const multiplyAndDivide = async (dif, sett) => {
-    const box = {};
-
-    const difSpike = !!sett?.[6] ? sett?.[6] : false; // overwriting the difficulty according to users settings (true - on, false - off)
-    const setTypo = !!sett?.[5] ? sett?.[5] : false;
-    const sign = Math.floor(Math.random() * 2); // sign (0 - divide, 1 - multiply)
-    const typo = setTypo ? 1 : Math.floor(Math.random() * 2); // the way exercise is shown to the user (0 - string, 1 - LaTeX)
-
-    let quota; // maximum allowed number size
-    let first; // first number
-    let second; // second number
-
-    if (!difSpike) { // if no difficulty spike
-        if (dif < 65) quota = 9;
-        else quota = 99;
-    }
-    else quota = 999;
-
-    const exercise = [];
-    const answer = [];
+    // < user settings (true = on, false = off)
+    const setTypo = !!sett?.[5] ? sett?.[5] : false; // < display overwrite
+    const difSpike = !!sett?.[6] ? sett?.[6] : false; // < difficulty spike
+    const typo = setTypo ? 1 : randCho(2); // how exercise is displayed (0 = string, 1 = LaTeX)
+    const sign = randCho(2); // sign (0 = divide, 1 = multiply)
+    let quota; // difficulty quota
+    if (difSpike) quota = 999; // difficulty spike
+    else if (dif < 65) quota = 9; // stage 1
+    else quota = 99; // stage 2
+    const exercise = [], answer = [];
     const minQuota = Math.floor(quota * 0.3);
-
-    switch (sign) {
-        case 0:
-            first = Math.floor(Math.random() * (quota + 1 - minQuota)) + minQuota;
-            second = Math.floor(Math.random() * (quota + 1 - minQuota)) + minQuota;
-
-            const product = first * second;
-
-            exercise.push({
-                type: typo, message: (typo == 0 ? (`${product} : ${first} = ?`) :
-                    (String.raw`\begin{array}{r} :\;${product} \\ \underline{${first}} \\ \end{array}`))
-            });
-            answer.push(second);
-            break;
-        case 1:
-            first = Math.floor(Math.random() * (quota + 1 - minQuota)) + minQuota;
-            second = Math.floor(Math.random() * (quota + 1 - minQuota)) + minQuota;
-
-            exercise.push({
-                type: typo, message: (typo == 0 ? (`${first} x ${second} = ?`) :
-                    (String.raw`\begin{array}{r} \text{x}\;${first} \\ \underline{${second}} \\ \end{array}`))
-            });
-            answer.push(first * second);
-            break;
+    // values for generation
+    let first, second, product, ans, message;
+    // assign values
+    first = randInt(minQuota, quota);
+    second = randInt(minQuota, quota);
+    if (sign == 0) { // case 1: :
+        product = first * second;
+        message = typo == 0 ? (`${product} : ${first} = ?`) :
+            (String.raw`\begin{array}{r} :\;${product} \\ \underline{${first}} \\ \end{array}`);
+        ans = second;
     }
-
-    box['exe'] = exercise;
-    box['ans'] = answer;
-    box['desc'] = false;
-
-    return box;
-}
-
-const multiplyAndDivideTest = async (sett) => {
-    let pack = [];
-
-    const difficultyCheck = [50, 50, 50, 50, 50, 50, 100, 100, 100, 100];
-
-    difficultyCheck.forEach(async (diff) => {
-        const box = await multiplyAndDivide(diff, sett);
-
-        pack.push(box);
-    });
-
-    console.log(pack)
-
-    return pack;
+    else { // case 2: x
+        message = typo == 0 ? (`${first} x ${second} = ?`) :
+            (String.raw`\begin{array}{r} \text{x}\;${first} \\ \underline{${second}} \\ \end{array}`);
+        ans = first * second;
+    }
+    exercise.push({ type: typo, message });
+    answer.push(ans);
+    return { exe: exercise, ans: answer, desc: false }
 }
 
 const mixed = async (dif, sett) => {
-    const box = {};
-
-    const fSign = Math.floor(Math.random() * 2); // first sign (0 - negative, 1 - positive, depends on signSwitch)
-    const sSign = Math.floor(Math.random() * 2); // second sign (0 - negative, 1 - positive, depends on signSwitch)
-    const signSwitch = Math.floor(Math.random() * 2); // sign switches determine which one ll multiply and whom ll sum (0 - first is summing, 1 - first is multiplying)
-    const bracketSwitch = Math.floor(Math.random() * 2); // bracket switch, determine if brackets appear or not (0 - no brackets, 1 - with brackets)
-
-    let quota;
-    let first;
-    let second;
-    let third;
-
-    if (dif < 60) quota = 999;
-    else quota = 9999;
-
-    const exercise = [];
-    const answer = [];
+    // depends on signSwitch
+    const fSign = randCho(2); // first sign (0 = negative, 1 = positive)
+    const sSign = randCho(2); // second sign (0 = negative, 1 = positive)
+    // switches
+    const signSwitch = randCho(2); // determine whom ll multiply and whom ll sum (0 = first is summing, 1 = first is multiplying)
+    const bracketSwitch = randCho(2); // determine if brackets appear or not (0 = no brackets, 1 = with brackets)
+    let quota; // difficulty quota
+    if (dif < 60) quota = 999; // stage 1
+    else quota = 9999; // stage 2
+    const exercise = [], answer = [];
     const minQuota = Math.floor(quota * 0.1);
-
-    if (bracketSwitch == 0) {
-        if (fSign == 0 && signSwitch == 0) { // first sign is minus
-            if (sSign == 0) { // second sign is divide
-                third = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-                second = (Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)))) * third;
-                first = Math.floor(Math.random() * (quota + 1 - (second / third) - minQuota)) + (second / third) + minQuota;
-
-                exercise.push({ type: 0, message: `${first} - ${second} : ${third} = ?` });
-
-                answer.push(first - (second / third));
-            }// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
-            else { // second sign is multiply
-                second = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-                third = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-                first = Math.floor(Math.random() * (quota + 1 - (second * third))) + (second * third);
-
-                exercise.push({ type: 0, message: `${first} - ${second} x ${third} = ?` });
-
-                answer.push(first - (second * third));
-            }// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
+    //operators maping (0 = negatives, 1 = positives)
+    const ops = [['-', '/'], ['+', '*'],];
+    // operators decoder
+    const fstOp = ops[fSign][signSwitch];
+    const secOp = ops[sSign][1 - signSwitch];
+    // navigation key build
+    const key = fstOp + secOp;
+    // values for generation
+    let first, second, third, ans, message;
+    const high = quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1));
+    const low = quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01));
+    const getSmall = () => randInt(low, high);
+    // generation functions
+    const minus_div = (brackets) => {
+        if (brackets == 1) {
+            third = getSmall(); second = randInt(low, quota - (high ** 2)); first = getSmall() * third + second;
+            message = `(${first} - ${second}) : ${third} = ?`; ans = (first - second) / third;
         }
-        else if (fSign == 0 && signSwitch == 1) { // first sign is divide
-            if (sSign == 0) { // second sign is minus
-                second = Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-                first = (Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)))) * second;
-                third = Math.floor(Math.random() * ((first / second) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-
-                exercise.push({ type: 0, message: `${first} : ${second} - ${third} = ?` });
-
-                answer.push((first / second) - third);
-            }// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
-            else { // second sign is plus
-                second = Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-                first = (Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)))) * second;
-                third = Math.floor(Math.random() * (quota + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-
-                exercise.push({ type: 0, message: `${first} : ${second} + ${third} = ?` });
-
-                answer.push((first / second) + third);
-            }// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
-        }
-        else if (fSign == 1 && signSwitch == 0) { // first sign is plus
-            if (sSign == 0) { // second sign is divide
-                second = Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-                first = (Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)))) * second;
-                third = Math.floor(Math.random() * (quota + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-
-                exercise.push({ type: 0, message: `${third} + ${first} : ${second} = ?` });
-
-                answer.push(third + (first / second));
-            }// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
-            else { // second sign is multiply
-                second = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-                third = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-                first = Math.floor(Math.random() * ((quota - (second * third)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-
-                exercise.push({ type: 0, message: `${first} + ${second} x ${third} = ?` });
-
-                answer.push(first + (second * third));
-            }// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
-        }
-        else if (fSign == 1 && signSwitch == 1) { // first sign is multiply
-            if (sSign == 0) { // second sign is minus
-                second = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-                third = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-                first = Math.floor(Math.random() * ((second * third) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-
-                exercise.push({ type: 0, message: `${second} x ${third} - ${first} = ?` });
-
-                answer.push((second * third) - first);
-            }// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
-            else { // second sign is plus
-                second = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-                third = Math.floor(Math.random() * (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-                first = Math.floor(Math.random() * ((quota - (second * third)) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-
-                exercise.push({ type: 0, message: `${second} x ${third} + ${first} = ?` });
-
-                answer.push((second * third) + first);
-            }// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
+        else {
+            third = getSmall(); second = getSmall() * third; first = randInt((second / third) + minQuota, quota);
+            message = `${first} - ${second} : ${third} = ?`; ans = first - (second / third);
         }
     }
-    else { //========================================================================<
-        if (fSign == 0 && signSwitch == 0) { // first sign is minus
-            if (sSign == 0) { // second sign is divide
-                third = Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-                second = Math.floor(Math.random() * (quota - (quota == 999 ? (Math.floor(minQuota * 0.3) ** 2) : ((Math.floor(minQuota * 0.1) ** 2))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-                first = (Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)))) * third + second;
-
-                exercise.push({ type: 0, message: `(${first} - ${second}) : ${third} = ?` });
-
-                answer.push((first - second) / third);
-            }// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
-            else { // second sign is multiply
-                third = Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-                second = Math.floor(Math.random() * (quota - (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-                first = Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))) + second;
-
-                exercise.push({ type: 0, message: `(${first} - ${second}) x ${third} = ?` });
-
-                answer.push((first - second) * third);
-            } // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
+    const minus_mul = (brackets) => {
+        if (brackets == 1) {
+            third = getSmall(); second = randInt(low, quota - high); first = getSmall() + second;
+            message = `(${first} - ${second}) x ${third} = ?`; ans = (first - second) * third;
         }
-        else if (fSign == 0 && signSwitch == 1) { // first sign is divide
-            if (sSign == 0) { // second sign is minus
-                third = Math.floor(Math.random() * (quota - (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-                second = (Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)))) + third;
-                first = (Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)))) * (second - third);
-
-                exercise.push({ type: 0, message: `${first} : (${second} - ${third}) = ?` });
-
-                answer.push(first / (second - third));
-            } // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
-            else { // second sign is plus
-                second = Math.floor(Math.random() * (((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) - 2) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-                third = Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) - second + 1 - 2)) + 2;
-                first = (Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)))) * second
-
-                exercise.push({ type: 0, message: `${first} : (${second} + ${third}) = ?` });
-
-                answer.push(first / (second + third));
-            } // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
-        }
-        else if (fSign == 1 && signSwitch == 0) { // first sign is plus
-            if (sSign == 0) { // second sign is divide
-                second = Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-                third = (Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)))) * second;
-                first = Math.floor(Math.random() * (Math.floor(third * 0.8) + 1 - Math.floor(third * 0.2))) + Math.floor(third * 0.2);
-                third -= first;
-
-                exercise.push({ type: 0, message: `(${third} + ${first}) : ${second} = ?` });
-
-                answer.push((third + first) / second);
-            } // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
-            else { // second sign is multiply
-                third = Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-                first = Math.floor(Math.random() * (((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) - 2) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-                second = Math.floor(Math.random() * (((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) - first) + 1 - 2)) + 2;
-
-                exercise.push({ type: 0, message: `(${first} + ${second}) x ${third} = ?` });
-
-                answer.push((first + second) * third);
-            } // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
-        }
-        else if (fSign == 1 && signSwitch == 1) { // first sign is multiply
-            if (sSign == 0) { // second sign is minus
-                second = Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-                first = Math.floor(Math.random() * (quota - (quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-                third = (Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)))) + first;
-
-                exercise.push({ type: 0, message: `${second} x (${third} - ${first}) = ?` });
-
-                answer.push(second * (third - first));
-            } // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
-            else { // second sign is plus
-                second = Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-                third = Math.floor(Math.random() * ((quota == 999 ? (Math.floor(minQuota * 0.3)) : (Math.floor(minQuota * 0.1))) + 1 - (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01))))) + (quota == 999 ? (Math.floor(minQuota * 0.1)) : (Math.floor(minQuota * 0.01)));
-                first = Math.floor(Math.random() * (Math.floor(third * 0.8) + 1 - Math.floor(third * 0.2))) + Math.floor(third * 0.2);
-                third -= first;
-
-                exercise.push({ type: 0, message: `${second} x (${third} + ${first}) = ?` });
-
-                answer.push(second * (third + first));
-            } // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DONE
+        else {
+            second = getSmall(); third = getSmall(); first = randInt(second * third, quota);
+            message = `${first} - ${second} x ${third} = ?`; ans = first - (second * third);
         }
     }
-
-    box['exe'] = exercise;
-    box['ans'] = answer;
-    box['desc'] = false;
-
-    return box;
-}
-
-const mixedTest = async (sett) => {
-    let pack = [];
-
-    const difficultyCheck = [30, 30, 30, 30, 30, 100, 100, 100, 100, 100];
-
-    difficultyCheck.forEach(async (diff) => {
-        const box = await mixed(diff, sett);
-
-        pack.push(box);
-    });
-
-    console.log(pack)
-
-    return pack;
-}
-
-const toolNumDenumDivider = (denum, num) => {
-    const min = Math.min(denum, num);
-    const max = Math.max(denum, num);
-
-    let divider;
-
-    for (let i = 1; i <= min; i++)
-        if (min % i == 0 && max % i == 0)
-            divider = i;
-
-    return divider;
-}
-
-const toolFracSimplify = (den, num) => {
-    const box = {
-        whole: 0,
-        num: 0,
-        den: 0
+    const div_minus = (brackets) => {
+        if (brackets == 1) {
+            third = randInt(low, quota - high); second = getSmall() + third; first = getSmall() * (second - third);
+            message = `${first} : (${second} - ${third}) = ?`; ans = first / (second - third);
+        }
+        else {
+            second = getSmall(); first = getSmall() * second; third = randInt(low, first / second);
+            message = `${first} : ${second} - ${third} = ?`; ans = (first / second) - third;
+        }
+    }
+    const div_plus = (brackets) => {
+        if (brackets == 1) {
+            second = randInt(low, high - 2); third = randInt(2, (high - second)); first = getSmall() * (second + third);
+            message = `${first} : (${second} + ${third}) = ?`; ans = first / (second + third);
+        }
+        else {
+            second = getSmall(); first = getSmall() * second; third = randInt(low, quota);
+            message = `${first} : ${second} + ${third} = ?`; ans = (first / second) + third;
+        }
+    }
+    const plus_div = (brackets) => {
+        if (brackets == 1) {
+            second = getSmall(); third = getSmall() * second; first = randInt(Math.floor(third * 0.2), Math.floor(third * 0.8)); third -= first;
+            message = `(${third} + ${first}) : ${second} = ?`; ans = (third + first) / second;
+        }
+        else {
+            second = getSmall(); first = getSmall() * second; third = randInt(low, quota);
+            message = `${third} + ${first} : ${second} = ?`; ans = third + (first / second);
+        }
+    }
+    const plus_mul = (brackets) => {
+        if (brackets == 1) {
+            third = getSmall(); first = randInt(low, high - 2); second = randInt(2, high - first);
+            message = `(${first} + ${second}) x ${third} = ?`; ans = (first + second) * third;
+        }
+        else {
+            second = getSmall(); third = getSmall(); first = randInt(low, quota - (second * third));
+            message = `${first} + ${second} x ${third} = ?`; ans = first + (second * third);
+        }
+    }
+    const mul_minus = (brackets) => {
+        if (brackets == 1) {
+            second = getSmall(); first = randInt(low, quota - high); third = getSmall() + first;
+            message = `${second} x (${third} - ${first}) = ?`; ans = second * (third - first);
+        }
+        else {
+            second = getSmall(); third = getSmall(); first = randInt(low, second * third);
+            message = `${second} x ${third} - ${first} = ?`; ans = (second * third) - first;
+        }
+    }
+    const mul_plus = (brackets) => {
+        if (brackets == 1) {
+            second = getSmall(); third = getSmall(); first = randInt(Math.floor(third * 0.2), Math.floor(third * 0.8)); third -= first;
+            message = `${second} x (${third} + ${first}) = ?`; ans = second * (third + first);
+        }
+        else {
+            second = getSmall(); third = getSmall(); first = randInt(low, quota - (second * third));
+            message = `${second} x ${third} + ${first} = ?`; ans = (second * third) + first;
+        }
+    }
+    // navigation functions
+    const handlers = {
+        "-/": minus_div, "-*": minus_mul,
+        "/-": div_minus, "/+": div_plus,
+        "+/": plus_div, "+*": plus_mul,
+        "*-": mul_minus, "*+": mul_plus
     };
-
-    if (num >= den) {
-        box.whole = Math.floor(num / den);
-
-        num = num % den;
-    }
-
-    if (num > 0) {
-        const divider = toolNumDenumDivider(num, den);
-
-        box.num = num / divider;
-        box.den = den / divider;
-    }
-
-    return box;
-}
-
-const fractions = async (dif, sett) => {
-    const box = {};
-
-    const first = {
-        whole: 0,
-        num: 0,
-        den: 0
-    }
-    const second = {
-        whole: 0,
-        num: 0,
-        den: 0
-    }
-
-    let quota; // max value allowed
-    let signSwitch; // sign switch, changes the outputs to multiply and division. (0 - devide, 1 - multiply)
-    let fSign; // first sign (0 - minus, 1 - plus)
-    let deno;
-
-    if (dif < 50) {
-        quota = 90;
-        signSwitch = 0;
-        deno = Math.floor(Math.random() * ((quota * 0.1) + 1 - 2)) + 2;
-
-        fSign = Math.floor(Math.random() * 2);
-    }
-    else if (dif >= 50 && dif < 85) {
-        quota = 900;
-        signSwitch = Math.floor(Math.random() * 2);
-        deno = Math.floor(Math.random() * ((quota * 0.1) + 1 - 10)) + 10;
-
-        fSign = Math.floor(Math.random() * 2);
-    }
-    else if (dif >= 85) {
-        quota = 9000;
-        signSwitch = Math.floor(Math.random() * 2);
-        deno = Math.floor(Math.random() * ((quota * 0.1) + 1 - 100)) + 100;
-
-        fSign = Math.floor(Math.random() * 2);
-    }
-
-    const exercise = [];
-    const answer = [];
-    const wholeQuota = 9;
-    //PS. minQuota for a whole is 0, while for mumerator is 1.
-    // whole = quota / deno (floored).
-
-    if (!signSwitch) { // first sign is plus or minus
-        if (!fSign) { // first sign is minus
-            first['whole'] = Math.floor(Math.random() * (wholeQuota + 1 - 1)) + 1;
-            second['whole'] = Math.floor(Math.random() * ((first['whole'] - 1) + 1));
-
-            first['num'] = Math.floor(Math.random() * ((deno - 1) + 1 - (dif < 40 ? 1 : Math.floor((deno - 1) * 0.1)))) + (dif < 40 ? 1 : Math.floor((deno - 1) * 0.1));
-            second['num'] = Math.floor(Math.random() * (first['num'] + 1 - (dif < 40 ? 1 : Math.floor((deno - 1) * 0.1)))) + (dif < 40 ? 1 : Math.floor((deno - 1) * 0.1));
-
-            const fPack = toolFracSimplify(deno, first['num']);
-
-            first['num'] = fPack['num'];
-            first['den'] = fPack['den'];
-
-            const sPack = toolFracSimplify(deno, second['num']);
-
-            second['num'] = sPack['num'];
-            second['den'] = sPack['den'];
-
-            exercise.push({
-                type: 1, message: String.raw`${!!first.whole && first.whole != 0 ? `${first.whole}` : ``}\tfrac{${first.num}}{${first.den}}\;-\;${!!second.whole && second.whole != 0 ? `${second.whole}` : ``}\tfrac{${second.num}}{${second.den}}\;=\;?`
-            });
-
-            let aWhole = first.whole - second.whole;
-            let aNum = first.num * second.den - second.num * first.den;
-            let aDen = first.den * second.den;
-
-            const aPack = toolFracSimplify(aDen, aNum);
-
-            aWhole += aPack['whole'];
-            aNum = aPack['num'];
-            aDen = aPack['den'];
-
-            answer.push(!!aWhole ?
-                (`${aWhole}${!!aNum ? `/${aNum}/${aDen}` : ``}`) :
-                (`${!!aNum ? `${aNum}/${aDen}` : 0}`));
-        } // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<DONE
-        else { // first sign is plus
-            first['whole'] = Math.floor(Math.random() * ((wholeQuota - 2) + 1));
-            second['whole'] = Math.floor(Math.random() * ((wholeQuota - first['whole'] + (first['whole'] != 0 ? (- 1) : 0)) + 1));
-
-            first['num'] = Math.floor(Math.random() * ((deno - 1) + 1 - (dif < 40 ? 1 : Math.floor((deno - 1) * 0.1)))) + (dif < 40 ? 1 : Math.floor((deno - 1) * 0.1));
-            second['num'] = Math.floor(Math.random() * ((deno - first['num']) + 1 - (dif < 40 ? 1 : Math.floor((deno - 1) * 0.01)))) + (dif < 40 ? 1 : Math.floor((deno - 1) * 0.01));
-
-            const fPack = toolFracSimplify(deno, first['num']);
-
-            first['num'] = fPack['num'];
-            first['den'] = fPack['den'];
-
-            const sPack = toolFracSimplify(deno, second['num']);
-
-            second['num'] = sPack['num'];
-            second['den'] = sPack['den'];
-
-            exercise.push({
-                type: 1, message: String.raw`${!!first.whole && first.whole != 0 ? `${first.whole}` : ``}\tfrac{${first.num}}{${first.den}}\;+\;${!!second.whole && second.whole != 0 ? `${second.whole}` : ``}\tfrac{${second.num}}{${second.den}}\;=\;?`
-            });
-
-            let aWhole = first.whole + second.whole;
-            let aNum = first.num * second.den + second.num * first.den;
-            let aDen = first.den * second.den;
-
-            const aPack = toolFracSimplify(aDen, aNum);
-
-            aWhole += aPack['whole'];
-            aNum = aPack['num'];
-            aDen = aPack['den'];
-
-            answer.push(!!aWhole ?
-                (`${aWhole}${!!aNum ? `/${aNum}/${aDen}` : ``}`) :
-                (`${!!aNum ? `${aNum}/${aDen}` : 0}`));
-        } // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<DONE
-    }
-    else { // first sign is multiply or divide
-        if (!fSign) { // first sign is divide
-            first['whole'] = Math.floor(Math.random() * ((wholeQuota - 1) + 1));
-            second['whole'] = Math.floor(Math.random() * ((first['whole']) + 1));
-
-            first['num'] = Math.floor(Math.random() * ((deno - 1) + 1 - (dif < 40 ? 1 : Math.floor((deno - 1) * 0.1)))) + (dif < 40 ? 1 : Math.floor((deno - 1) * 0.1));
-            second['num'] = Math.floor(Math.random() * ((deno - first['num']) + 1 - (dif < 40 ? 1 : Math.floor((deno - 1) * 0.01)))) + (dif < 40 ? 1 : Math.floor((deno - 1) * 0.01));
-
-            const fPack = toolFracSimplify(deno, first['num']);
-
-            first['num'] = fPack['num'];
-            first['den'] = fPack['den'];
-
-            const sPack = toolFracSimplify(deno, second['num']);
-
-            second['num'] = sPack['num'];
-            second['den'] = sPack['den'];
-
-            exercise.push({
-                type: 1, message: String.raw`${!!first.whole && first.whole != 0 ? `${first.whole}` : ``}\tfrac{${first.num}}{${first.den}}\;:\; ${!!second.whole && second.whole != 0 ? `${second.whole}` : ``}\tfrac{${second.num}}{${second.den}}\;=\;?`
-            });
-
-            let aWhole = 0;
-            let aNum = (first.num + first.whole * first.den) * second.den;
-            let aDen = first.den * (second.num + second.whole * second.den);
-
-            const aPack = toolFracSimplify(aDen, aNum);
-
-            aWhole += aPack['whole'];
-            aNum = aPack['num'];
-            aDen = aPack['den'];
-
-            answer.push(!!aWhole ?
-                (`${aWhole}${!!aNum ? `/${aNum}/${aDen}` : ``}`) :
-                (`${!!aNum ? `${aNum}/${aDen}` : 0}`));
-        } // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<DONE
-        else { // first sign is multiply
-            first['whole'] = Math.floor(Math.random() * (wholeQuota + 1));
-            second['whole'] = Math.floor(Math.random() * (wholeQuota + 1));
-
-            first['num'] = Math.floor(Math.random() * ((deno - 1) + 1 - (dif < 40 ? 1 : Math.floor((deno - 1) * 0.1)))) + (dif < 40 ? 1 : Math.floor((deno - 1) * 0.1));
-            second['num'] = Math.floor(Math.random() * ((deno - first['num']) + 1 - (dif < 40 ? 1 : Math.floor((deno - 1) * 0.01)))) + (dif < 40 ? 1 : Math.floor((deno - 1) * 0.01));
-
-            const fPack = toolFracSimplify(deno, first['num']);
-
-            first['num'] = fPack['num'];
-            first['den'] = fPack['den'];
-
-            const sPack = toolFracSimplify(deno, second['num']);
-
-            second['num'] = sPack['num'];
-            second['den'] = sPack['den'];
-
-            exercise.push({
-                type: 1, message: String.raw`${!!first.whole && first.whole != 0 ? `${first.whole}` : ``}\tfrac{${first.num}}{${first.den}}\;\text{x}\; ${!!second.whole && second.whole != 0 ? `${second.whole}` : ``}\tfrac{${second.num}}{${second.den}}\;=\;?`
-            });
-
-            let aWhole = 0;
-            let aNum = (first.num + first.whole * first.den) * (second.num + second.whole * second.den);
-            let aDen = first.den * second.den;
-
-            const aPack = toolFracSimplify(aDen, aNum);
-
-            aWhole += aPack['whole'];
-            aNum = aPack['num'];
-            aDen = aPack['den'];
-
-            answer.push(!!aWhole ?
-                (`${aWhole}${!!aNum ? `/${aNum}/${aDen}` : ``}`) :
-                (`${!!aNum ? `${aNum}/${aDen}` : 0}`));
-        } // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<DONE
-    }
-
-    box['exe'] = exercise;
-    box['ans'] = answer;
-    box['desc'] = false;
-
-    return box;
-}
-
-const fractionsTest = async (sett) => {
-    const pack = [];
-
-    const difficultyCheck = [30, 30, 30, 30, 70, 70, 70, 70, 100, 100];
-
-    difficultyCheck.forEach(async (diff) => {
-        const box = await fractions(diff, sett);
-
-        pack.push(box);
-    });
-
-    console.log(pack);
-
-    return pack;
+    handlers[key](bracketSwitch);
+    exercise.push({ type: 0, message });
+    answer.push(ans);
+    return { exe: exercise, ans: answer, desc: false };
 }
 
 const powerAndRoot = async (dif, sett) => {
-    const box = {};
-
-    const turn = Math.floor(Math.random() * 2); // turn ll determine whom ll carry the root and power (0 - first, 1 - second)
-    const main = Math.floor(Math.random() * 3); // determine if there ll be a main root or power carrier (0 - no main, 1 - main root carrier, 2 - main power carrier)
-    const sign = Math.floor(Math.random() * 4); // sign (0 - minus, 1 - plus, 2 - divide, 3 - multiply)
-    const powerFlip = Math.floor(Math.random() * 2); // determine if the digits carry root or power (0 - root, 1 - power)
-
-    let quota; // the limit that Ill generate powers from/ possible roots
-    let first;
-    let second;
-    let carrier;
-    let rawPow;
-    let mainPow;
-    let mp;
-    // rawPow / mainPow ll be used:
-    // >> rawPower ** 2 = A
-    // >> sqrt(A)
-
+    const turn = randCho(2); // turn ll determine whom ll carry the root and power (0 = first, 1 = second)
+    const main = randCho(3); // determine if there ll be a main root or power carrier (0 = no main, 1 = main root carrier, 2 = main power carrier)
+    const sign = randCho(4); // sign (0 = minus, 1 = plus, 2 = divide, 3 = multiply)
+    const powerFlip = randCho(2); // determine if the digits carry root or power (0 = root, 1 = power)
+    let quota; // difficulty quota
     if (dif < 40) quota = 16;
     else if (dif >= 40) quota = 36;
-
-    const exercise = [];
-    const answer = [];
-
+    const exercise = [], answer = [];
+    // values for generation
+    let first, second, carrier, rawPow, mainPow, mp, ans, message;
+    // generator helpers
+    const low = Math.floor(quota * 0.1);
+    const high = () => Math.floor(quota * 0.4);
+    const pwrSwitch = (rev) => !rev ? (!powerFlip ? (rawPow ** 2) : (rawPow)) : (!powerFlip ? (rawPow) : (rawPow ** 2));
+    const rndIntS = (min, max) => Math.floor(Math.random() * (max - min)) + min;
+    const LtoQ = rndIntS(low, quota);
     if (sign == 0) { // minus sign
-        mp = Math.floor(Math.random() * ((quota - 1) - Math.floor(quota * 0.4))) + Math.floor(quota * 0.4);
-        mainPow = !main ? 0 : (main == 1 ? (mp ** 2) : (mp));
-        rawPow = !main ?
-            (Math.floor(Math.random() * (quota - Math.floor(quota * 0.1) - 1)) + Math.floor(quota * 0.1) + 1) :
-            (!turn ?
-                (Math.floor(Math.random() * ((!powerFlip ? (quota ** 2) : (quota)) - mainPow)) + mainPow) :
-                (Math.floor(Math.random() * (quota - Math.floor(quota * 0.1))) + Math.floor(quota * 0.1)));
-        first = !turn ?
-            (!powerFlip ? (rawPow ** 2) : (rawPow)) :
-            (!main ?
-                ((Math.floor(Math.random() * (quota - Math.floor(quota * 0.1))) + Math.floor(quota * 0.1)) + (!powerFlip ? (rawPow) : (rawPow ** 2))) :
-                (mainPow + (!powerFlip ? (rawPow) : (rawPow ** 2))));
-        second = !!turn ?
-            (!powerFlip ? (rawPow ** 2) : (rawPow)) :
-            (!main ?
-                (Math.floor(Math.random() * ((!powerFlip ? (rawPow) : (rawPow ** 2)) - Math.floor(quota * 0.1))) + Math.floor(quota * 0.1)) :
-                ((!powerFlip ? (rawPow) : (rawPow ** 2)) - mainPow));
-
-        let exerciseStr;
-        let answerStr;
-
-        if (!main) {
-            answerStr = !turn ?
-                (!powerFlip ?
-                    (rawPow - second) :
-                    (rawPow ** 2 - second)) :
-                (!powerFlip ?
-                    (first - rawPow) :
-                    (first - rawPow ** 2));
-
-            exerciseStr = !turn ?
-                (!powerFlip ?
-                    (`\\sqrt{${first}}\\;-\\;${second}\\;=\\;?`) :
-                    (`${first}^{2}\\;-\\;${second}\\;=\\;?`)) :
-                (!powerFlip ?
-                    (`${first}\\;-\\;\\sqrt{${second}}\\;=\\;?`) :
-                    (`${first}\\;-\\;${second}^{2}\\;=\\;?`));
-        }
-        else if (main == 1) {
-            answerStr = mp;
-
-            exerciseStr = !turn ?
-                (!powerFlip ?
-                    (`\\sqrt{\\sqrt{${first}}\\;-\\;${second}}\\;=\\;?`) :
-                    (`\\sqrt{${first}^{2}\\;-\\;${second}}\\;=\\;?`)) :
-                (!powerFlip ?
-                    (`\\sqrt{${first}\\;-\\;\\sqrt{${second}}}\\;=\\;?`) :
-                    (`\\sqrt{${first}\\;-\\;${second}^{2}}\\;=\\;?`));
-        }
-        else {
-            answerStr = mp ** 2;
-
-            exerciseStr = !turn ?
-                (!powerFlip ?
-                    (`(\\sqrt{${first}}\\;-\\;${second})^2\\;=\\;?`) :
-                    (`(${first}^{2}\\;-\\;${second})^2\\;=\\;?`)) :
-                (!powerFlip ?
-                    (`(${first}\\;-\\;\\sqrt{${second}})^2\\;=\\;?`) :
-                    (`(${first}\\;-\\;${second}^{2})^2\\;=\\;?`));
-        }
-
-        exercise.push({
-            type: 1, message: exerciseStr
-        });
-
-        answer.push(answerStr);
-    } //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<DONE FIXED
+        mp = rndIntS(high(), quota - 1); mainPow = !main ? 0 : (main == 1 ? (mp ** 2) : (mp));
+        rawPow = !main ? rndIntS(low + 1, quota) : (!turn ? rndIntS(mainPow, (!powerFlip ? (quota ** 2) : (quota))) : LtoQ);
+        first = !turn ? pwrSwitch() : (!main ? (LtoQ + pwrSwitch(1)) : (mainPow + pwrSwitch(1)));
+        second = !!turn ? pwrSwitch() : (!main ? rndIntS(low, pwrSwitch(1)) : (pwrSwitch(1) - mainPow));
+    }
     else if (sign == 1) { // plus sign
-        mp = Math.floor(Math.random() * (quota - Math.floor(quota * 0.4))) + Math.floor(quota * 0.4);
-        mainPow = !main ? 0 : (main == 1 ? (mp ** 2) : (mp));
-        rawPow = !main ?
-            (Math.floor(Math.random() * (quota - Math.floor(quota * 0.1))) + Math.floor(quota * 0.1)) :
-            (Math.floor(Math.random() * ((mainPow - 1) - 1)) + 1);
-        first = !turn ?
-            (!powerFlip ? (rawPow ** 2) : (rawPow)) :
-            (!main ?
-                (Math.floor(Math.random() * (quota - Math.floor(quota * 0.1))) + Math.floor(quota * 0.1)) :
-                (mainPow - (!powerFlip ? (rawPow) : (rawPow ** 2))));
-        second = !!turn ?
-            (!powerFlip ? (rawPow ** 2) : (rawPow)) :
-            (!main ?
-                (Math.floor(Math.random() * (quota - Math.floor(quota * 0.1))) + Math.floor(quota * 0.1)) :
-                (mainPow - (!powerFlip ? (rawPow) : (rawPow ** 2))));
-
-        let exerciseStr;
-        let answerStr;
-
-        if (!main) {
-            answerStr = !turn ?
-                (!powerFlip ?
-                    (rawPow + second) :
-                    (rawPow ** 2 + second)) :
-                (!powerFlip ?
-                    (first + rawPow) :
-                    (first + rawPow ** 2));
-
-            exerciseStr = !turn ?
-                (!powerFlip ?
-                    (`\\sqrt{${first}}\\;+\\;${second}\\;=\\;?`) :
-                    (`${first}^{2}\\;+\\;${second}\\;=\\;?`)) :
-                (!powerFlip ?
-                    (`${first}\\;+\\;\\sqrt{${second}}\\;=\\;?`) :
-                    (`${first}\\;+\\;${second}^{2}\\;=\\;?`));
-        }
-        else if (main == 1) {
-            answerStr = mp;
-
-            exerciseStr = !turn ?
-                (!powerFlip ?
-                    (`\\sqrt{\\sqrt{${first}}\\;+\\;${second}}\\;=\\;?`) :
-                    (`\\sqrt{${first}^{2}\\;+\\;${second}}\\;=\\;?`)) :
-                (!powerFlip ?
-                    (`\\sqrt{${first}\\;+\\;\\sqrt{${second}}}\\;=\\;?`) :
-                    (`\\sqrt{${first}\\;+\\;${second}^{2}}\\;=\\;?`));
-        }
-        else {
-            answerStr = mp ** 2;
-
-            exerciseStr = !turn ?
-                (!powerFlip ?
-                    (`(\\sqrt{${first}}\\;+\\;${second})^2\\;=\\;?`) :
-                    (`(${first}^{2}\\;+\\;${second})^2\\;=\\;?`)) :
-                (!powerFlip ?
-                    (`(${first}\\;+\\;\\sqrt{${second}})^2\\;=\\;?`) :
-                    (`(${first}\\;+\\;${second}^{2})^2\\;=\\;?`));
-        }
-
-        exercise.push({
-            type: 1, message: exerciseStr
-        });
-
-        answer.push(answerStr);
-    } //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<DONE FIXED
+        mp = rndIntS(high(), quota); mainPow = !main ? 0 : (main == 1 ? (mp ** 2) : (mp));
+        rawPow = !main ? LtoQ : rndIntS(1, mainPow - 1);
+        first = !turn ? pwrSwitch() : (!main ? LtoQ : mainPow - pwrSwitch(1));
+        second = !!turn ? pwrSwitch() : (!main ? LtoQ : mainPow - pwrSwitch(1));
+    }
     else if (sign == 2) { // divide sign
-        carrier = Math.floor(Math.random() * (quota - Math.floor(quota * 0.1))) + Math.floor(quota * 0.1);
-        rawPow = Math.floor(Math.random() * (quota - Math.floor(quota * 0.1))) + Math.floor(quota * 0.1);
-        first = !turn ?
-            (!powerFlip ? ((rawPow * carrier) ** 2) : (rawPow * carrier)) :
-            ((!powerFlip ? (rawPow) : (rawPow ** 2)) * carrier);
-        second = !!turn ? (!powerFlip ? (rawPow ** 2) : (rawPow)) : (carrier);
-
-        let answerStr = !turn ?
-            (!powerFlip ?
-                (Math.sqrt(first) / second) :
-                ((first) ** 2 / second)) :
-            (!powerFlip ?
-                (first / Math.sqrt(second)) :
-                (first / (second) ** 2));
-
-        let exerciseStr = !turn ?
-            (!powerFlip ?
-                (`\\sqrt{${first}}\\;:\\;${second}\\;=\\;?`) :
-                (`${first}^{2}\\;:\\;${second}\\;=\\;?`)) :
-            (!powerFlip ?
-                (`${first}\\;:\\;\\sqrt{${second}}\\;=\\;?`) :
-                (`${first}\\;:\\;${second}^{2}\\;=\\;?`));
-
-
-        exercise.push({
-            type: 1, message: exerciseStr
-        });
-
-        answer.push(answerStr);
-    } //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<DONE
+        carrier = LtoQ; rawPow = LtoQ;
+        first = !turn ? (!powerFlip ? ((rawPow * carrier) ** 2) : (rawPow * carrier)) : (pwrSwitch(1) * carrier);
+        second = !!turn ? pwrSwitch() : (carrier);
+    }
     else if (sign == 3) { // multiply sign
-        rawPow = Math.floor(Math.random() * (quota - Math.floor(quota * 0.1))) + Math.floor(quota * 0.1);
-        first = !turn ?
-            (!powerFlip ? (rawPow ** 2) : (rawPow)) :
-            (Math.floor(Math.random() * (quota - Math.floor(quota * 0.1))) + Math.floor(quota * 0.1));
-        second = !!turn ?
-            (!powerFlip ? (rawPow ** 2) : (rawPow)) :
-            (Math.floor(Math.random() * (quota - Math.floor(quota * 0.1))) + Math.floor(quota * 0.1));
-
-        let answerStr = !turn ?
-            (!powerFlip ?
-                (rawPow * second) :
-                ((rawPow ** 2) * second)) :
-            (!powerFlip ?
-                (first * rawPow) :
-                (first * (rawPow ** 2)));
-
-        let exerciseStr = !turn ?
-            (!powerFlip ?
-                (`\\sqrt{${first}}\\;\text{x}\\;${second}\\;=\\;?`) :
-                (`${first}^{2}\\;\text{x}\\;${second}\\;=\\;?`)) :
-            (!powerFlip ?
-                (`${first}\\;\text{x}\\;\\sqrt{${second}}\\;=\\;?`) :
-                (`${first}\\;\text{x}\\;${second}^{2}\\;=\\;?`));
-
-
-        exercise.push({
-            type: 1, message: exerciseStr
-        });
-
-        answer.push(answerStr);
-    } //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<DONE FIXED
-
-
-    box['exe'] = exercise;
-    box['ans'] = answer;
-    box['desc'] = false;
-
-    return box;
+        rawPow = LtoQ; first = !turn ? pwrSwitch() : LtoQ;
+        second = !!turn ? pwrSwitch() : LtoQ;
+    }
+    // values for answers generation
+    const ansMap = [
+        [[[rawPow - second, rawPow ** 2 - second,], [first - rawPow, first - rawPow ** 2,],], [[mp],], [[mp ** 2],],],
+        [[[rawPow + second, rawPow ** 2 + second,], [first + rawPow, first + rawPow ** 2,],], [[mp],], [[mp ** 2],],],
+        [[[Math.sqrt(first) / second, (first) ** 2 / second,], [first / Math.sqrt(second), first / (second) ** 2,],],],
+        [[[rawPow * second, (rawPow ** 2) * second,], [first * rawPow, first * (rawPow ** 2),],],]
+    ];
+    const mpCheck = sign < 2 && main > 0;
+    ans = ansMap[sign][sign > 1 ? 0 : main][mpCheck ? 0 : turn][mpCheck ? 0 : powerFlip];
+    // values for latex string generation
+    const ops = ['-', '+', ':', 'x'];
+    const pwr_sqrt = (sign, item) => { return sign == 1 ? `\\sqrt{${item}}` : (sign == 2 ? `(${item})^{2}` : item); }
+    message = `${pwr_sqrt(sign < 2 ? main : 0, `${!turn ? pwr_sqrt((1 + powerFlip), first) : first}\\;\\text{${ops[sign]}}\\;${turn ? pwr_sqrt((1 + powerFlip), second) : second}`)}\\;=\\;?`;
+    exercise.push({ type: 1, message });
+    answer.push(ans);
+    return { exe: exercise, ans: answer, desc: false }
 }
 
-const powerAndRootTest = async (sett) => {
+const toolNumDenumDivider = (a, b) => {
+    // NOTATION: GCD - Oclidus algorithm
+    while (b !== 0) [a, b] = [b, a % b];
+    return a;
+}
+
+const toolFracSimplify = (den, num) => {
+    let whole = 0
+    if (num >= den) { whole = Math.floor(num / den); num %= den; }
+    if (num > 0) { const divider = toolNumDenumDivider(num, den); num /= divider; den /= divider; }
+    return { whole, num, den };
+}
+
+const fractions = async (dif, sett) => {
+    const sign = randCho(dif > 49 ? 4 : 2); // sign (0 = minus, 1 = plus, 2 = divide, 3 = multiply)
+    let dMin; // deno helper
+    let quota; // difficulty quota(for fraction)
+    if (dif < 50) { quota = 90; dMin = 2; }
+    else if (dif >= 50 && dif < 85) { quota = 900; dMin = 10; }
+    else { quota = 9000; dMin = 100; }
+    const exercise = []; const answer = [];
+    const wholeQuota = 9; // actual exercise limit
+    // values for generation
+    let aNum, aDen, aWhole = 0;
+    const ops = ['-', '+', ':', 'x'];
+    const first = { whole: 0, num: 0, den: 0 }
+    const second = { whole: 0, num: 0, den: 0 }
+    const Q01 = (quota * 0.1); // deno helper
+    const deno = randInt(dMin, Q01); //PS. minQuota for a whole is 0, while for numerator is 1. whole = quota / deno (floored).
+    const packer = (item) => { const pack = toolFracSimplify(deno, item['num']); item['num'] = pack['num']; item['den'] = pack['den']; }
+    const evaluate = perc => dif < 40 ? 1 : Math.floor((deno - 1) * perc);
+    const high = evaluate(0.1);
+    first['num'] = randInt(high, deno - 1);
+    if (!sign) { // first sign is minus
+        first['whole'] = randInt(1, wholeQuota); second['whole'] = randCho((first['whole'] - 1) + 1);
+        second['num'] = randInt(high, first['num']); packer(first); packer(second);
+        aNum = first.num * second.den - second.num * first.den; aDen = first.den * second.den;
+    }
+    else if (sign == 1) { // first sign is plus
+        const low = evaluate(0.01); first['whole'] = randCho((wholeQuota - 2) + 1);
+        second['whole'] = randCho((wholeQuota - first['whole'] + (first['whole'] != 0 ? (- 1) : 0)) + 1);
+        second['num'] = randInt(low, (deno - first['num'])); packer(first); packer(second);
+        aNum = first.num * second.den + second.num * first.den; aDen = first.den * second.den;
+    }
+    if (sign == 2) { // first sign is divide
+        const low = evaluate(0.01); first['whole'] = randCho((wholeQuota - 1) + 1); second['whole'] = randCho((first['whole']) + 1);
+        second['num'] = randInt(low, (deno - first['num'])); packer(first); packer(second);
+        aNum = (first.num + first.whole * first.den) * second.den; aDen = first.den * (second.num + second.whole * second.den);
+    }
+    else if (sign == 3) { // first sign is multiply
+        const temp = randCho(wholeQuota + 1), low = evaluate(0.01);
+        first['whole'] = temp; second['whole'] = temp;
+        second['num'] = randInt(low, (deno - first['num'])); packer(first); packer(second);
+        aNum = (first.num + first.whole * first.den) * (second.num + second.whole * second.den); aDen = first.den * second.den;
+    }
+    const aPack = toolFracSimplify(aDen, aNum);
+    const aWholeList = [() => first.whole - second.whole + aPack['whole'], () => first.whole + second.whole + aPack['whole'], () => aPack['whole'], () => aPack['whole'],];
+    aWhole = aWholeList[sign](); aNum = aPack['num']; aDen = aPack['den'];
+    exercise.push({ type: 1, message: String.raw`${!!first.whole && first.whole != 0 ? `${first.whole}` : ``}\tfrac{${first.num}}{${first.den}}\;\text{${ops[sign]}}\;${!!second.whole && second.whole != 0 ? `${second.whole}` : ``}\tfrac{${second.num}}{${second.den}}\;=\;?` });
+    answer.push(!!aWhole ? (`${aWhole}${!!aNum ? `/${aNum}/${aDen}` : ``}`) : (`${!!aNum ? `${aNum}/${aDen}` : 0}`));
+    return { exe: exercise, ans: answer, desc: false };
+}
+
+const testTears = {
+    sum_substract: { tears: [39, 39, 39, 74, 74, 74, 74, 100, 100, 100], handler: sumAndSub, },
+    multiply_divide: { tears: [50, 50, 50, 50, 50, 50, 100, 100, 100, 100], handler: multiplyAndDivide, },
+    mixed: { tears: [30, 30, 30, 30, 30, 100, 100, 100, 100, 100], handler: mixed, },
+    fraction_fractionMixed: { tears: [30, 30, 30, 30, 70, 70, 70, 70, 100, 100], handler: fractions, },
+    power_root: { tears: [30, 30, 30, 100, 100, 100, 100, 100, 100, 100], handler: powerAndRoot, },
+    forms_sizes: { tears: [], handler: () => { }, },
+    equasions_basic: { tears: [], handler: () => { }, },
+    equations_two_more: { tears: [], handler: () => { }, },
+    verbal_problems: { tears: [], handler: () => { }, },
+    geometry: { tears: [], handler: () => { }, },
+    quadratic_equation: { tears: [], handler: () => { }, },
+    circles: { tears: [], handler: () => { }, },
+};
+
+const testMaker = async (topic, sett) => {
     const pack = [];
-
-    const difficultyCheck = [30, 30, 30, 100, 100, 100, 100, 100, 100, 100];
-
-    difficultyCheck.forEach(async (diff) => {
-        const box = await powerAndRoot(diff, sett);
-
+    const diff = testTears[topic].tears;
+    diff.forEach(async (tear) => {
+        // pulling the function from testTears
+        const taskHandler = testTears[topic].handler;
+        // creating a box
+        const box = await taskHandler(tear, sett);
+        box['topic'] = topic;
         pack.push(box);
     });
-
-    console.log(pack);
-
     return pack;
 }
 
-const examBasic = async (sett) => {
-    console.log('tried to access exam');
+const examLists = {
+    exam_basic: {
+        mustHave: [
+            [(sett) => sumAndSub(100, sett), 'sum_substract'],
+            [(sett) => multiplyAndDivide(100, sett), 'multiply_divide'],
+            [(sett) => mixed(100, sett), 'mixed'],
+            [(sett) => fractions(70, sett), 'fraction_fractionMixed'],
+            [(sett) => powerAndRoot(100, sett), 'power_root'],
+        ],
+    },
+    exam_advanced: { mustHave: [], additional: [], },
+};
 
+const examMaker = async (topic, sett) => {
+    // saving lines, reinserting the same list on first run 
+    examLists.exam_basic['additional'] = examLists.exam_basic.mustHave;
     const pack = [];
-
-    // must include forms and sizes
-    const mustHave = [
-        () => sumAndSub(100, sett),
-        () => multiplyAndDivide(100, sett),
-        () => mixed(100, sett),
-        () => fractions(70, sett),
-        () => powerAndRoot(100, sett),
-    ];
-    const additional = [
-        () => sumAndSub(100, sett),
-        () => multiplyAndDivide(100, sett),
-        () => mixed(100, sett),
-        () => fractions(70, sett),
-        () => powerAndRoot(100, sett),
-    ];
-
-    for (const thing of mustHave) {
-        const box = await thing();
-
+    // making a copys of additional to not remove the original
+    const core = [...examLists[topic]['mustHave']], solidify = [...examLists[topic]['additional']];
+    // creating core exercises
+    while (core.length != 0) {
+        // creating a random integer
+        const ind = randCho(core.length);
+        // creating a box by using integer
+        const box = await core[ind][0](sett);
+        box['topic'] = core[ind][1];
         pack.push(box);
+        // removing the used index
+        core.splice(ind, 1);
     }
-
+    // creating additional exercises
     while (pack.length < 10) {
-        const ind = Math.floor(Math.random() * additional.length);
-
-        const box = await additional[ind]();
-
+        // creating a random integer
+        const ind = randCho(solidify.length);
+        // creating a box by using integer
+        const box = await solidify[ind][0](sett);
+        box['topic'] = solidify[ind][1];
         pack.push(box);
-
-        additional.splice(ind, 1);
+        // removing the used index
+        solidify.splice(ind, 1);
     }
-
-    console.log(pack);
-
     return pack;
 }
 
 const exercisePack = async (difficulty, topic, settings) => {
-    let pack = [];
-    let box = {};
-
-    if (topic != 'exam_basic' && topic != 'exam_advanced') {
-        //if (difficulty == 0 && topic == 'fraction_fractionMixed') difficulty = 30; // <====================== FOR TEST ONLY!!!! delete as you done!!!
-
-        if (difficulty != 0) {
-            for (let i = 0; i < 10; i++) {
-                switch (topic) {
-                    case 'sum_substract':
-                        box = await sumAndSub(difficulty, settings);
-                        break;
-                    case 'multiply_divide':
-                        box = await multiplyAndDivide(difficulty, settings);
-                        break;
-                    case 'mixed':
-                        box = await mixed(difficulty, settings);
-                        break;
-                    case 'power_root':
-                        box = await powerAndRoot(difficulty, settings);
-                        break;
-                    case 'fraction_fractionMixed':
-                        box = await fractions(difficulty, settings);
-                        break;
-                    case 'forms_sizes':
-                        break;
-                    case 'equasions_basic':
-                        break;
-                    case 'equations_two_more':
-                        break;
-                    case 'verbal_problems':
-                        break;
-                    case 'geometry':
-                        break;
-                    case 'quadratic_equation':
-                        break;
-                    case 'circles':
-                        break;
-                    default:
-                        box['exe'] = false;
-                        box['ans'] = false;
-                        box['desc'] = false;
-
-                        console.log('Unexisting Topic!');
-                        break;
-                }
-
-                if (topic !== 'exam_basic' && topic !== 'exam_advanced') box['topic'] = topic;
-
-                pack.push(box);
-            }
-        }
-        else {
-            switch (topic) {
-                case 'sum_substract':
-                    pack = await sumAndSubTest(settings);
-                    break;
-                case 'multiply_divide':
-                    pack = await multiplyAndDivideTest(settings);
-                    break;
-                case 'mixed':
-                    pack = await mixedTest(settings);
-                    break;
-                case 'power_root':
-                    pack = await powerAndRootTest(settings);
-                    break;
-                case 'fraction_fractionMixed':
-                    pack = await fractionsTest(settings);
-                    break;
-                case 'forms_sizes':
-                    break;
-                case 'equasions_basic':
-                    break;
-                case 'equations_two_more':
-                    break;
-                case 'verbal_problems':
-                    break;
-                case 'geometry':
-                    break;
-                case 'quadratic_equation':
-                    break;
-                case 'circles':
-                    break;
-                default:
-                    box = [];
-
-                    console.log('Unexisting Topic!');
-                    break;
-            }
-
-            if (topic !== 'exam_basic' && topic !== 'exam_advanced') box['topic'] = topic;
+    const topicMap = {
+        sum_substract: sumAndSub,
+        multiply_divide: multiplyAndDivide,
+        mixed: mixed,
+        power_root: powerAndRoot,
+        fraction_fractionMixed: fractions,
+        // forms_sizes: null,
+        // equasions_basic: null,
+        // equations_two_more: null,
+        // verbal_problems: null,
+        // geometry: null,
+        // quadratic_equation: null,
+        // circles: null,
+    };
+    let pack = [], box = {};
+    // exams creation
+    if (topic == 'exam_basic' || topic == 'exam_advanced') { pack = await examMaker(topic, settings); return pack; }
+    // exercise creation
+    if (difficulty != 0) {
+        for (let i = 0; i < 10; i++) {
+            const handler = topicMap[topic];
+            if (handler) box = await handler(difficulty, settings);
+            else { box = {}; console.error('Unexisting Topic'); }
+            pack.push(box);
         }
     }
-    else {
-        switch (topic) {
-            case 'exam_basic':
-                pack = await examBasic(settings);
-                break;
-            case 'exam_advanced':
-                break;
-        }
-    }
-
+    else pack = await testMaker(topic, settings);
     return pack;
 }
 
+/*
+        db save:
+    {
+        id: ...,
+        userId: ...,
+        ans: [...],
+        timestamps: ...,
+    }*/
 export const exerciseGen = async (req, res) => {
-    const topic = req.body.topic;
-    const settings = req.body.settings;
-    const token = req.body.token;
-    let difficulty = req.body.grade;
-
-    if (!!topic) {
-        if (!difficulty) difficulty = 0;
-
-        let pack = await exercisePack(difficulty, topic, settings);
-
-        console.log('Exercise creation pre hash:');
-        console.log(pack);
-
-        // hashing answers within a pack
-        pack = await Promise.all(
-            pack.map(async thing => ({
-                ...thing,
-                ans: [await bcrypt.hash(`${thing.ans[0]}`, await bcrypt.genSalt(10))]
-            }))
-        );
-
-        console.log('is online user is ' + !!token);
-
-        if (!!token) { // online user
-            // token validation
-            const user = await verify(token);
-
-            console.log('is valid token is ' + !!user);
-            console.log(user._id);
-
-            if (!!user._id) { // valid token
-                /*
-                db save:
-            {
-                id: ...,
-                userId: ...,
-                ans: [...],
-                timestamps: ...,
-            }
-                */
-
-                // pulling only answers from the pack
-                const ansPack = pack.map(thing => `${thing.ans}`);
-
-                // check of existing answers sheet for the user
-                let compModel = await Compare.findOne({ userId: user._id });
-
-                if (!!compModel) { // there is an a existing sheet
-                    // server updating a copy of the answers in db with users id
-                    compModel.updateOne({ userId: user._id }, { $set: { ans: ansPack } });
-                }
-                else { // there no existing sheet
-                    compModel = new Compare({
-                        userId: user._id,
-                        ans: ansPack,
-                    });
-
-                    // server saving a copy of the answers in db with users id
-                    await compModel.save();
-                }
-            }
-            else { // invalid token
-                console.log('Error answers compare: invalid token!');
-                res.status(500).json({ success: false, message: 'Server error' });
-            }
-        }
-
-        try {
-            res.status(200).json({ success: true, message: 'Exercises successfully created!', data: pack });
-
-            console.log('Exercise creation success!');
-            //console.log(pack);
-        }
-        catch (error) {
-            console.log('Error in creating exercises: ' + error.message);
-            res.status(400).json({ success: false, message: 'Server error' });
+    const { topic, settings, token, grade } = req.body;
+    let difficulty = grade;
+    // validating topic
+    if (!topic) { console.error('Request missing some part'); return res.status(400).json({ success: false, message: 'Server error: missing requirements' }); }
+    // filtering difficulty
+    if (!difficulty) difficulty = 0;
+    let pack = await exercisePack(difficulty, topic, settings);
+    //=============================================================< console log
+    console.log('Exercise creation pre hash:');
+    console.log(pack);
+    // hashing answers within a pack
+    pack = await Promise.all(pack.map(async thing => ({ ...thing, ans: [await bcrypt.hash(`${thing.ans[0]}`, await bcrypt.genSalt(10))] })));
+    //=============================================================< console log
+    console.log('is online user is ' + !!token);
+    if (!!token) { // online user
+        // token validation
+        const user = await verify(token);
+        //=============================================================< console log
+        console.log('is valid token is ' + !!user);
+        console.log(user._id);
+        if (!user._id) { console.error('Invalid token'); return serverError(res); }
+        // pulling only answers from the pack
+        const ansPack = pack.map(thing => `${thing.ans}`);
+        // check of existing answers sheet for the user
+        let compModel = await Compare.findOne({ userId: user._id });
+        // there is an a existing sheet, server updating a copy of the answers in db with users id
+        if (!!compModel) compModel.updateOne({ userId: user._id }, { $set: { ans: ansPack } });
+        else { // there no existing sheet
+            compModel = new Compare({ userId: user._id, ans: ansPack, });
+            // server saving a copy of the answers in db with users id
+            await compModel.save();
         }
     }
-    else {
-        console.log('Error in creating exercises, request missing some part.');
-        res.status(400).json({ success: false, message: 'Server error: missing requirements' });
-    }
+    try { res.status(200).json({ success: true, message: 'Exercises successfully created!', data: pack }); }
+    catch (error) { console.error(error.message); return serverError(res); }
 }

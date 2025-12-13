@@ -1,21 +1,11 @@
-import hebrewPackage  from '../languages/hebrewPackage.js';
-import russianPackage  from '../languages/russianPackage.js';
+import hebrewPackage from '../languages/hebrewPackage.js';
+import russianPackage from '../languages/russianPackage.js';
 
 export const getLang = (req, res) => {
-    const requestedLang = req.body.language;
-
+    const { language } = req.body;
     try {
-        switch (requestedLang) {
-            case 'he':
-                res.status(200).json({ success: true, message: 'Hebrew language loaded!', data: hebrewPackage });
-                break;
-            case 'ru':
-                res.status(200).json({ success: true, message: 'Russian language loaded!', data: russianPackage });
-                break;
-        }
+        if (language == 'he') return res.status(200).json({ success: true, message: 'Hebrew language loaded!', data: hebrewPackage });
+        if (language == 'ru') return res.status(200).json({ success: true, message: 'Russian language loaded!', data: russianPackage });
     }
-    catch (error) {
-        console.log('Error in loading language: ' + error.message);
-        res.status(500).json({ success: false, message: 'Server error' });
-    }
+    catch (error) { console.error(error.message); res.status(500).json({ success: false, message: 'Server error' }); }
 }

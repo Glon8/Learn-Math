@@ -1,66 +1,34 @@
 import Participant from '../models/participant.model.js';
 import { verify } from "../util/token.util.js";
 
+const serverError = (res, msg) => res.status(500).json({ success: false, message: msg ?? 'Server error' });
+
 export const signToTop = async (req, res) => {
-    const token = req.body.token;
-
-    //token verification before user delition
+    const { token } = req.body;
+    // token verification
     const verImage = await verify(token);
-
-    if (!!verImage) {
-        const participantModel = new Participant({ userId: verImage?._id });
-
-        try {
-            await participantModel.save();
-
-            res.status(200).json({ success: true, message: 'User has been added to top list!' });
-        }
-        catch (error) {
-            console.log('Error in signing to the top list: ' + error.message);
-            res.status(500).json({ success: false, message: 'Server error' });
-        }
-    }
-    else {
-        console.log('Error in signing to the top list: expired token!');
-        res.status(500).json({ success: false, message: 'Server error' });
-    }
+    if (!verImage) { console.error('Expired token'); return serverError(res); }
+    // model creation
+    const participantModel = new Participant({ userId: verImage?._id });
+    try { await participantModel.save(); res.status(200).json({ success: true, message: 'User has been added to top list!' }); }
+    catch (error) { console.error(error.message); return serverError(res); }
 }
 
 export const deleteFromTop = async (req, res) => {
-    const token = req.body.token;
-
-    //token verification before user delition
+    const { token } = req.body;
+    //token verification
     const verImage = await verify(token);
-
-    if (!!verImage) {
-        try {
-            await Participant.deleteOne({ userId: verImage?._id });
-
-            res.status(200).json({ success: true, message: 'User has been removed from top list!' });
-        }
-        catch (error) {
-            console.log('Error in removing from the top list: ' + error.message);
-            res.status(500).json({ success: false, message: 'Server error' });
-        }
-    }
+    if (!verImage) return;
+    try { await Participant.deleteOne({ userId: verImage?._id }); res.status(200).json({ success: true, message: 'User has been removed from top list!' }); }
+    catch (error) { console.error(error.message); return serverError(res); }
 }
 
 export const getTop = async (get, res) => {
     try {
+        // fetch scores request conf
         const scoresPipeline = [
-            {
-                $lookup: {
-                    from: "scores",
-                    localField: "userId",
-                    foreignField: "userId",
-                    as: "participantInfo"
-                }
-            },
-            {
-                $match: {
-                    "participantInfo.0": { $exists: true }
-                }
-            },
+            { $lookup: { from: "scores", localField: "userId", foreignField: "userId", as: "participantInfo" } },
+            { $match: { "participantInfo.0": { $exists: true } } },
             {
                 $addFields: {
                     scoresArray: {
@@ -81,35 +49,13 @@ export const getTop = async (get, res) => {
                                     "quadratic_equation": { $arrayElemAt: ["$participantInfo.quadratic_equation", 0] },
                                     "circles": { $arrayElemAt: ["$participantInfo.circles", 0] },
                                     "exam_advanced": { $arrayElemAt: ["$participantInfo.exam_advanced", 0] }
-                                }
-                            ]
+                                }]
                         }
                     }
                 }
             },
-            {
-                $addFields: {
-                    validScores: {
-                        $filter: {
-                            input: "$scoresArray",
-                            as: "score",
-                            cond: { $ne: ["$$score.v", null] }
-                        }
-                    }
-                }
-            },
-            {
-                $addFields: {
-                    averageScore: {
-                        $divide: [
-                            {
-                                $sum: "$validScores.v"
-                            },
-                            14
-                        ]
-                    }
-                }
-            },
+            { $addFields: { validScores: { $filter: { input: "$scoresArray", as: "score", cond: { $ne: ["$$score.v", null] } } } } },
+            { $addFields: { averageScore: { $divide: [{ $sum: "$validScores.v" }, 14] } } },
             {
                 $addFields: {
                     "sum_substract": { $arrayElemAt: ["$participantInfo.sum_substract", 0] },
@@ -149,58 +95,21 @@ export const getTop = async (get, res) => {
                     "exam_advanced": 1
                 }
             },
-            {
-                $sort: { averageScore: -1 }
-            },
-            {
-                $limit: 10
-            }
+            { $sort: { averageScore: -1 } },
+            { $limit: 10 }
         ];
-
+        // fetch users request conf
         const usersPipeline = [
-            {
-                $addFields: {
-                    userObjectId: { $toObjectId: "$userId" }
-                }
-            },
-            {
-                $lookup: {
-                    from: "users",
-                    localField: "userObjectId",
-                    foreignField: "_id",
-                    as: "check"
-                }
-            },
-            {
-                $match: {
-                    "check.0": { $exists: true }
-                }
-            },
-            {
-                $unwind: "$check"
-            },
-            {
-                $project: {
-                    "_id": "$check._id",
-                    "name": "$check.name"
-                }
-            }
+            { $addFields: { userObjectId: { $toObjectId: "$userId" } } },
+            { $lookup: { from: "users", localField: "userObjectId", foreignField: "_id", as: "check" } },
+            { $match: { "check.0": { $exists: true } } },
+            { $unwind: "$check" },
+            { $project: { "_id": "$check._id", "name": "$check.name" } }
         ];
-
+        // sorting lists
         const scores = await Participant.aggregate(scoresPipeline);
         const users = await Participant.aggregate(usersPipeline);
-
-        const box = {
-            users: users,
-            scores: scores
-        }
-
-        console.log(box)
-
-        res.status(200).json({ success: true, message: 'Top list has been loaded!', data: box });
+        res.status(200).json({ success: true, message: 'Top list has been loaded!', data: { users: users, scores: scores } });
     }
-    catch (error) {
-        console.log('Error in retreiving the top: ' + error.message);
-        res.status(500).json({ success: false, message: 'Server error' });
-    }
+    catch (error) { console.error(error.message); return serverError(res); }
 }
