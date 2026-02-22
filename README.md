@@ -5,10 +5,10 @@ Build on React-Vite, Mongo Atlas, JS. The site also includes an "online teacher"
 
 **Link to:** https://learn-math-now.netlify.app/
 
-To run locally, download files, and run each part seperately:
+**To run locally:**
 
+download files, and run each part seperately:
 npm run dev - for frontend
-
 npm test - for backend
 
 **Connect by link:** http://localhost:5174/
