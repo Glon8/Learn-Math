@@ -7,7 +7,7 @@ Also, since the site is a user friendly, it allows local data savings, which do 
 The site includes authentication and scores save/share for the authorised users.
 The back end, generates exercises, endlessly, by math formulas, and not by premade charts.
 
-**Link to:** https://learn-math-now.netlify.app/
+**Link to working site:** https://learn-math-now.netlify.app/
 
 **To run locally:**
 
