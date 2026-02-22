@@ -11,9 +11,9 @@ The back end, generates exercises, endlessly, by math formulas, and not by prema
 
 **To run locally:**
 
-0. download files, and run each part seperately
-1. npm run dev - for frontend
-2. npm test - for backend
+1. download files, and run each part seperately
+2. npm run dev - for frontend
+3. npm test - for backend
 
 **Connect by link:** http://localhost:5174/
 
