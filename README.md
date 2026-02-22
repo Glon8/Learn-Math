@@ -1,20 +1,47 @@
-# Learn math:
+# Learn math — a full‑stack educational platform
 
-Its my graduation project in Atid college. It ment to be used by pupils and children, to **MAINLY** exercise math, and also learn some cool tricks with.
-Build on React-Vite, Mongo Atlas, JS. The site also includes an "online teacher" for kids, which is a Gemini, it very linear toward math,
-so if one of the users ll have trouble with excercises, they could ask it about.
-Also, since the site is a user friendly, it allows local data savings, which do not requires sign in to the server, but has its own limitations.
-The site includes authentication and scores save/share for the authorised users.
-The back end, generates exercises, endlessly, by math formulas, and not by premade charts.
+A React‑Vite + MongoDB Atlas project designed for pupils and children to practice math through:
 
-**Link to working site:** https://learn-math-now.netlify.app/
+**1. Unlimited, dynamically generated exercises**
 
-**To run locally:**
+* The backend doesn’t rely on static question banks.
+* It generates exercises endlessly using mathematical formulas.
+* This gives the platform infinite replayability and avoids repetition.
 
-1. download files, and run each part seperately
-2. npm run dev - for frontend
-3. npm test - for backend
+**2. A built‑in “online teacher”**
 
-**Connect by link:** http://localhost:5174/
+* Powered by Gemini.
+* Focused specifically on math explanations.
+* Kids can ask for help when they get stuck — like having a tutor on demand.
 
-Project still under work.
+**3. Two modes of use**
+
+**Local mode (no login required)**
+
+* Saves progress locally in the browser.
+* Great for kids who just want to practice without creating an account.
+* Naturally comes with limitations (e.g., no cloud sync).
+
+**Authenticated mode**
+
+* Secure login system.
+* Saves scores and progress to the server.
+* Allows sharing achievements and tracking improvement over time.
+
+**4. User‑friendly design**
+
+* Built for children — simple, accessible, and engaging.
+* Encourages learning without pressure.
+
+**5. Full-stack architecture**
+
+* **Frontend:** React + Vite
+* **Backend:** Node/JS
+* **Database:** MongoDB Atlas
+* **Hosting:** Netlify (frontend)
+* **Local dev:**
+  * npm run dev for frontend
+  *npm test for backend
+  *Local access at: http://localhost:5174/
+
+**Project still under work.**
