@@ -7,9 +7,9 @@ Build on React-Vite, Mongo Atlas, JS. The site also includes an "online teacher"
 
 **To run locally:**
 
-download files, and run each part seperately:
-npm run dev - for frontend
-npm test - for backend
+1. download files, and run each part seperately
+2. npm run dev - for frontend
+3. npm test - for backend
 
 **Connect by link:** http://localhost:5174/
 
