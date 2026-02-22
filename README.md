@@ -44,6 +44,6 @@ A React‑Vite + MongoDB Atlas project designed for pupils and children to pract
   * ``npm test`` for backend
   * Local access at: ``http://localhost:5174/``
 
-**Live site:** ``https://learn-math-now.netlify.app/``
+**Live site:** https://learn-math-now.netlify.app/
 
 **Project still under work.**
