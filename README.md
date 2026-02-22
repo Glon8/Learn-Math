@@ -38,7 +38,7 @@ A React‑Vite + MongoDB Atlas project designed for pupils and children to pract
 * **Frontend:** React + Vite
 * **Backend:** Node/JS
 * **Database:** MongoDB Atlas
-* **Hosting:** Netlify (frontend)
+* **Hosting:** Netlify (frontend), Render (backend)
 * **Local dev:**
   * npm run dev for frontend
   * npm test for backend
